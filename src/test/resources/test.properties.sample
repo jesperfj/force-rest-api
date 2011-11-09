@@ -1,0 +1,8 @@
+# Test fixture
+username=user@domain.com
+password=secretcode
+clientId=long-alphanumeric-sequence
+clientSecret=shorter-numeric-sequence
+
+# Account ID of some existing account in the org
+accountId=18-char-account-id
