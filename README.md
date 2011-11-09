@@ -16,7 +16,7 @@ This module is not yet in a Maven repository. So you must clone and install in y
 
     $ git clone https://github.com/jesperfj/force-rest-api.git
     $ cd force-rest-api
-    $ mvn install
+    $ mvn install -DskipTests
 
 Add as dependency to your project
 
@@ -90,4 +90,48 @@ If you already have an access token and endpoint (e.g. from a cookie), you can p
 	    .setApiEndpoint("apiEndpoint");
     
     DataApi api = new DataApi(c,s);
+
+## Run Tests
+
+This project currently only has integration-y tests (they hit the actual API). To make them work copy `src/test/resources/test.properties.sample` to `src/test/resources/test.properties` and replace the properties in the file with actual values
+
+### Login and password
+
+Add your Force.com developer org login and password. Needless to say, don't use credentials for a production org containing sensitive data. If you don't have a developer org, [sign up for one](http://www.developerforce.com/events/regular/registration.php?d=70130000000EjHb). It's free.
+
+### Client ID and Secret
+
+Once you have signed up for an org, navigate to the Remote Access Setup:
+
+* Click on "Admin User" drop-down in upper-right
+* Select Setup
+* In the left-side navigation pane, under "App Setup", click on "Develop"
+* Select "Remote Access"
+
+Now create a new Remote Access Application:
+
+* Click on "New"
+* Choose any name for your application
+* Choose any callback URL (you'll need to set this properly when web server flow is supported)
+* Choose some contact email
+* Click "Save"
+* Copy "Consumer Key" to the property "clientId" in test.properties
+* Click on "Click to reveal" and copy "Consumer Secret" to "clientSecret" in test.properties
+
+### Set a Test Account ID
+
+* Click on the drop-down in the top right corner and select "Sales"
+* Select the "Accounts" tab
+* In the "View" drop-down, select "All Accounts"
+* Click on one of the accounts in the list
+* Copy the Path part of the URL in your Browser's location. It should look something like this: "001A000000h6kkf".
+* Set "accountId" in test.properties to this value
+
+Now run tests with
+
+    $ mvn test
+
+
+
+
 
