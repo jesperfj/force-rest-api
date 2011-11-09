@@ -46,7 +46,7 @@ public class Http {
 				return r;
 			}
 		} catch(IOException e) {
-			throw new RuntimeException(e);
+			throw new RuntimeException(req.toString(),e);
 		}
 		
 	}

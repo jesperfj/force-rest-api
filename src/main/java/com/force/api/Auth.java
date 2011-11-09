@@ -76,7 +76,7 @@ public class Auth {
 			String s = b.toString();
 			System.out.println(s);
 			String accessToken = s.replaceAll("^.*<sessionId>(.*)</sessionId>.*$","$1").trim();
-			String apiEndpoint = s.replaceAll("^.*<serverUrl>.*https://(.*)/.*</serverUrl>.*$","$1").trim();
+			String apiEndpoint = "https://"+s.replaceAll("^.*<serverUrl>.*https://([^/]*)/.*</serverUrl>.*$","$1").trim();
 			//String organizationId = s.replaceAll("^.*<organizationId>(.*)</organizationId>.*$","$1").trim();
 			//String userId = s.replaceAll("^.*<userId>(.*)</userId>.*$","$1").trim();
 			System.out.println("accessToken:"+accessToken);

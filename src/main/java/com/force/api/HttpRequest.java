@@ -22,7 +22,7 @@ public class HttpRequest {
 	protected void baseSetUrl(String url) {
 		try {
 			conn = (HttpURLConnection) new URL(url).openConnection();
-			stringRep.append("URL: "+url);
+			stringRep.append("URL: "+url+"\n");
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
 		} catch (IOException e) {
@@ -33,7 +33,7 @@ public class HttpRequest {
 
 	protected void baseAddHeader(String key, String value) {
 		conn.addRequestProperty(key, value);
-		stringRep.append("Header: "+key+": "+value);
+		stringRep.append("Header: "+key+": "+value+"\n");
 	}
 	
 	public HttpRequest header(String key, String value) {
@@ -61,7 +61,7 @@ public class HttpRequest {
 	public HttpRequest method(String value) {
 		try {
 			conn.setRequestMethod(value);
-			stringRep.append("Method: "+value);
+			stringRep.append("Method: "+value+"\n");
 		} catch (ProtocolException e) {
 			throw new RuntimeException(e);
 		}

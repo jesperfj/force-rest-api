@@ -13,36 +13,24 @@ import org.junit.Test;
 public class DataApiOperationsTest {
 
 	private static DataApi api;
-	private static Properties fixture;
 	
 	@BeforeClass
 	public static void beforeClass() {
-		fixture = new Properties();
-			try {
-				fixture.load(DataApiOperationsTest.class
-				        .getResourceAsStream("/test.properties"));
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		System.out.println(fixture.getProperty("username"));
-		System.out.println(fixture.getProperty("password"));
-		System.out.println(fixture.getProperty("clientId"));
-		System.out.println(fixture.getProperty("clientSecret"));
 		api = new DataApi(new ApiConfig()
-			.setUsername(fixture.getProperty("username"))
-			.setPassword(fixture.getProperty("password"))
-			.setClientId(fixture.getProperty("clientId"))
-			.setClientSecret(fixture.getProperty("clientSecret")));
+			.setUsername(Fixture.get("username"))
+			.setPassword(Fixture.get("password"))
+			.setClientId(Fixture.get("clientId"))
+			.setClientSecret(Fixture.get("clientSecret")));
 	}
 
 	@Test
 	public void testGetSObjectTyped() {
 
 		Account a = api.get(new SObjectResource()
-						.setId(fixture.getProperty("accountId"))
+						.setId(Fixture.get("accountId"))
 						.setType("Account")).as(Account.class);
 
-		assertEquals(a.getId(),fixture.getProperty("accountId"));
+		assertEquals(a.getId(),Fixture.get("accountId"));
 		
 	}
 
@@ -50,12 +38,12 @@ public class DataApiOperationsTest {
 	public void testGetSObjectUntyped() {
 		
 		Map<?, ?> sobj = api.get(new SObjectResource()
-										.setId(fixture.getProperty("accountId"))
+										.setId(Fixture.get("accountId"))
 										.setType("Account")).asMap();
 		for(Object key : sobj.keySet()) {
 			System.out.println(key+": "+sobj.get(key));
 		}
-		assertEquals(fixture.getProperty("accountId"),sobj.get("Id"));
+		assertEquals(Fixture.get("accountId"),sobj.get("Id"));
 
 	}
 
