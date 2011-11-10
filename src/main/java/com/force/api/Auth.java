@@ -7,6 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Map;
 
 import org.codehaus.jackson.JsonParseException;
@@ -93,6 +94,49 @@ public class Auth {
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
+	}
+
+	static public final String startOAuthWebServerFlow(AuthorizationRequest req) {
+		try {
+			return req.apiConfig.getLoginEndpoint()+
+					"/services/oauth2/authorize"+
+					"?response_type=code"+
+					"&client_id="+URLEncoder.encode(req.apiConfig.getClientId(),"UTF-8")+
+					(req.scope!=null ? "&scope="+URLEncoder.encode(req.scope,"UTF-8") : "") +
+					"&redirect_uri="+URLEncoder.encode(req.apiConfig.redirectURI,"UTF-8")+
+					(req.state!=null ? "&state="+URLEncoder.encode(req.state,"UTF-8") : "") +
+					(req.immediate ? "&immediate=true" : "") +
+					(req.display!=null ? "&display="+req.display : "");
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	static public final ApiSession completeOAuthWebServerFlow(AuthorizationResponse res) {
+		try {
+			Map<?,?> resp = jsonMapper.readValue(
+					Http.send(new HttpFormPost()
+						.url(res.apiConfig.getLoginEndpoint()+"/services/oauth2/token")
+						.header("Accept","application/json")
+						.param("grant_type","authorization_code")
+						.param("client_id",res.apiConfig.getClientId())
+						.param("client_secret", res.apiConfig.getClientSecret())
+						.param("redirect_uri",res.apiConfig.getRedirectURI())
+						.preEncodedParam("code",res.code)
+					).getStream(),Map.class);
+
+			return new ApiSession()
+					.setApiConfig(res.apiConfig.clone().setRefreshToken((String)resp.get("refresh_token")))
+					.setAccessToken((String)resp.get("access_token"))
+					.setApiEndpoint((String)resp.get("instance_url"));
+			
+		} catch (JsonParseException e) {
+			throw new RuntimeException(e);
+		} catch (JsonMappingException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	static public final ApiSession authenticate(ApiConfig c) {

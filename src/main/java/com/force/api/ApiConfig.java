@@ -9,6 +9,24 @@ public class ApiConfig {
 	String loginEndpoint = "https://login.salesforce.com";
 	String clientId;
 	String clientSecret;
+	String redirectURI;
+
+	public ApiConfig clone() {
+		return new ApiConfig()
+			.setApiVersion(apiVersion)
+			.setUsername(username)
+			.setPassword(password)
+			.setRefreshToken(refreshToken)
+			.setLoginEndpoint(loginEndpoint)
+			.setClientId(clientId)
+			.setClientSecret(clientSecret)
+			.setRedirectURI(redirectURI);
+	}
+	
+	public ApiConfig setRedirectURI(String redirectURI) {
+		this.redirectURI = redirectURI;
+		return this;
+	}
 	
 	public ApiConfig setApiVersion(ApiVersion value) {
 		apiVersion = value;
@@ -67,6 +85,10 @@ public class ApiConfig {
 
 	public String getClientSecret() {
 		return clientSecret;
+	}
+	
+	public String getRedirectURI() {
+		return redirectURI;
 	}
 
 	public ApiVersion getApiVersion() {

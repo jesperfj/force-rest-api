@@ -1,9 +1,9 @@
 package com.force.api;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import static org.junit.Assert.assertEquals;
-
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class AuthTest {
@@ -50,6 +50,38 @@ public class AuthTest {
 		DataApi api2 = new DataApi(c,session);
 		
 		assertEquals(Fixture.get("username"),api2.getIdentity().getUsername());
+		
+	}
+	
+	@Test
+	public void testAuthorizationURL() {
+		String url = Auth.startOAuthWebServerFlow(new AuthorizationRequest()
+			.apiConfig(new ApiConfig()
+				.setClientId(Fixture.get("clientId"))
+				.setRedirectURI(Fixture.get("redirectURI"))));
+		System.out.println(url);
+	}
+	
+	
+	/**
+	 * This test only works manually for now. Paste the URL printed when you ran
+	 * testAuthorizationURL() into your browser and authenticate yourself. When
+	 * you get redirected to localhost ignore the error page and copy the value
+	 * of the code URL parameter into the .code("...") method argument below.
+	 * Then run this and only this test (in Eclipse, remove @Ignore annotation,
+	 * highlight method name, right-click and select Run As.. JUnit Test).
+	 * 
+	 * TODO: Automate this.
+	 */
+	@Test
+	@Ignore
+	public void testCompleteWebServerFlow() {
+		ApiSession s = Auth.completeOAuthWebServerFlow(new AuthorizationResponse()
+			.apiConfig(new ApiConfig()
+				.setClientId(Fixture.get("clientId"))
+				.setClientSecret(Fixture.get("clientSecret"))
+				.setRedirectURI(Fixture.get("redirectURI")))
+			.code("aPrxZibfVBKPF9tp0UFCbrd9VpKQUr5eoNNqUf.ZQS1cIp9NvWQABQLGbFRbQ_75x8m3qKa9_A%3D%3D"));
 		
 	}
 }

@@ -9,6 +9,7 @@ Goals:
 * Other projects will handle generation of typed SObject classes and it should work here
 * Automatic session renewal
 * Pluggable JSON kit
+* Make sure it's Spring friendly. [This solution](http://stackoverflow.com/questions/2901166/how-to-make-spring-accept-fluent-non-void-setters) may be necessary.
 
 ## Usage
 
@@ -69,11 +70,37 @@ This assumes you have an Account class defined with proper Jackson deserializati
 
 ### OAuth Username/Password Authentication Flow
 
+As [documented here](https://help.salesforce.com/help/doc/en/remoteaccess_oauth_username_password_flow.htm)
+
     DataApi api = new DataApi(new ApiConfig()
         .setUsername("user@domain.com")
         .setPassword("password")
         .setClientId("longclientidalphanumstring")
         .setClientSecret("notsolongnumeric"));
+
+### OAuth Web Server Flow
+
+As [documented here](https://help.salesforce.com/help/doc/en/remoteaccess_oauth_web_server_flow.htm)
+
+    String url = Auth.startOAuthWebServerFlow(new AuthorizationRequest()
+    	.apiConfig(new ApiConfig()
+    		.setClientId("longclientidalphanumstring")
+    		.setRedirectURI("https://myapp.mydomain.com/oauth"))
+    	.state("mystate"));
+
+    // redirect browser to url
+    // Browser will get redirected back to your app after user authentication at
+    // https://myapp.mydomain.com/oauth with a code parameter. Now do:
+
+	ApiSession s = Auth.completeOAuthWebServerFlow(new AuthorizationResponse()
+		.apiConfig(new ApiConfig()
+			.setClientId("longclientidalphanumstring")
+			.setClientSecret("notsolongnumeric")
+			.setRedirectURI("https://myapp.mydomain.com/oauth"))
+		.code("alphanumericstringpassedbackinbrowserrequest"));
+    
+    DataApi api = new DataApi(s.getApiConfig(),s);
+
 
 ### Instantiate with existing accessToken and endpoint
 

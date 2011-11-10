@@ -40,7 +40,16 @@ public class HttpFormPost extends HttpRequest {
 		}
 		return this;
 	}
-	
+
+	public HttpFormPost preEncodedParam(String key, String value) {
+		if(body.length()>0) {
+			body.append("&"+key+"="+value);
+		} else {
+			body.append(key+"="+value);
+		}
+		return this;
+	}
+
 	public void sendContent() {
 		
 		try {
@@ -51,5 +60,9 @@ public class HttpFormPost extends HttpRequest {
 			throw new RuntimeException(e);
 		}
 		
+	}
+	
+	public String toString() {
+		return super.toString()+"Request Body:\n"+body.toString();
 	}
 }
