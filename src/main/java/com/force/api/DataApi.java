@@ -1,7 +1,6 @@
 package com.force.api;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.Map;
 
 import org.codehaus.jackson.JsonParseException;
