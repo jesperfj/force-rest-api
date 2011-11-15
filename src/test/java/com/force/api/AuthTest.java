@@ -1,7 +1,6 @@
 package com.force.api;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -18,6 +17,40 @@ public class AuthTest {
 		assertNotNull(api.session.accessToken);
 		assertNotNull(api.session.apiEndpoint);
 
+	}
+	
+	@Test
+	public void testForceURL() {
+		
+		ApiConfig c = new ApiConfig().setForceURL("force://login.salesforce.com?user=testuser@domain.com&password=pwd123");
+		assertEquals("testuser@domain.com",c.username);
+		assertEquals("pwd123", c.password);
+		assertEquals("https://login.salesforce.com",c.loginEndpoint);
+
+		c = new ApiConfig().setForceURL("force://login.salesforce.com:443?user=testuser@domain.com&password=pwd123");
+		assertEquals("testuser@domain.com",c.username);
+		assertEquals("pwd123", c.password);
+		assertEquals("https://login.salesforce.com:443",c.loginEndpoint);
+
+		c = new ApiConfig().setForceURL("force://login.salesforce.com:443?user=testuser@domain.com&password=pwd123&oauth_key=key123&oauth_secret=secret123");
+		assertEquals("testuser@domain.com",c.username);
+		assertEquals("pwd123", c.password);
+		assertEquals("https://login.salesforce.com:443",c.loginEndpoint);
+		assertEquals("key123",c.clientId);
+		assertEquals("secret123", c.clientSecret);
+
+		c = new ApiConfig().setForceURL("force://login.salesforce.com:443?oauth_key=key123&oauth_secret=secret123");
+		assertEquals("https://login.salesforce.com:443",c.loginEndpoint);
+		assertEquals("key123",c.clientId);
+		assertEquals("secret123", c.clientSecret);
+		
+		try {
+			c = new ApiConfig().setForceURL("login.salesforce.com:443?oauth_key=key123&oauth_secret=secret123");
+			fail();
+		} catch(Throwable t) {
+			t.printStackTrace();
+			assertEquals("java.lang.IllegalArgumentException", t.getClass().getName());
+		}
 	}
 	
 	@Test
