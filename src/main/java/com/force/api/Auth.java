@@ -30,9 +30,6 @@ public class Auth {
 						.param("username",c.getUsername())
 						.param("password",c.getPassword())
 					).getStream(),Map.class);
-			for(String key : resp.keySet()) {
-				System.out.println(key+": "+resp.get(key));
-			}
 			return new ApiSession(c,(String)resp.get("access_token"),(String)resp.get("instance_url"));
 			
 		} catch (JsonParseException e) {
@@ -75,13 +72,13 @@ public class Auth {
 				b.append(new String(buf,0,n));
 			}
 			String s = b.toString();
-			System.out.println(s);
+			//System.out.println(s);
 			String accessToken = s.replaceAll("^.*<sessionId>(.*)</sessionId>.*$","$1").trim();
 			String apiEndpoint = "https://"+s.replaceAll("^.*<serverUrl>.*https://([^/]*)/.*</serverUrl>.*$","$1").trim();
 			//String organizationId = s.replaceAll("^.*<organizationId>(.*)</organizationId>.*$","$1").trim();
 			//String userId = s.replaceAll("^.*<userId>(.*)</userId>.*$","$1").trim();
-			System.out.println("accessToken:"+accessToken);
-			System.out.println("apiEndpoint: "+apiEndpoint);
+			//System.out.println("accessToken:"+accessToken);
+			//System.out.println("apiEndpoint: "+apiEndpoint);
 			//System.out.println("userId: "+userId);
 			//System.out.println("organizationId: "+organizationId);
 							
