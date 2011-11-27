@@ -2,8 +2,15 @@ package com.force.api;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Map;
 
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -53,7 +60,7 @@ public class DataApiOperationsTest {
 	
 	@Test
 	@Ignore
-	public void testCreateSObjectUNtyped() {
+	public void testCreateSObjectUntyped() {
 		
 	}
 	
@@ -65,7 +72,7 @@ public class DataApiOperationsTest {
 	
 	@Test
 	@Ignore
-	public void testUpdateSObjectUNntyped() {
+	public void testUpdateSObjectUntyped() {
 		
 	}
 	
@@ -77,7 +84,7 @@ public class DataApiOperationsTest {
 	
 	@Test
 	@Ignore
-	public void testUpsertSObjectUNtyped() {
+	public void testUpsertSObjectUntyped() {
 		
 	}
 	
@@ -88,7 +95,7 @@ public class DataApiOperationsTest {
 	}
 	
 	@Test
-	public void testQuery() {
+	public void testQueryUntyped() {
 		
 		Map<?,?> result = api.get(new QueryResource()
 						         .setQuery("SELECT id FROM Account")).asMap();
@@ -97,7 +104,41 @@ public class DataApiOperationsTest {
 		}
 		
 	}
+	
+	@Test
+	@Ignore
+	public void testQueryTyped() {
+		QueryResult<Account> result = api.query("SELECT id FROM Account",Account.class);
+		System.out.println(result.totalSize);
+		System.out.println(result.getRecords().get(0).getName());
+	}
 
+	@Test
+	public void testTest() {
+		ObjectMapper jsonMapper = new ObjectMapper();
+		try {
+			jsonMapper.readValue(Http.send(new HttpRequest()
+			.url(api.session.getApiEndpoint()+"/services/data/"+api.config.getApiVersion()+"/query/?q="+URLEncoder.encode("SELECT id FROM Account","UTF-8"))
+			.method("GET")
+			.header("Accept", "application/json")
+			.header("Authorization", "OAuth "+api.session.getAccessToken())).getStream(),new TypeReference<QueryResult<Account>>() {});
+		} catch (JsonParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
+	
 	@Test
 	@Ignore
 	public void testSearch() {

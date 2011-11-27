@@ -110,6 +110,7 @@ public class Auth {
 	}
 	
 	static public final ApiSession completeOAuthWebServerFlow(AuthorizationResponse res) {
+		// TODO: throw a (runtime) exception with detailed info if auth failed
 		try {
 			Map<?,?> resp = jsonMapper.readValue(
 					Http.send(new HttpFormPost()

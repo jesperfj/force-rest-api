@@ -1,11 +1,14 @@
 package com.force.api;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Map;
 
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 
 public class DataApi {
 
@@ -67,5 +70,24 @@ public class DataApi {
 					.header("Accept", "application/json")
 					.header("Authorization", "OAuth "+session.getAccessToken())));
 	}
-	
+
+	public <T> QueryResult<T> query(String query, Class<T> clazz) {
+
+		try {
+			return jsonMapper.readValue(Http.send(new HttpRequest()
+				.url(session.getApiEndpoint()+"/services/data/"+config.getApiVersion()+"/query/?q="+URLEncoder.encode(query,"UTF-8"))
+				.method("GET")
+				.header("Accept", "application/json")
+				.header("Authorization", "OAuth "+session.getAccessToken())).getStream(),new TypeReference<QueryResult<T>>() {});
+		} catch (JsonParseException e) {
+			throw new ResourceException(e);
+		} catch (JsonMappingException e) {
+			throw new ResourceException(e);
+		} catch (UnsupportedEncodingException e) {
+			throw new ResourceException(e);
+		} catch (IOException e) {
+			throw new ResourceException(e);
+		}
+
+	}
 }
