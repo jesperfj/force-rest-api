@@ -6,6 +6,12 @@
     <artifactId>force-rest-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>force-rest-api</name>
+    <scm>
+        <connection>scm:git:https://github.com/jesperfj/force-rest-api.git</connection>
+        <developerConnection>scm:git:git@github.com/jesperfj/force-rest-api.git</developerConnection>
+        <tag>HEAD</tag>
+        <url>https://github.com/jesperfj/force-rest-api.git</url>
+    </scm>
 
     <dependencies>
         <dependency>
