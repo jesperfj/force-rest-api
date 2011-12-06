@@ -4,13 +4,9 @@ Lightweight library for building Force.com apps with OAuth authentication and da
 
 # Usage
 
-This module is not yet in a Maven repository. So you must clone and install in your local repo:
+You can either include as a dependency and pull the module from its github maven repo or you can build locally.
 
-    $ git clone https://github.com/jesperfj/force-rest-api.git
-    $ cd force-rest-api
-    $ mvn install -DskipTests
-
-## Add as dependency to your project
+## Dependency on published release
 
 The version number is bumped regularly. Check the tags list or commit messages for latest version.
 
@@ -30,6 +26,22 @@ The version number is bumped regularly. Check the tags list or commit messages f
         <groupId>com.force.api</groupId>
         <artifactId>force-rest-api</artifactId>
         <version>0.0.3</version>
+    </dependency>
+
+## Build and link locally
+
+    $ git clone https://github.com/jesperfj/force-rest-api.git
+    $ cd force-rest-api
+    $ mvn install -DskipTests
+
+### Maven
+
+The latest HEAD always builds to a snapshot:
+
+    <dependency>
+        <groupId>com.force.api</groupId>
+        <artifactId>force-rest-api</artifactId>
+        <version>0.0.3-SNAPSHOT</version>
     </dependency>
 
 ## Write code
