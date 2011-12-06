@@ -21,7 +21,6 @@ public class Http {
 		try {
 			req.sendContent();
 			int code = req.getConnection().getResponseCode();
-			System.out.println("Got code "+code);
 			
 			if(code<300 && code >=200) {
 				switch(req.responseFormat) {

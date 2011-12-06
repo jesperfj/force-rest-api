@@ -48,7 +48,6 @@ public class AuthTest {
 			c = new ApiConfig().setForceURL("login.salesforce.com:443?oauth_key=key123&oauth_secret=secret123");
 			fail();
 		} catch(Throwable t) {
-			t.printStackTrace();
 			assertEquals("java.lang.IllegalArgumentException", t.getClass().getName());
 		}
 	}
@@ -93,7 +92,19 @@ public class AuthTest {
 				.setClientId(Fixture.get("clientId"))
 				.setRedirectURI(Fixture.get("redirectURI"))));
 		System.out.println(url);
+
+		try {
+			url = Auth.startOAuthWebServerFlow(new AuthorizationRequest()
+			.apiConfig(new ApiConfig()
+				.setClientId(System.getenv("UNKNOWNENDVAR"))
+				.setRedirectURI(System.getenv("ANOTHERUNKNOWNENDVAR"))));
+		} catch(java.lang.AssertionError e) {
+			return;
+		}
+		fail();
+		
 	}
+
 	
 	
 	/**
