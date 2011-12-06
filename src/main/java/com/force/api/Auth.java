@@ -19,6 +19,10 @@ public class Auth {
 	private static final ObjectMapper jsonMapper = new ObjectMapper();
 
 	static public final ApiSession oauthLoginPasswordFlow(ApiConfig c) {
+		assert(c.getClientId()!=null);
+		assert(c.getClientSecret()!=null);
+		assert(c.getUsername()!=null);
+		assert(c.getPassword()!=null);
 		try {
 			@SuppressWarnings("unchecked")
 			Map<String,Object> resp = jsonMapper.readValue(
@@ -43,6 +47,8 @@ public class Auth {
 
 	
 	static public final ApiSession soaploginPasswordFlow(ApiConfig c) {
+		assert(c.getUsername()!=null);
+		assert(c.getPassword()!=null);
 		try {
 			URL url = new URL(c.getLoginEndpoint()+"/services/Soap/u/23.0");
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -94,6 +100,8 @@ public class Auth {
 	}
 
 	static public final String startOAuthWebServerFlow(AuthorizationRequest req) {
+		assert(req.apiConfig.getClientId()!=null);
+		assert(req.apiConfig.getRedirectURI()!=null);
 		try {
 			return req.apiConfig.getLoginEndpoint()+
 					"/services/oauth2/authorize"+
@@ -110,6 +118,11 @@ public class Auth {
 	}
 	
 	static public final ApiSession completeOAuthWebServerFlow(AuthorizationResponse res) {
+		assert(res.apiConfig!=null);
+		assert(res.apiConfig.getClientId()!=null);
+		assert(res.apiConfig.getClientSecret()!=null);
+		assert(res.apiConfig.getRedirectURI()!=null);
+		assert(res.code!=null);
 		// TODO: throw a (runtime) exception with detailed info if auth failed
 		try {
 			Map<?,?> resp = jsonMapper.readValue(
