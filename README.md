@@ -171,6 +171,58 @@ Now run tests with
 
     $ mvn test
 
+# Cutting a Release
+
+This project uses the Maven release plugin with Github pages as Maven repo to facilitate quick releases. Snapshots are never released. They are reserved for local builds. See [Christian Kaltepoth's post](http://chkal.blogspot.com/2010/09/maven-repositories-on-github.html) for an excellent guide to setting up Github pages as a maven repo. To cut a release:
+
+### Clone this repo
+
+(Adjust URL if necessary)
+
+    $ git clone git@github.com:jesperfj/force-rest-api.git
+
+### Clone the github pages branch of this repo into `release-repo` sub-dir
+
+    $ cd force-rest-api
+    $ git clone -b gh-pages git@github.com:jesperfj/force-rest-api.git release-repo
+
+### Prepare a new release
+
+Set up your test properties as described above in the testing section. Tests must pass. Edit `pom.xml` and adjust the SCM information to match your repo and github info if different from this one. Run
+
+    $ mvn release:prepare
+
+This will create a couple of commits and push to your github repo. A new release has now been created and snapshotted in github, but it has not yet actually been built and deployed.
+
+### Build and deploy the new release
+
+You can't use `mvn release:perform` because it will be missing your test fixture. Instead just do it manually. Check out the commit that was tagged as the new release. Something like:
+
+    $ git checkout force-rest-api-0.0.4
+
+Build and deploy
+
+    $ mvn clean deploy -DupdateReleaseInfo
+
+Commit the new release and push to gh-pages
+
+    $ cd release-repo
+    $ git add .
+    $ git commit -m "Release 0.0.4"
+    $ git push origin gh-pages
+
+### Clean up
+
+    $ cd ..
+    $ mvn release:clean
+
+(deletes temporary and backup files)
+
+    $ git checkout master
+
+gets you back to master from detached HEAD.
+
+
 # Project Goals:
 
 * Make it as thin as possible
