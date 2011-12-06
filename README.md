@@ -1,17 +1,8 @@
 # Force.com REST API Connector
 
-Current status: First commit. Lots of stuff not implemented.
+Lightweight library for building Force.com apps with OAuth authentication and data access through the Force.com REST API.
 
-Goals:
-
-* Make it as thin as possible
-* Few or no dependencies
-* Other projects will handle generation of typed SObject classes and it should work here
-* Automatic session renewal
-* Pluggable JSON kit
-* Make sure it's Spring friendly. [This solution](http://stackoverflow.com/questions/2901166/how-to-make-spring-accept-fluent-non-void-setters) may be necessary.
-
-## Usage
+# Usage
 
 This module is not yet in a Maven repository. So you must clone and install in your local repo:
 
@@ -19,19 +10,29 @@ This module is not yet in a Maven repository. So you must clone and install in y
     $ cd force-rest-api
     $ mvn install -DskipTests
 
-Add as dependency to your project
+## Add as dependency to your project
+
+The version number is bumped regularly. Check the tags list or commit messages for latest version.
 
 ### Maven
 
+    <repositories>
+        <repository>
+            <id>force-rest-api</id>
+            <name>force-rest-api repository on GitHub</name>
+            <url>http://jesperfj.github.com/force-rest-api/repository/</url>            
+        </repository>
+    </repositories>
+
+    ...
+    
     <dependency>
         <groupId>com.force.api</groupId>
         <artifactId>force-rest-api</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.3</version>
     </dependency>
 
-### Gradle
-
-    compile 'com.force.api:force-rest-api:0.0.1-SNAPSHOT'
+## Write code
 
 ### Username / Password Authentication
 
@@ -158,7 +159,19 @@ Now run tests with
 
     $ mvn test
 
+# Project Goals:
 
+* Make it as thin as possible
+* Few or no dependencies
+* Other projects will handle generation of typed SObject classes and it should work here
+* Automatic session renewal
+* Pluggable JSON kit
+* Make sure it's Spring friendly. [This solution](http://stackoverflow.com/questions/2901166/how-to-make-spring-accept-fluent-non-void-setters) may be necessary.
 
+# License
 
+BSD 3-clause license
 
+# Author
+
+Jesper Joergensen
