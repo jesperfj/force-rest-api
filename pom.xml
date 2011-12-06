@@ -12,6 +12,13 @@
         <url>https://github.com/jesperfj/force-rest-api.git</url>
     </scm>
 
+    <distributionManagement>
+      <repository>
+        <id>gh-pages</id>
+        <url>file:///${basedir}/release-repo/repository/</url>
+      </repository>
+    </distributionManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
