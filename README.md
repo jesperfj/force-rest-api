@@ -173,11 +173,11 @@ Now run tests with
 
 # Cutting a Release
 
-This project uses the Maven release plugin with Github pages as Maven repo to facilitate quick releases. Snapshots are never released. They are reserved for local builds. See [Christian Kaltepoth's post](http://chkal.blogspot.com/2010/09/maven-repositories-on-github.html) for an excellent guide to setting up Github pages as a maven repo. To cut a release:
+This project uses the Maven release plugin with Github pages as Maven repo to facilitate quick releases. Snapshots are never released. They are reserved for local builds. See [Christian Kaltepoth's post](http://chkal.blogspot.com/2010/09/maven-repositories-on-github.html) for an excellent guide to setting up Github pages as a maven repo. To cut a release: (adjust repo references as necessary below if you're on a fork or doing this on your own repo)
 
 ### Clone this repo
 
-(Adjust URL if necessary)
+(Adjust URL if you're on a fork or doing the same thing on another repo)
 
     $ git clone git@github.com:jesperfj/force-rest-api.git
 
