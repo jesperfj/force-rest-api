@@ -177,8 +177,6 @@ This project uses the Maven release plugin with Github pages as Maven repo to fa
 
 ### Clone this repo
 
-(Adjust URL if you're on a fork or doing the same thing on another repo)
-
     $ git clone git@github.com:jesperfj/force-rest-api.git
 
 ### Clone the github pages branch of this repo into `release-repo` sub-dir
