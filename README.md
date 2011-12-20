@@ -44,7 +44,7 @@ The latest HEAD always builds to a snapshot:
         <version>0.0.3-SNAPSHOT</version>
     </dependency>
 
-## Write code
+## Authentication and Instantiation
 
 ### Username / Password Authentication
 
@@ -53,33 +53,6 @@ Authenticate using just login and password and get an account record:
     DataApi api = new DataApi(new ApiConfig()
         .setUsername("user@domain.com")
         .setPassword("password"));
-
-### Get an SObject
-
-    Account a = api.get(new SObjectResource()
-        .setId("001aaaaaaaaaaaAXY")
-    	.setType("Account")).as(Account.class);
-
-This assumes you have an Account class defined with proper Jackson deserialization annotations. For example:
-
-    import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-    import org.codehaus.jackson.annotate.JsonSetter;
-
-    @JsonIgnoreProperties(ignoreUnknown=true)
-    public class Account {
-
-    	String id;
-    	String name;
-    	public String getId() {return id;}
-    	public String getName() {return name;}
-	
-    	@JsonSetter(value="Id")
-    	public void setId(String id) {this.id = id;}
-
-    	@JsonSetter(value="Name")
-    	public void setName(String name) {this.name = name;}
-    }
-
 
 ### OAuth Username/Password Authentication Flow
 
@@ -131,6 +104,66 @@ If you already have an access token and endpoint (e.g. from a cookie), you can p
     
     DataApi api = new DataApi(c,s);
 
+## CRUD and Query Operations
+
+### Get an SObject
+
+    Account res = api.getSObject("Account", "001D000000INjVe").as(Account.class);
+
+This assumes you have an Account class defined with proper Jackson deserialization annotations. For example:
+
+    import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+    import org.codehaus.jackson.annotate.JsonProperty;
+
+    @JsonIgnoreProperties(ignoreUnknown=true)
+    public class Account {
+
+    	@JsonProperty(value="Id")
+    	String id;
+    	@JsonProperty(value="Name")
+    	String name;
+    	@JsonProperty(value="AnnualRevenue")
+    	private Double annualRevenue;
+    	@JsonProperty(value="externalId__c")
+    	String externalId;	
+	
+    	public String getId() { return id; }
+    	public void setId(String id) { this.id = id; }
+    	public String getName() { return name; }
+    	public void setName(String name) { this.name = name; }
+    	public Double getAnnualRevenue() { return annualRevenue; }
+    	public void setAnnualRevenue(Double value) { annualRevenue = value; }
+    	public String getExternalId() { return externalId; }
+    	public void setExternalId(String externalId) { this.externalId = externalId; }
+    }
+
+### Create SObject
+
+    Account a = new Account();
+    a.setName("Test account");
+    String id = api.createSObject("account", a);
+
+### Update SObject
+
+    a.setName("Updated Test Account");
+    api.updateSObject("account", id, a);
+
+### Create or Update SObject
+
+    a = new Account();
+    a.setName("Perhaps existing account");
+    a.setAnnualRevenue(3141592.65);
+    api.createOrUpdateSObject("account", "externalId__c", "1234", a);
+
+### Delete an SObject
+
+    api.deleteSObject("account", id);
+
+### Query SObjects
+
+    QueryResult<Account> res = api.query("SELECT id FROM Account WHERE name LIKE 'Test account%'", Account.class);
+
+
 ## Run Tests
 
 This project currently only has integration-y tests (they hit the actual API). To make them work copy `src/test/resources/test.properties.sample` to `src/test/resources/test.properties` and replace the properties in the file with actual values
@@ -158,14 +191,11 @@ Now create a new Remote Access Application:
 * Copy "Consumer Key" to the property "clientId" in test.properties
 * Click on "Click to reveal" and copy "Consumer Secret" to "clientSecret" in test.properties
 
-### Set a Test Account ID
+### Add `externalId__c` to Account SObject
 
-* Click on the drop-down in the top right corner and select "Sales"
-* Select the "Accounts" tab
-* In the "View" drop-down, select "All Accounts"
-* Click on one of the accounts in the list
-* Copy the Path part of the URL in your Browser's location. It should look something like this: "001A000000h6kkf".
-* Set "accountId" in test.properties to this value
+Use the Force.com Web UI to add a custom field called `externalId__c` and mark it as an external ID field:
+
+* (sorry, you have to figure out how to do this yourself. Will add instructions or automate it later)
 
 Now run tests with
 

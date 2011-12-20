@@ -7,6 +7,8 @@ public class QueryResult<T> {
 	int totalSize;
 	boolean done = false;
 	List<T> records;
+	String nextRecordsUrl;
+	
 	public int getTotalSize() {
 		return totalSize;
 	}
@@ -24,6 +26,12 @@ public class QueryResult<T> {
 	}
 	public void setRecords(List<T> records) {
 		this.records = records;
+	}
+	public String getNextRecordsUrl() {
+		return nextRecordsUrl;
+	}
+	public void setNextRecordsUrl(String nextRecordsUrl) {
+		this.nextRecordsUrl = nextRecordsUrl;
 	}
 	
 }
