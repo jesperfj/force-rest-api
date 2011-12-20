@@ -1,9 +1,10 @@
-package com.force.api;
+package com.force.api.http;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
 
 public class Http {
 	

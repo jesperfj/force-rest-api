@@ -8,6 +8,8 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import com.force.api.http.HttpResponse;
+
 /**
  * A representation of a resource in the Force.com REST API. The format of the representation
  * depends on what you passed to Resource when you requested it.

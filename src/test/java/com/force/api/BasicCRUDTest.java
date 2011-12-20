@@ -19,7 +19,7 @@ public class BasicCRUDTest {
 	@Test
 	public void basicCRUDTest() {
 
-		DataApi api = new DataApi(new ApiConfig()
+		ForceApi api = new ForceApi(new ApiConfig()
 			.setUsername(Fixture.get("username"))
 			.setPassword(Fixture.get("password"))
 			.setClientId(Fixture.get("clientId"))

@@ -14,6 +14,9 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import com.force.api.http.Http;
+import com.force.api.http.HttpFormPost;
+
 public class Auth {
 
 	private static final ObjectMapper jsonMapper = new ObjectMapper();

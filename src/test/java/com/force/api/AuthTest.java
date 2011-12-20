@@ -9,7 +9,7 @@ public class AuthTest {
 
 	@Test
 	public void testSoapLogin() {
-		DataApi api = new DataApi(new ApiConfig()
+		ForceApi api = new ForceApi(new ApiConfig()
 			.setUsername(Fixture.get("username"))
 			.setPassword(Fixture.get("password")));
 
@@ -54,7 +54,7 @@ public class AuthTest {
 	
 	@Test
 	public void testOAuthUsernamePasswordFlow() {
-		DataApi api = new DataApi(new ApiConfig()
+		ForceApi api = new ForceApi(new ApiConfig()
 			.setUsername(Fixture.get("username"))
 			.setPassword(Fixture.get("password"))
 			.setClientId(Fixture.get("clientId"))
@@ -72,14 +72,14 @@ public class AuthTest {
 			.setUsername(Fixture.get("username"))
 			.setPassword(Fixture.get("password"));
 
-		DataApi api = new DataApi(c);
+		ForceApi api = new ForceApi(c);
 
 		ApiSession session = new ApiSession()
 			.setApiConfig(c)
 			.setAccessToken(api.session.accessToken)
 			.setApiEndpoint(api.session.apiEndpoint);
 		
-		DataApi api2 = new DataApi(c,session);
+		ForceApi api2 = new ForceApi(c,session);
 		
 		assertEquals(Fixture.get("username"),api2.getIdentity().getUsername());
 		

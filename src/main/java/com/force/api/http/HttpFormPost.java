@@ -1,10 +1,11 @@
-package com.force.api;
+package com.force.api.http;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.ProtocolException;
 import java.net.URLEncoder;
+
 
 public class HttpFormPost extends HttpRequest {
 

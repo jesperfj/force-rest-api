@@ -14,7 +14,11 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
-public class DataApi {
+import com.force.api.http.Http;
+import com.force.api.http.HttpRequest;
+import com.force.api.http.HttpResponse;
+
+public class ForceApi {
 
 	private static final ObjectMapper jsonMapper;
 
@@ -27,12 +31,12 @@ public class DataApi {
 	ApiSession session;
 	Identity identity;
 
-	public DataApi(ApiConfig config, ApiSession session) {
+	public ForceApi(ApiConfig config, ApiSession session) {
 		this.config = config;
 		this.session = session;
 	}
 
-	public DataApi(ApiConfig apiConfig) {
+	public ForceApi(ApiConfig apiConfig) {
 		config = apiConfig;
 		session = Auth.authenticate(apiConfig);
 	}

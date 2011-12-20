@@ -1,4 +1,4 @@
-package com.force.api;
+package com.force.api.http;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
