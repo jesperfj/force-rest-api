@@ -5,6 +5,3 @@ clientId=long-alphanumeric-sequence
 clientSecret=shorter-numeric-sequence
 redirectURI=http://localhost:5000/_auth
 
-# Account ID of some existing account in the org
-accountId=18-char-account-id
-
