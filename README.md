@@ -250,6 +250,22 @@ Commit the new release and push to gh-pages
 
 gets you back to master from detached HEAD.
 
+# Release History
+
+## 0.0.7
+
+* Added support for OAuth refresh_token flow
+* Added a bit more debug info to createSObject
+* Should work with Jackson 1.9.1 and 1.9.2. Both are accepted in the version range
+
+## 0.0.6
+
+* Tested with Winter '12, API version 23
+* Requires (and explicitly declares dependency on) Jackson 1.9.1. Not tested with other Jackson versions.
+* Basic CRUD and query functionality for SObjects
+* OAuth functionality that covers all Force.com options
+* Only happy path tested, almost no error scenarios or edge cases covered except for some sporadic debug output
+* Focused on typed access. But you must build SObject classes manually for now (or use builders available elsewhere)
 
 # Project Goals:
 

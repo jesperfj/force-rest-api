@@ -93,7 +93,7 @@ public class ForceApi {
 			// But it would be nice to have a streaming implementation. We can do that
 			// by using ObjectMapper.writeValue() passing in output stream, but then we have
 			// polluted the Http layer.
-			CreateResponse res = jsonMapper.readValue(
+			HttpResponse res = 
 				Http.send(new HttpRequest()
 					.url(session.getApiEndpoint()+"/services/data/"+config.getApiVersion()+"/sobjects/"+type)
 					.method("POST")
@@ -101,11 +101,20 @@ public class ForceApi {
 					.header("Accept", "application/json")
 					.header("Content-Type", "application/json")
 					.content(jsonMapper.writeValueAsBytes(sObject))
-				).getStream(),CreateResponse.class);
-			if(res.isSuccess()) {
-				return(res.getId());
+				);
+
+			if(res.getResponseCode()!=201) {
+				// TODO: fix
+				System.out.println("Code: "+res.getResponseCode());
+				System.out.println("Message: "+res.getString());
+				throw new RuntimeException();
+			}
+			CreateResponse result = jsonMapper.readValue(res.getStream(),CreateResponse.class);
+
+			if (result.isSuccess()) {
+				return (result.getId());
 			} else {
-				throw new OperationFailedException(res.getErrors());
+				throw new OperationFailedException(result.getErrors());
 			}
 		} catch (JsonGenerationException e) {
 			throw new ResourceException(e);

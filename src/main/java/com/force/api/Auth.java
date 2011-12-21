@@ -152,7 +152,38 @@ public class Auth {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
+	static public final ApiSession refreshOauthTokenFlow(ApiConfig config) {
+		assert(config!=null);
+		assert(config.getClientId()!=null);
+		assert(config.getClientSecret()!=null);
+		assert(config.getRefreshToken()!=null);
+		// TODO: throw a (runtime) exception with detailed info if auth failed
+		try {
+			Map<?,?> resp = jsonMapper.readValue(
+					Http.send(new HttpFormPost()
+						.url(config.getLoginEndpoint()+"/services/oauth2/token")
+						.header("Accept","application/json")
+						.param("grant_type","refresh_token")
+						.param("client_id",config.getClientId())
+						.param("client_secret", config.getClientSecret())
+						.param("refresh_token",config.getRefreshToken())
+					).getStream(),Map.class);
+
+			return new ApiSession()
+					.setApiConfig(config)
+					.setAccessToken((String)resp.get("access_token"))
+					.setApiEndpoint((String)resp.get("instance_url"));
+			
+		} catch (JsonParseException e) {
+			throw new RuntimeException(e);
+		} catch (JsonMappingException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	static public final ApiSession authenticate(ApiConfig c) {
 		if(c.getUsername()!=null && c.getPassword()!=null && c.getClientId()!=null && c.getClientSecret()!=null) {
 			// username/password oauth flow
