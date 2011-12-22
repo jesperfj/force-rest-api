@@ -8,7 +8,6 @@ public class ApiConfig {
 	ApiVersion apiVersion = ApiVersion.DEFAULT_VERSION;
 	String username;
 	String password;
-	String refreshToken;
 	String loginEndpoint = "https://login.salesforce.com";
 	String clientId;
 	String clientSecret;
@@ -19,7 +18,6 @@ public class ApiConfig {
 			.setApiVersion(apiVersion)
 			.setUsername(username)
 			.setPassword(password)
-			.setRefreshToken(refreshToken)
 			.setLoginEndpoint(loginEndpoint)
 			.setClientId(clientId)
 			.setClientSecret(clientSecret)
@@ -69,11 +67,6 @@ public class ApiConfig {
 		return this;
 	}
 
-	public ApiConfig setRefreshToken(String value) {
-		refreshToken = value;
-		return this;
-	}
-
 	public ApiConfig setLoginEndpoint(String value) {
 		loginEndpoint = value;
 		return this;
@@ -95,10 +88,6 @@ public class ApiConfig {
 
 	public String getPassword() {
 		return password;
-	}
-
-	public String getRefreshToken() {
-		return refreshToken;
 	}
 
 	public String getLoginEndpoint() {

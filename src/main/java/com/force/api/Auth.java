@@ -16,6 +16,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import com.force.api.http.Http;
 import com.force.api.http.HttpFormPost;
+import com.force.api.http.HttpResponse;
 
 public class Auth {
 
@@ -140,7 +141,7 @@ public class Auth {
 					).getStream(),Map.class);
 
 			return new ApiSession()
-					.setApiConfig(res.apiConfig.clone().setRefreshToken((String)resp.get("refresh_token")))
+					.setRefreshToken((String)resp.get("refresh_token"))
 					.setAccessToken((String)resp.get("access_token"))
 					.setApiEndpoint((String)resp.get("instance_url"));
 			
@@ -153,11 +154,11 @@ public class Auth {
 		}
 	}
 
-	static public final ApiSession refreshOauthTokenFlow(ApiConfig config) {
+	static public final ApiSession refreshOauthTokenFlow(ApiConfig config, String refreshToken) {
 		assert(config!=null);
 		assert(config.getClientId()!=null);
 		assert(config.getClientSecret()!=null);
-		assert(config.getRefreshToken()!=null);
+		assert(refreshToken!=null);
 		// TODO: throw a (runtime) exception with detailed info if auth failed
 		try {
 			Map<?,?> resp = jsonMapper.readValue(
@@ -167,7 +168,7 @@ public class Auth {
 						.param("grant_type","refresh_token")
 						.param("client_id",config.getClientId())
 						.param("client_secret", config.getClientSecret())
-						.param("refresh_token",config.getRefreshToken())
+						.param("refresh_token", refreshToken)
 					).getStream(),Map.class);
 
 			return new ApiSession()
@@ -181,6 +182,24 @@ public class Auth {
 			throw new RuntimeException(e);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
+		}
+	}
+	
+	/**
+	 * revokes a token. Works with both access token and refresh token
+	 * @param config
+	 * @param token either an access token or a refresh token
+	 */
+	static public void revokeToken(ApiConfig config, String token) {
+		try {
+			HttpResponse res = Http.send(new HttpFormPost()
+				.url(config.getLoginEndpoint()+"/services/oauth2/revoke")
+				.param("token", token));
+		} catch(Throwable t) {
+			// Looks like revoke endpoint closes stream when trying to revoke
+			// an already revoked token. It doesn't return an error code. So
+			// we'll have to just catch it here and fake the code.
+			throw new AuthException(404, "Token could not be revoked. Most likely it has already expired or been revoked.");
 		}
 	}
 

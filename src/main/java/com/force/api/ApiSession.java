@@ -5,6 +5,7 @@ public class ApiSession {
 	ApiConfig apiConfig;
 	String accessToken;
 	String apiEndpoint;
+	String refreshToken;
 
 	public ApiSession() {}
 	
@@ -23,6 +24,9 @@ public class ApiSession {
 	public String getApiEndpoint() {
 		return apiEndpoint;
 	}
+	public String getRefreshToken() {
+		return refreshToken;
+	}
 	public ApiSession setApiConfig(ApiConfig apiConfig) {
 		this.apiConfig = apiConfig;
 		return this;
@@ -33,6 +37,11 @@ public class ApiSession {
 	}
 	public ApiSession setApiEndpoint(String apiEndpoint) {
 		this.apiEndpoint = apiEndpoint;
+		return this;
+	}
+
+	public ApiSession setRefreshToken(String value) {
+		refreshToken = value;
 		return this;
 	}
 	

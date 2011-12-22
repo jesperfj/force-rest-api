@@ -128,4 +128,35 @@ public class AuthTest {
 			.code("aPrxZibfVBKPF9tp0UFCbrd9VpKQUr5eoNNqUf.ZQS1cIp9NvWQABQLGbFRbQ_75x8m3qKa9_A%3D%3D"));
 		
 	}
+	
+	@Test
+	public void testRevokeToken() {
+		ApiConfig c = new ApiConfig()
+			.setUsername(Fixture.get("username"))
+			.setPassword(Fixture.get("password"))
+			.setClientId(Fixture.get("clientId"))
+			.setClientSecret(Fixture.get("clientSecret"));
+		ApiSession s = Auth.oauthLoginPasswordFlow(c);
+		ForceApi api = new ForceApi(c,s);
+		assertNotNull(api.getIdentity());
+		
+		Auth.revokeToken(c, s.getAccessToken());
+		
+		try {
+			api.getIdentity();
+			fail("Expected an error when making an API call with a revoked token, but it succeeded");
+		} catch(Throwable t) {
+			
+		}
+		
+		// test that it throws an exception on the second revoke
+		
+		try {
+			Auth.revokeToken(c, s.getAccessToken());
+			fail("Expected AuthException when revoking already revoked token");
+		} catch(AuthException e) {
+			System.out.println(e.getCode()+" "+e.getMessage());
+		}
+	}
+
 }
