@@ -16,7 +16,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import com.force.api.http.Http;
 import com.force.api.http.HttpFormPost;
-import com.force.api.http.HttpResponse;
 
 public class Auth {
 
@@ -38,7 +37,7 @@ public class Auth {
 						.param("username",c.getUsername())
 						.param("password",c.getPassword())
 					).getStream(),Map.class);
-			return new ApiSession(c,(String)resp.get("access_token"),(String)resp.get("instance_url"));
+			return new ApiSession((String)resp.get("access_token"),(String)resp.get("instance_url"));
 			
 		} catch (JsonParseException e) {
 			throw new RuntimeException(e);
@@ -92,7 +91,7 @@ public class Auth {
 			//System.out.println("userId: "+userId);
 			//System.out.println("organizationId: "+organizationId);
 							
-			return new ApiSession(c,accessToken, apiEndpoint);
+			return new ApiSession(accessToken, apiEndpoint);
 			
 			} catch (MalformedURLException e) {
 				throw new RuntimeException(e);
@@ -172,7 +171,6 @@ public class Auth {
 					).getStream(),Map.class);
 
 			return new ApiSession()
-					.setApiConfig(config)
 					.setAccessToken((String)resp.get("access_token"))
 					.setApiEndpoint((String)resp.get("instance_url"));
 			
@@ -192,7 +190,7 @@ public class Auth {
 	 */
 	static public void revokeToken(ApiConfig config, String token) {
 		try {
-			HttpResponse res = Http.send(new HttpFormPost()
+			Http.send(new HttpFormPost()
 				.url(config.getLoginEndpoint()+"/services/oauth2/revoke")
 				.param("token", token));
 		} catch(Throwable t) {

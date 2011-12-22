@@ -75,7 +75,6 @@ public class AuthTest {
 		ForceApi api = new ForceApi(c);
 
 		ApiSession session = new ApiSession()
-			.setApiConfig(c)
 			.setAccessToken(api.session.accessToken)
 			.setApiEndpoint(api.session.apiEndpoint);
 		
@@ -120,7 +119,7 @@ public class AuthTest {
 	@Test
 	@Ignore
 	public void testCompleteWebServerFlow() {
-		ApiSession s = Auth.completeOAuthWebServerFlow(new AuthorizationResponse()
+		Auth.completeOAuthWebServerFlow(new AuthorizationResponse()
 			.apiConfig(new ApiConfig()
 				.setClientId(Fixture.get("clientId"))
 				.setClientSecret(Fixture.get("clientSecret"))
