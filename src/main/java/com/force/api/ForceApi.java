@@ -236,4 +236,22 @@ public class ForceApi {
 
 	}
 	
+	public DescribeGlobal describeGlobal() {
+		try {
+			return jsonMapper.readValue(Http.send(new HttpRequest()
+					.url(session.getApiEndpoint()+"/services/data/"+config.getApiVersion()+"/sobjects/")
+					.method("GET")
+					.header("Accept", "application/json")
+					.header("Authorization", "OAuth "+session.getAccessToken())).getStream(),DescribeGlobal.class);
+		} catch (JsonParseException e) {
+			throw new ResourceException(e);
+		} catch (JsonMappingException e) {
+			throw new ResourceException(e);
+		} catch (UnsupportedEncodingException e) {
+			throw new ResourceException(e);
+		} catch (IOException e) {
+			throw new ResourceException(e);
+		}
+	}
+	
 }
