@@ -252,6 +252,10 @@ gets you back to master from detached HEAD.
 
 # Release History
 
+## 0.0.9
+
+* Minimalistic Describe
+
 ## 0.0.8
 
 * Added revoke support ([read more](http://blogs.developerforce.com/developer-relations/2011/11/revoking-oauth-2-0-access-tokens-and-refresh-tokens.html))
