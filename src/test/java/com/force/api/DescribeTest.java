@@ -15,8 +15,6 @@ public class DescribeTest {
 		.setClientSecret(Fixture.get("clientSecret")));
 
 		DescribeGlobal dg = api.describeGlobal();
-		assertNotNull(dg.getEncoding());
-		assertNotNull(dg.getMaxBatchSize());
 		assertNotNull(dg.getSObjects().get(0));
 	}
 }

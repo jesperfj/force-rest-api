@@ -2,17 +2,12 @@ package com.force.api;
 
 import java.util.List;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class DescribeGlobal {
-    String encoding;
-    int maxBatchSize;
     private List<DescribeSObject> sobjects;
     
-    public String getEncoding() {
-        return encoding;
-    }
-    public int getMaxBatchSize() {
-        return maxBatchSize;
-    }
     public List<DescribeSObject> getSObjects() {
         return sobjects;
     }
