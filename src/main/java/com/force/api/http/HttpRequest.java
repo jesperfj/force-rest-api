@@ -1,54 +1,69 @@
 package com.force.api.http;
 
-import java.io.BufferedOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HttpRequest {
 
+	static public HttpRequest formPost() { 
+			return new HttpRequest()
+				.method("POST")
+				.header("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+	}
+	
 	public enum ResponseFormat { STREAM, BYTE, STRING };
 	
-	protected HttpURLConnection conn;
-	protected ResponseFormat responseFormat = ResponseFormat.STREAM;
+	ResponseFormat responseFormat = ResponseFormat.STREAM;
 	
-	StringBuffer stringRep = new StringBuffer();
 	byte[] contentBytes;
 	InputStream contentStream;
+
+	List<Header> headers = new ArrayList<Header>();
+	String method;
+	String url;
+
+	StringBuilder postParams = new StringBuilder();
 	
 	public HttpRequest() {
-		super();
 	}
 
-	protected void baseSetUrl(String url) {
-		try {
-			conn = (HttpURLConnection) new URL(url).openConnection();
-			stringRep.append("URL: "+url+"\n");
-		} catch (MalformedURLException e) {
-			throw new RuntimeException(e);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+	public List<Header> getHeaders() {
+		return headers;
+	}
+
+	public String getMethod() {
+		return method;
+	}
+
+	public byte[] getContentBytes() {
+		if(postParams.length()>0) {
+			try {
+				return postParams.toString().getBytes("UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				throw new RuntimeException(e);
+			}
+		} else {
+			return contentBytes;
 		}
-		conn.setInstanceFollowRedirects(true);
 	}
 
-	protected void baseAddHeader(String key, String value) {
-		conn.addRequestProperty(key, value);
-		stringRep.append("Header: "+key+": "+value+"\n");
+	public InputStream getContentStream() {
+		return contentStream;
 	}
-	
+
+	public String getUrl() {
+		return url;
+	}
+
 	public HttpRequest header(String key, String value) {
-		baseAddHeader(key, value);
+		headers.add(new Header(key,value));
+		
 		return this;
 	}
 
-	public HttpURLConnection getConnection() {
-		return conn;
-	}
-	
 	public ResponseFormat getResponseFormat() {
 		return responseFormat;
 	}
@@ -57,62 +72,100 @@ public class HttpRequest {
 		responseFormat = value;
 		return this;
 	}
-	public void sendContent() {
-		try {
-			if (contentBytes != null) {
-				BufferedOutputStream out = new BufferedOutputStream(
-						conn.getOutputStream());
-				out.write(contentBytes);
-				out.flush();
-			} else if (contentStream != null) {
-				final byte[] buf = new byte[2000];
-				BufferedOutputStream out = new BufferedOutputStream(
-						conn.getOutputStream());
-				int n;
-				while((n=contentStream.read(buf)) >= 0) {
-					out.write(buf,0,n);
-				}
-				out.flush();
-			}
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		
-	}
 
 	public HttpRequest url(String value) {
-		baseSetUrl(value);
+		url = value;
 		return this;
 	}
 
 	public HttpRequest method(String value) {
-		try {
-			conn.setRequestMethod(value);
-			stringRep.append("Method: "+value+"\n");
-		} catch (ProtocolException e) {
-			throw new RuntimeException(e);
-		}
+		method = value;
 		return this;
 	}
 	
 	public HttpRequest content(byte[] value) {
-		contentBytes = value;
-		conn.setDoOutput(true);
-		return this;
-	}
-	
-	public HttpRequest content(InputStream value) {
-		contentStream = value;
-		conn.setDoOutput(true);
-		return this;
-	}
-	
-	public String toString() {
-		if(conn==null) {
-			return "HttpRequest with uninitialized URL";
-		} else {
-			return stringRep.toString()+(contentBytes!=null ? "\nBODY\n\n"+new String(contentBytes) : "");
+		if(postParams.length()>0) {
+			throw new IllegalStateException("Cannot add request content as byte[] after post parameters have been set with param() or preEncodedParam()");
 		}
+		contentBytes = value;
+		return this;
 	}
 
+	public HttpRequest param(String key, String value) {
+		if(contentBytes!=null) {
+			throw new IllegalStateException("Cannot add params to HttpRequest after content(byte[]) has been called with non-null value");
+		}
+		try {
+			if(postParams.length()>0) {
+				postParams.append("&"+key+"="+URLEncoder.encode(value, "UTF-8"));
+			} else {
+				postParams.append(key+"="+URLEncoder.encode(value, "UTF-8"));
+			}
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
+		return this;
+	}
+
+	public HttpRequest preEncodedParam(String key, String value) {
+		if(contentBytes!=null) {
+			throw new IllegalStateException("Cannot add params to HttpRequest after content(byte[]) has been called with non-null value");
+		}
+		if(postParams.length()>0) {
+			postParams.append("&"+key+"="+value);
+		} else {
+			postParams.append(key+"="+value);
+		}
+		return this;
+	}
+	
+//  possible future method
+//	
+//	public HttpRequest content(InputStream value) {
+//		contentStream = value;
+//		conn.setDoOutput(true);
+//		return this;
+//	}
+	
+	public String toString() {
+		StringBuilder b = new StringBuilder();
+		b.append(method+" "+url+"\n");
+		for(Header h : headers) {
+			b.append(h.key=": "+h.value+"\n");
+		}
+		if(contentBytes!=null) {
+			try {
+				b.append("\n"+new String(contentBytes,"UTF-8")+"\n");
+			} catch (UnsupportedEncodingException e) {
+				throw new RuntimeException(e);
+			}
+		} else if(contentStream!=null) {
+			b.append("\n[streamed content. Cannot print]\n");
+		}
+		return b.toString();
+	}
+	
+	public class Header {
+		String key;
+		String value;
+		public Header() {}
+		public Header(String key, String value) {
+			super();
+			this.key = key;
+			this.value = value;
+		}
+		public String getKey() {
+			return key;
+		}
+		public void setKey(String key) {
+			this.key = key;
+		}
+		public String getValue() {
+			return value;
+		}
+		public void setValue(String value) {
+			this.value = value;
+		}
+	}
+	
 }

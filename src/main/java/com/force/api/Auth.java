@@ -15,7 +15,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import com.force.api.http.Http;
-import com.force.api.http.HttpFormPost;
+import com.force.api.http.HttpRequest;
 
 public class Auth {
 
@@ -29,7 +29,7 @@ public class Auth {
 		try {
 			@SuppressWarnings("unchecked")
 			Map<String,Object> resp = jsonMapper.readValue(
-					Http.send(new HttpFormPost()
+					Http.send(HttpRequest.formPost()
 						.url(c.getLoginEndpoint()+"/services/oauth2/token")
 						.param("grant_type","password")
 						.param("client_id",c.getClientId())
@@ -105,7 +105,6 @@ public class Auth {
 	static public final String startOAuthWebServerFlow(AuthorizationRequest req) {
 		if(req.apiConfig.getClientId()==null) throw new IllegalStateException("clientId cannot be null");
 		if(req.apiConfig.getRedirectURI()==null) throw new IllegalStateException("redirectURI cannot be null");
-		
 		try {
 			return req.apiConfig.getLoginEndpoint()+
 					"/services/oauth2/authorize"+
@@ -129,7 +128,7 @@ public class Auth {
 		// TODO: throw a (runtime) exception with detailed info if auth failed
 		try {
 			Map<?,?> resp = jsonMapper.readValue(
-					Http.send(new HttpFormPost()
+					Http.send(HttpRequest.formPost()
 						.url(res.apiConfig.getLoginEndpoint()+"/services/oauth2/token")
 						.header("Accept","application/json")
 						.param("grant_type","authorization_code")
@@ -159,7 +158,7 @@ public class Auth {
 		// TODO: throw a (runtime) exception with detailed info if auth failed
 		try {
 			Map<?,?> resp = jsonMapper.readValue(
-					Http.send(new HttpFormPost()
+					Http.send(HttpRequest.formPost()
 						.url(config.getLoginEndpoint()+"/services/oauth2/token")
 						.header("Accept","application/json")
 						.param("grant_type","refresh_token")
@@ -188,7 +187,7 @@ public class Auth {
 	 */
 	static public void revokeToken(ApiConfig config, String token) {
 		try {
-			Http.send(new HttpFormPost()
+			Http.send(HttpRequest.formPost()
 				.url(config.getLoginEndpoint()+"/services/oauth2/revoke")
 				.param("token", token));
 		} catch(Throwable t) {
