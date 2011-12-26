@@ -97,7 +97,7 @@ public class AuthTest {
 			.apiConfig(new ApiConfig()
 				.setClientId(System.getenv("UNKNOWNENDVAR"))
 				.setRedirectURI(System.getenv("ANOTHERUNKNOWNENDVAR"))));
-		} catch(java.lang.AssertionError e) {
+		} catch(IllegalStateException e) {
 			return;
 		}
 		fail();

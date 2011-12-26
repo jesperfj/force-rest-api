@@ -22,10 +22,10 @@ public class Auth {
 	private static final ObjectMapper jsonMapper = new ObjectMapper();
 
 	static public final ApiSession oauthLoginPasswordFlow(ApiConfig c) {
-		assert(c.getClientId()!=null);
-		assert(c.getClientSecret()!=null);
-		assert(c.getUsername()!=null);
-		assert(c.getPassword()!=null);
+		if(c.getClientId()==null) throw new IllegalStateException("clientId cannot be null");
+		if(c.getClientSecret()==null) throw new IllegalStateException("clientSecret cannot be null");
+		if(c.getUsername()==null) throw new IllegalStateException("username cannot be null");
+		if(c.getPassword()==null) throw new IllegalStateException("password cannot be null");
 		try {
 			@SuppressWarnings("unchecked")
 			Map<String,Object> resp = jsonMapper.readValue(
@@ -50,8 +50,8 @@ public class Auth {
 
 	
 	static public final ApiSession soaploginPasswordFlow(ApiConfig c) {
-		assert(c.getUsername()!=null);
-		assert(c.getPassword()!=null);
+		if(c.getUsername()==null) throw new IllegalStateException("username cannot be null");
+		if(c.getPassword()==null) throw new IllegalStateException("password cannot be null");
 		try {
 			URL url = new URL(c.getLoginEndpoint()+"/services/Soap/u/23.0");
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -103,8 +103,9 @@ public class Auth {
 	}
 
 	static public final String startOAuthWebServerFlow(AuthorizationRequest req) {
-		assert(req.apiConfig.getClientId()!=null);
-		assert(req.apiConfig.getRedirectURI()!=null);
+		if(req.apiConfig.getClientId()==null) throw new IllegalStateException("clientId cannot be null");
+		if(req.apiConfig.getRedirectURI()==null) throw new IllegalStateException("redirectURI cannot be null");
+		
 		try {
 			return req.apiConfig.getLoginEndpoint()+
 					"/services/oauth2/authorize"+
@@ -121,11 +122,10 @@ public class Auth {
 	}
 	
 	static public final ApiSession completeOAuthWebServerFlow(AuthorizationResponse res) {
-		assert(res.apiConfig!=null);
-		assert(res.apiConfig.getClientId()!=null);
-		assert(res.apiConfig.getClientSecret()!=null);
-		assert(res.apiConfig.getRedirectURI()!=null);
-		assert(res.code!=null);
+		if(res.apiConfig.getClientId()==null) throw new IllegalStateException("clientId cannot be null");
+		if(res.apiConfig.getClientSecret()==null) throw new IllegalStateException("clientSecret cannot be null");
+		if(res.apiConfig.getRedirectURI()==null) throw new IllegalStateException("redirectURI cannot be null");
+		if(res.code==null) throw new IllegalStateException("code cannot be null");
 		// TODO: throw a (runtime) exception with detailed info if auth failed
 		try {
 			Map<?,?> resp = jsonMapper.readValue(
@@ -154,10 +154,8 @@ public class Auth {
 	}
 
 	static public final ApiSession refreshOauthTokenFlow(ApiConfig config, String refreshToken) {
-		assert(config!=null);
-		assert(config.getClientId()!=null);
-		assert(config.getClientSecret()!=null);
-		assert(refreshToken!=null);
+		if(config.getClientId()==null) throw new IllegalStateException("clientId cannot be null");
+		if(config.getClientSecret()==null) throw new IllegalStateException("clientSecret cannot be null");
 		// TODO: throw a (runtime) exception with detailed info if auth failed
 		try {
 			Map<?,?> resp = jsonMapper.readValue(
