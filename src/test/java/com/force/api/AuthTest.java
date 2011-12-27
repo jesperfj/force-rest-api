@@ -139,7 +139,7 @@ public class AuthTest {
 		ForceApi api = new ForceApi(c,s);
 		assertNotNull(api.getIdentity());
 		
-		Auth.revokeToken(c, s.getAccessToken());
+		Auth.revokeToken(new ApiConfig(), s.getAccessToken());
 		
 		try {
 			api.getIdentity();

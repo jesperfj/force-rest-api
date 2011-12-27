@@ -31,6 +31,9 @@ public class Http {
 			for (HttpRequest.Header h : req.getHeaders()) {
 				conn.addRequestProperty(h.getKey(), h.getValue());
 			}
+			if(req.getAuthorization()!=null) {
+				conn.addRequestProperty("Authorization", req.getAuthorization());
+			}
 			if (req.getContentBytes() != null) {
 				conn.setDoOutput(true);
 				BufferedOutputStream out = new BufferedOutputStream(conn.getOutputStream());

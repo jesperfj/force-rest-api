@@ -169,7 +169,8 @@ public class Auth {
 
 			return new ApiSession()
 					.setAccessToken((String)resp.get("access_token"))
-					.setApiEndpoint((String)resp.get("instance_url"));
+					.setApiEndpoint((String)resp.get("instance_url"))
+					.setRefreshToken(refreshToken);
 			
 		} catch (JsonParseException e) {
 			throw new RuntimeException(e);
@@ -188,6 +189,7 @@ public class Auth {
 	static public void revokeToken(ApiConfig config, String token) {
 		try {
 			Http.send(HttpRequest.formPost()
+				.header("Accept","*/*")
 				.url(config.getLoginEndpoint()+"/services/oauth2/revoke")
 				.param("token", token));
 		} catch(Throwable t) {

@@ -24,8 +24,11 @@ public class HttpRequest {
 	List<Header> headers = new ArrayList<Header>();
 	String method;
 	String url;
+	int expectedCode = -1; // -1 means no expected code specified.
 
 	StringBuilder postParams = new StringBuilder();
+
+	private String authorization;
 	
 	public HttpRequest() {
 	}
@@ -57,7 +60,16 @@ public class HttpRequest {
 	public String getUrl() {
 		return url;
 	}
+	
+	public HttpRequest expectsCode(int value) {
+		expectedCode = value;
+		return this;
+	}
 
+	public int getExpectedCode() {
+		return expectedCode;
+	}
+	
 	public HttpRequest header(String key, String value) {
 		headers.add(new Header(key,value));
 		
@@ -131,11 +143,14 @@ public class HttpRequest {
 		StringBuilder b = new StringBuilder();
 		b.append(method+" "+url+"\n");
 		for(Header h : headers) {
-			b.append(h.key=": "+h.value+"\n");
+			b.append(h.key+": "+h.value+"\n");
 		}
-		if(contentBytes!=null) {
+		if(authorization!=null) {
+			b.append("Authorization: "+authorization);
+		}
+		if(getContentBytes()!=null) {
 			try {
-				b.append("\n"+new String(contentBytes,"UTF-8")+"\n");
+				b.append("\n"+new String(getContentBytes(),"UTF-8")+"\n");
 			} catch (UnsupportedEncodingException e) {
 				throw new RuntimeException(e);
 			}
@@ -167,5 +182,12 @@ public class HttpRequest {
 			this.value = value;
 		}
 	}
+
+	public void setAuthorization(String value) {
+		authorization = value;
+	}
 	
+	public String getAuthorization() {
+		return authorization;
+	}
 }

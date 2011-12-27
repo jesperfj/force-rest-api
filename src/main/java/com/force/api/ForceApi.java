@@ -18,6 +18,21 @@ import com.force.api.http.Http;
 import com.force.api.http.HttpRequest;
 import com.force.api.http.HttpResponse;
 
+/**
+ * main class for making API calls.
+ * 
+ * This class is cheap to instantiate and throw away. It holds a user's session
+ * as state and thus should never be reused across multiple user sessions,
+ * unless that's explicitly what you want to do.
+ * 
+ * For web apps, you should instantiate this class on every request and feed it
+ * the session information as obtained from a session cookie or similar. An
+ * exception to this rule is if you make all API calls as a single API user.
+ * Then you can keep a static reference to this class.
+ * 
+ * @author jjoergensen
+ * 
+ */
 public class ForceApi {
 
 	private static final ObjectMapper jsonMapper;
@@ -27,44 +42,47 @@ public class ForceApi {
 		jsonMapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
 	}
 	
-	ApiConfig config;
+	final ApiConfig config;
 	ApiSession session;
-	Identity identity;
+	private boolean autoRenew = false;
 
 	public ForceApi(ApiConfig config, ApiSession session) {
 		this.config = config;
 		this.session = session;
+		if(session.getRefreshToken()!=null) {
+			autoRenew = true;
+		}
+	}
+
+	public ForceApi(ApiSession session) {
+		this(new ApiConfig(), session);
 	}
 
 	public ForceApi(ApiConfig apiConfig) {
 		config = apiConfig;
 		session = Auth.authenticate(apiConfig);
+		autoRenew  = true;
+		
 	}
 
 
 	public Identity getIdentity() {
-		if(identity!=null) {
-			return identity;
-		}
 		try {
 			
 			@SuppressWarnings("unchecked")
 			Map<String,Object> resp = jsonMapper.readValue(
-					Http.send(new HttpRequest()
-						.url(session.getApiEndpoint()+"/services/data/"+config.getApiVersion()+"/")
+					apiRequest(new HttpRequest()
+						.url(uriBase())
 						.method("GET")
 						.header("Accept", "application/json")
-						.header("Authorization","OAuth "+session.getAccessToken())
 					).getStream(),Map.class);
 			
-			identity = jsonMapper.readValue(
-					Http.send(new HttpRequest()
+			return jsonMapper.readValue(
+					apiRequest(new HttpRequest()
 						.url((String) resp.get("identity"))
 						.method("GET")
 						.header("Accept", "application/json")
-						.header("Authorization","OAuth " + session.getAccessToken())
 					).getStream(), Identity.class);
-			return identity;
 		} catch (JsonParseException e) {
 			throw new RuntimeException(e);
 		} catch (JsonMappingException e) {
@@ -79,11 +97,10 @@ public class ForceApi {
 	public ResourceRepresentation getSObject(String type, String id) throws ResourceException {
 		// Should we return null or throw an exception if the record is not found?
 		// Right now will just throw crazy runtimeexception with no explanation
-		return new ResourceRepresentation(Http.send(new HttpRequest()
-					.url(session.getApiEndpoint()+"/services/data/"+config.getApiVersion()+"/sobjects/"+type+"/"+id)
+		return new ResourceRepresentation(apiRequest(new HttpRequest()
+					.url(uriBase()+"/sobjects/"+type+"/"+id)
 					.method("GET")
-					.header("Accept", "application/json")
-					.header("Authorization", "OAuth "+session.getAccessToken())));
+					.header("Accept", "application/json")));
 	}
 
 	public String createSObject(String type, Object sObject) {
@@ -93,28 +110,18 @@ public class ForceApi {
 			// But it would be nice to have a streaming implementation. We can do that
 			// by using ObjectMapper.writeValue() passing in output stream, but then we have
 			// polluted the Http layer.
-			HttpResponse res = 
-				Http.send(new HttpRequest()
-					.url(session.getApiEndpoint()+"/services/data/"+config.getApiVersion()+"/sobjects/"+type)
+			CreateResponse result = jsonMapper.readValue(apiRequest(new HttpRequest()
+					.url(uriBase()+"/sobjects/"+type)
 					.method("POST")
-					.header("Authorization", "OAuth "+session.getAccessToken())
 					.header("Accept", "application/json")
 					.header("Content-Type", "application/json")
-					.content(jsonMapper.writeValueAsBytes(sObject))
-				);
-
-			if(res.getResponseCode()!=201) {
-				// TODO: fix
-				System.out.println("Code: "+res.getResponseCode());
-				System.out.println("Message: "+res.getString());
-				throw new RuntimeException();
-			}
-			CreateResponse result = jsonMapper.readValue(res.getStream(),CreateResponse.class);
+					.expectsCode(201)
+					.content(jsonMapper.writeValueAsBytes(sObject))).getStream(),CreateResponse.class);
 
 			if (result.isSuccess()) {
 				return (result.getId());
 			} else {
-				throw new OperationFailedException(result.getErrors());
+				throw new SObjectException(result.getErrors());
 			}
 		} catch (JsonGenerationException e) {
 			throw new ResourceException(e);
@@ -128,21 +135,14 @@ public class ForceApi {
 	public void updateSObject(String type, String id, Object sObject) {
 		try {
 			// See createSObject for note on streaming ambition
-			HttpResponse res = 
-				Http.send(new HttpRequest()
-					.url(session.getApiEndpoint()+"/services/data/"+config.getApiVersion()+"/sobjects/"+type+"/"+id+"?_HttpMethod=PATCH")
-					.method("POST")
-					.header("Authorization", "OAuth "+session.getAccessToken())
-					.header("Accept", "application/json")
-					.header("Content-Type", "application/json")
-					.content(jsonMapper.writeValueAsBytes(sObject))
-				);
-			if(res.getResponseCode()!=204) {
-				// TODO: fix
-				System.out.println("Code: "+res.getResponseCode());
-				System.out.println("Message: "+res.getString());
-				throw new RuntimeException();
-			}
+			apiRequest(new HttpRequest()
+				.url(uriBase()+"/sobjects/"+type+"/"+id+"?_HttpMethod=PATCH")
+				.method("POST")
+				.header("Accept", "application/json")
+				.header("Content-Type", "application/json")
+				.expectsCode(204)
+				.content(jsonMapper.writeValueAsBytes(sObject))
+			);
 		} catch (JsonGenerationException e) {
 			throw new ResourceException(e);
 		} catch (JsonMappingException e) {
@@ -153,10 +153,9 @@ public class ForceApi {
 	}
 
 	public void deleteSObject(String type, String id) {
-		Http.send(new HttpRequest()
-			.url(session.getApiEndpoint()+"/services/data/"+config.getApiVersion()+"/sobjects/"+type+"/"+id)
+		apiRequest(new HttpRequest()
+			.url(uriBase()+"/sobjects/"+type+"/"+id)
 			.method("DELETE")
-			.header("Authorization", "OAuth "+session.getAccessToken())
 		);
 	}
 
@@ -164,10 +163,9 @@ public class ForceApi {
 		try {
 			// See createSObject for note on streaming ambition
 			HttpResponse res = 
-				Http.send(new HttpRequest()
-					.url(session.getApiEndpoint()+"/services/data/"+config.getApiVersion()+"/sobjects/"+type+"/"+externalIdField+"/"+URLEncoder.encode(externalIdValue,"UTF-8")+"?_HttpMethod=PATCH")
+				apiRequest(new HttpRequest()
+					.url(uriBase()+"/sobjects/"+type+"/"+externalIdField+"/"+URLEncoder.encode(externalIdValue,"UTF-8")+"?_HttpMethod=PATCH")
 					.method("POST")
-					.header("Authorization", "OAuth "+session.getAccessToken())
 					.header("Accept", "application/json")
 					.header("Content-Type", "application/json")
 					.content(jsonMapper.writeValueAsBytes(sObject))
@@ -177,7 +175,6 @@ public class ForceApi {
 			} else if(res.getResponseCode()==204) {
 				return CreateOrUpdateResult.UPDATED;
 			} else {
-				// TODO: fix
 				System.out.println("Code: "+res.getResponseCode());
 				System.out.println("Message: "+res.getString());
 				throw new RuntimeException();
@@ -195,35 +192,28 @@ public class ForceApi {
 	public <T> QueryResult<T> query(String query, Class<T> clazz) {
 
 		try {
-			HttpResponse res = Http.send(new HttpRequest()
-					.url(session.getApiEndpoint()+"/services/data/"+config.getApiVersion()+"/query/?q="+URLEncoder.encode(query,"UTF-8"))
+			HttpResponse res = apiRequest(new HttpRequest()
+					.url(uriBase()+"/query/?q="+URLEncoder.encode(query,"UTF-8"))
 					.method("GET")
 					.header("Accept", "application/json")
-					.header("Authorization", "OAuth "+session.getAccessToken()));
+					.expectsCode(200));
 
 			// We build the result manually, because we can't pass the type information easily into 
 			// the JSON parser mechanism.
 
-			if(res.getResponseCode()==200) {
-				QueryResult<T> result = new QueryResult<T>();
-				JsonNode root = jsonMapper.readTree(res.getStream());
-				result.setDone(root.get("done").getBooleanValue());
-				result.setTotalSize(root.get("totalSize").getIntValue());
-				if(root.get("nextRecodsUrl")!=null) {
-					result.setNextRecordsUrl(root.get("nextRecordsUrl").getTextValue());
-				}
-				List<T> records = new ArrayList<T>();
-				for(JsonNode elem : root.get("records")) {
-					records.add(jsonMapper.readValue(elem,clazz));
-				}
-				result.setRecords(records);
-				return result;
-			} else {
-				// TODO: fix
-				System.out.println("Code: "+res.getResponseCode());
-				System.out.println("Message: "+res.getString());
-				throw new RuntimeException();
+			QueryResult<T> result = new QueryResult<T>();
+			JsonNode root = jsonMapper.readTree(res.getStream());
+			result.setDone(root.get("done").getBooleanValue());
+			result.setTotalSize(root.get("totalSize").getIntValue());
+			if(root.get("nextRecodsUrl")!=null) {
+				result.setNextRecordsUrl(root.get("nextRecordsUrl").getTextValue());
 			}
+			List<T> records = new ArrayList<T>();
+			for(JsonNode elem : root.get("records")) {
+				records.add(jsonMapper.readValue(elem,clazz));
+			}
+			result.setRecords(records);
+			return result;
 		} catch (JsonParseException e) {
 			throw new ResourceException(e);
 		} catch (JsonMappingException e) {
@@ -238,11 +228,10 @@ public class ForceApi {
 	
 	public DescribeGlobal describeGlobal() {
 		try {
-			return jsonMapper.readValue(Http.send(new HttpRequest()
-					.url(session.getApiEndpoint()+"/services/data/"+config.getApiVersion()+"/sobjects/")
+			return jsonMapper.readValue(apiRequest(new HttpRequest()
+					.url(uriBase()+"/sobjects/")
 					.method("GET")
-					.header("Accept", "application/json")
-					.header("Authorization", "OAuth "+session.getAccessToken())).getStream(),DescribeGlobal.class);
+					.header("Accept", "application/json")).getStream(),DescribeGlobal.class);
 		} catch (JsonParseException e) {
 			throw new ResourceException(e);
 		} catch (JsonMappingException e) {
@@ -257,10 +246,9 @@ public class ForceApi {
 	public DescribeSObject describeSObject(String sobject) {
 		try {
 			return jsonMapper.readValue(Http.send(new HttpRequest()
-					.url(session.getApiEndpoint()+"/services/data/"+config.getApiVersion()+"/sobjects/"+sobject+"/describe")
+					.url(uriBase()+"/sobjects/"+sobject+"/describe")
 					.method("GET")
-					.header("Accept", "application/json")
-					.header("Authorization", "OAuth "+session.getAccessToken())).getStream(),DescribeSObject.class);
+					.header("Accept", "application/json")).getStream(),DescribeSObject.class);
 		} catch (JsonParseException e) {
 			throw new ResourceException(e);
 		} catch (JsonMappingException e) {
@@ -269,6 +257,40 @@ public class ForceApi {
 			throw new ResourceException(e);
 		} catch (IOException e) {
 			throw new ResourceException(e);
+		}
+	}
+	
+	private final String uriBase() {
+		return(session.getApiEndpoint()+"/services/data/"+config.getApiVersion());
+	}
+	
+	private final HttpResponse apiRequest(HttpRequest req) {
+		req.setAuthorization("OAuth "+session.getAccessToken());
+		HttpResponse res = Http.send(req);
+		if(res.getResponseCode()==401) {
+			// Perform one attempt to auto renew session if possible
+			if(autoRenew) {
+				System.out.println("Session expired. Refreshing session...");
+				if(session.getRefreshToken()!=null) {
+					session = Auth.refreshOauthTokenFlow(config, session.getRefreshToken());
+				} else {
+					session = Auth.authenticate(config);
+				}
+				req.setAuthorization("OAuth "+session.getAccessToken());
+				res = Http.send(req);
+			}
+		}
+		if(res.getResponseCode()>299) {
+			if(res.getResponseCode()==401) {
+				throw new ApiTokenException(res.getString());
+			} else {
+				throw new ApiException(res.getResponseCode(), res.getString());
+			}
+		} else if(req.getExpectedCode()!=-1 && res.getResponseCode()!=req.getExpectedCode()) {
+			throw new RuntimeException("Unexpected response from Force API. Got response code "+res.getResponseCode()+
+					". Was expecing "+req.getExpectedCode());
+		} else {
+			return res;
 		}
 	}
 }
