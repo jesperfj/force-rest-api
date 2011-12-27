@@ -252,6 +252,10 @@ gets you back to master from detached HEAD.
 
 # Release History
 
+## 0.0.11
+
+0.0.10 was botched. Missed a checkin
+
 ## 0.0.10
 
 * Basic exceptions
