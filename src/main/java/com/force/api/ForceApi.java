@@ -245,7 +245,7 @@ public class ForceApi {
 	
 	public DescribeSObject describeSObject(String sobject) {
 		try {
-			return jsonMapper.readValue(Http.send(new HttpRequest()
+			return jsonMapper.readValue(apiRequest(new HttpRequest()
 					.url(uriBase()+"/sobjects/"+sobject+"/describe")
 					.method("GET")
 					.header("Accept", "application/json")).getStream(),DescribeSObject.class);
