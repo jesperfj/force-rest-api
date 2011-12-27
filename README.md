@@ -252,6 +252,12 @@ gets you back to master from detached HEAD.
 
 # Release History
 
+## 0.0.10
+
+* Basic exceptions
+* Some internal refactorings
+* First attempt at session renewal
+
 ## 0.0.9
 
 * Minimalistic Describe
