@@ -293,11 +293,17 @@ gets you back to master from detached HEAD.
 # Project Goals:
 
 * Make it as thin as possible
+  * Status: Both ForceApi and Auth classes are very thin wrappers on top of the APIs.
 * Few or no dependencies
+  * Status: Currently only depends on Jackson. Could consider supporting gson as well for added flexibility
 * Other projects will handle generation of typed SObject classes and it should work here
 * Automatic session renewal
+  * Status: Added in 0.0.10 and testable in 0.0.12. Waiting for feedback to see if it works.
 * Pluggable JSON kit
+  * Status: Not yet. This is currently low priority
 * Make sure it's Spring friendly. [This solution](http://stackoverflow.com/questions/2901166/how-to-make-spring-accept-fluent-non-void-setters) may be necessary.
+  * Status: No Spring work has been done yet
+* Consider adding newrelic hooks.
 
 # License
 
