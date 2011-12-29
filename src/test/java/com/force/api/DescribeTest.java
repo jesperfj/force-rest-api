@@ -2,6 +2,9 @@ package com.force.api;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 import org.junit.Test;
 
 public class DescribeTest {
@@ -27,4 +30,17 @@ public class DescribeTest {
 		assertNotNull(ds.getAllFields());
 	}
 
+	@Test
+	public void testGenerateJava() {
+		DescribeSObject ds = api.describeSObject("Contact");
+		PojoCodeGenerator gen = new PojoCodeGenerator();
+		ByteArrayOutputStream s = new ByteArrayOutputStream();
+		try {
+			gen.generateCode(s, ds, new ApiConfig().getApiVersion(),null);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 }
