@@ -252,6 +252,10 @@ gets you back to master from detached HEAD.
 
 # Release History
 
+## 0.0.14
+
+* Fixed bug in DescribeSObject. Had inlineHelpText as boolean instead of String
+
 ## 0.0.13
 
 * More complete DescribeSObject. Can now be used to generate Java classes. An example can be found in the tests based on [PojoCodeGenerator](https://github.com/forcedotcom/wsc/blob/master/src/main/java/com/sforce/rest/tools/PojoCodeGenerator.java)

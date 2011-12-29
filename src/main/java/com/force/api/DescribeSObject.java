@@ -261,7 +261,7 @@ public class DescribeSObject {
         private Boolean unique;
         private Boolean nillable;
         private Boolean caseSensitive;
-        private Boolean inlineHelpText;
+        private String inlineHelpText;
         private Boolean nameField;
         private Boolean externalId;
         private Boolean idLookup;
@@ -324,7 +324,7 @@ public class DescribeSObject {
             return caseSensitive;
         }
 
-        public Boolean isInlineHelpText() {
+        public String getInlineHelpText() {
             return inlineHelpText;
         }
 
