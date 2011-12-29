@@ -25,7 +25,13 @@
  */
 package com.force.api;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
  * This class represents a JSON response from /services/data/v{version}/sobjects/{sobjectName}/describe It has all of
@@ -34,6 +40,7 @@ import java.util.*;
  * @author gwester
  * @since 172
  */
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class DescribeSObject {
     private String name;
     private String label;
@@ -56,17 +63,30 @@ public class DescribeSObject {
     private Boolean deprecatedAndHidden;
     private Boolean customSetting;
     private Boolean searchable;
-    private Set<Field> fields;
-    private List<ChildEntity> childRelationships;
+    
+    List<Field> fields;
+    List<ChildEntity> childRelationships;
 
     /**
      * All fields for the sobject.
      * @return
      */
-    public Set<Field> getAllFields() {
+    public List<Field> getAllFields() {
+        return fields;
+    }
+
+	/**
+     * All fields for the sobject.
+     * @return
+     */
+    public List<Field> getFields() {
         return fields;
     }
     
+    public List<ChildEntity> getChildRelationships() {
+    	return childRelationships;
+    }
+
     /**
      * 
      * @return A map keyed child entities (e.g. Opportunity), with value of relationship name (e.g. childOpportunities).
@@ -229,6 +249,7 @@ public class DescribeSObject {
      * @author gwester
      * @since 170
      */
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Field {
         private Integer length;
         private String name;
@@ -387,6 +408,7 @@ public class DescribeSObject {
      * @author gwester
      * @since 170
      */
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class ChildEntity {
         private String field;
         private String childSObject;
