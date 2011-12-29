@@ -252,6 +252,10 @@ gets you back to master from detached HEAD.
 
 # Release History
 
+## 0.0.15
+
+* ApiSession now serializable, so it can be cached in Memcached and similar
+
 ## 0.0.14
 
 * Fixed bug in DescribeSObject. Had inlineHelpText as boolean instead of String
