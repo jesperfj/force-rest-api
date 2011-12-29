@@ -1,6 +1,8 @@
 package com.force.api;
 
-public class ApiSession {
+public class ApiSession implements java.io.Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	String accessToken;
 	String apiEndpoint;
