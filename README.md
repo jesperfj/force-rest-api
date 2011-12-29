@@ -254,7 +254,7 @@ gets you back to master from detached HEAD.
 
 ## 0.0.13
 
-* More complete DescribeSObject. Can now be used to generate Java classes. An example can be found in the tests based on forcedotcom/wsc@8477afe7a7aa8049604b4d07e16b235697802f21
+* More complete DescribeSObject. Can now be used to generate Java classes. An example can be found in the tests based on [PojoCodeGenerator](https://github.com/forcedotcom/wsc/blob/master/src/main/java/com/sforce/rest/tools/PojoCodeGenerator.java)
 
 ## 0.0.12
 
