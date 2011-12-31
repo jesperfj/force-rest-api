@@ -20,14 +20,14 @@ public class SessionRefreshTest {
 		Auth.revokeToken(api.config, api.session.accessToken);
 
 		Identity id = null;
-		for(int i=0;i<3;i++) {
+		for(int i=0;i<5;i++) {
 			try {
 				id = api.getIdentity();
 			} catch(Throwable t) {
 				System.out.println("Got "+t);
-				System.out.println("Attempt "+i+1+"/3: api failed to refresh after revoking token.");
+				System.out.println("Attempt "+(i+1)+"/5: api failed to refresh after revoking token.");
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(2000);
 				} catch(InterruptedException e) {}
 			}
 		}
