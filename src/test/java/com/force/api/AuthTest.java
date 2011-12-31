@@ -1,8 +1,9 @@
 package com.force.api;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class AuthTest {
@@ -85,50 +86,6 @@ public class AuthTest {
 	}
 	
 	@Test
-	public void testAuthorizationURL() {
-		String url = Auth.startOAuthWebServerFlow(new AuthorizationRequest()
-			.apiConfig(new ApiConfig()
-				.setClientId(Fixture.get("clientId"))
-				.setRedirectURI(Fixture.get("redirectURI"))));
-		System.out.println(url);
-
-		try {
-			url = Auth.startOAuthWebServerFlow(new AuthorizationRequest()
-			.apiConfig(new ApiConfig()
-				.setClientId(System.getenv("UNKNOWNENDVAR"))
-				.setRedirectURI(System.getenv("ANOTHERUNKNOWNENDVAR"))));
-		} catch(IllegalStateException e) {
-			return;
-		}
-		fail();
-		
-	}
-
-	
-	
-	/**
-	 * This test only works manually for now. Paste the URL printed when you ran
-	 * testAuthorizationURL() into your browser and authenticate yourself. When
-	 * you get redirected to localhost ignore the error page and copy the value
-	 * of the code URL parameter into the .code("...") method argument below.
-	 * Then run this and only this test (in Eclipse, remove @Ignore annotation,
-	 * highlight method name, right-click and select Run As.. JUnit Test).
-	 * 
-	 * TODO: Automate this.
-	 */
-	@Test
-	@Ignore
-	public void testCompleteWebServerFlow() {
-		Auth.completeOAuthWebServerFlow(new AuthorizationResponse()
-			.apiConfig(new ApiConfig()
-				.setClientId(Fixture.get("clientId"))
-				.setClientSecret(Fixture.get("clientSecret"))
-				.setRedirectURI(Fixture.get("redirectURI")))
-			.code("aPrxZibfVBKPF9tp0UFCbrd9VpKQUr5eoNNqUf.ZQS1cIp9NvWQABQLGbFRbQ_75x8m3qKa9_A%3D%3D"));
-		
-	}
-	
-	@Test
 	public void testRevokeToken() {
 		ApiConfig c = new ApiConfig()
 			.setUsername(Fixture.get("username"))
@@ -148,14 +105,6 @@ public class AuthTest {
 			
 		}
 
-		// This one was flapping so commented it out.
-		// test that it throws an exception on the second revoke
-//		try {
-//			Auth.revokeToken(c, s.getAccessToken());
-//			fail("Expected AuthException when revoking already revoked token");
-//		} catch(AuthException e) {
-//			System.out.println(e.getCode()+" "+e.getMessage());
-//		}
 	}
 
 }
