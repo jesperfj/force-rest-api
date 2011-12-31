@@ -25,7 +25,7 @@ The version number is bumped regularly. Check the tags list or commit messages f
     <dependency>
         <groupId>com.force.api</groupId>
         <artifactId>force-rest-api</artifactId>
-        <version>0.0.3</version>
+        <version>0.0.15</version>
     </dependency>
 
 ## Build and link locally
@@ -41,14 +41,14 @@ The latest HEAD always builds to a snapshot:
     <dependency>
         <groupId>com.force.api</groupId>
         <artifactId>force-rest-api</artifactId>
-        <version>0.0.3-SNAPSHOT</version>
+        <version>0.0.16-SNAPSHOT</version>
     </dependency>
 
 ## Authentication and Instantiation
 
 ### Username / Password Authentication
 
-Authenticate using just login and password and get an account record:
+Authenticate using just login and password:
 
     DataApi api = new DataApi(new ApiConfig()
         .setUsername("user@domain.com")
