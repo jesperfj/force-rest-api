@@ -105,6 +105,14 @@ public class AuthTest {
 			
 		}
 
+		
+		try {
+		    Auth.revokeToken(new ApiConfig(), s.getAccessToken());
+		} catch (Throwable t) {
+		    t.printStackTrace();
+		    fail("Expected no exception when revoking an already revoked token, but got: "+t);
+		}
+
 	}
 
 }

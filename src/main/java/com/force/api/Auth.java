@@ -187,17 +187,10 @@ public class Auth {
 	 * @param token either an access token or a refresh token
 	 */
 	static public void revokeToken(ApiConfig config, String token) {
-		try {
-			Http.send(HttpRequest.formPost()
-				.header("Accept","*/*")
-				.url(config.getLoginEndpoint()+"/services/oauth2/revoke")
-				.param("token", token));
-		} catch(Throwable t) {
-			// Looks like revoke endpoint closes stream when trying to revoke
-			// an already revoked token. It doesn't return an error code. So
-			// we'll have to just catch it here and fake the code.
-			throw new AuthException(404, "Token could not be revoked. Most likely it has already expired or been revoked.");
-		}
+		Http.send(HttpRequest.formPost()
+			.header("Accept","*/*")
+			.url(config.getLoginEndpoint()+"/services/oauth2/revoke")
+			.param("token", token));
 	}
 
 	static public final ApiSession authenticate(ApiConfig c) {

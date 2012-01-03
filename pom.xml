@@ -30,6 +30,9 @@
             <artifactId>jackson-mapper-asl</artifactId>
             <version>[1.9.1,1.9.2]</version>
         </dependency>
+
+        <!-- Test dependencies below here -->
+        
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
