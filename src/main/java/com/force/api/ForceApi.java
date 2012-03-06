@@ -205,7 +205,7 @@ public class ForceApi {
 			JsonNode root = jsonMapper.readTree(res.getStream());
 			result.setDone(root.get("done").getBooleanValue());
 			result.setTotalSize(root.get("totalSize").getIntValue());
-			if(root.get("nextRecodsUrl")!=null) {
+			if(root.get("nextRecordsUrl")!=null) {
 				result.setNextRecordsUrl(root.get("nextRecordsUrl").getTextValue());
 			}
 			List<T> records = new ArrayList<T>();
@@ -224,6 +224,10 @@ public class ForceApi {
 			throw new ResourceException(e);
 		}
 
+	}
+	
+	public QueryResult<Map> query(String query) {
+		return query(query, Map.class);
 	}
 	
 	public DescribeGlobal describeGlobal() {
