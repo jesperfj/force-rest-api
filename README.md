@@ -50,7 +50,7 @@ The latest HEAD always builds to a snapshot:
 
 Authenticate using just login and password:
 
-    DataApi api = new DataApi(new ApiConfig()
+    ForceApi api = new ForceApi(new ApiConfig()
         .setUsername("user@domain.com")
         .setPassword("password"));
 
@@ -58,7 +58,7 @@ Authenticate using just login and password:
 
 As [documented here](https://help.salesforce.com/help/doc/en/remoteaccess_oauth_username_password_flow.htm)
 
-    DataApi api = new DataApi(new ApiConfig()
+    ForceApi api = new ForceApi(new ApiConfig()
         .setUsername("user@domain.com")
         .setPassword("password")
         .setClientId("longclientidalphanumstring")
@@ -85,12 +85,12 @@ As [documented here](https://help.salesforce.com/help/doc/en/remoteaccess_oauth_
 			.setRedirectURI("https://myapp.mydomain.com/oauth"))
 		.code("alphanumericstringpassedbackinbrowserrequest"));
     
-    DataApi api = new DataApi(s.getApiConfig(),s);
+    ForceApi api = new ForceApi(s.getApiConfig(),s);
 
 
 ### Instantiate with existing accessToken and endpoint
 
-If you already have an access token and endpoint (e.g. from a cookie), you can pass an ApiSession instance to DataApi:
+If you already have an access token and endpoint (e.g. from a cookie), you can pass an ApiSession instance to ForceApi:
 
     ApiConfig c = new ApiConfig()
         .setRefreshToken("refreshtoken")
@@ -102,7 +102,7 @@ If you already have an access token and endpoint (e.g. from a cookie), you can p
 	    .setAccessToken("accessToken")
 	    .setApiEndpoint("apiEndpoint");
     
-    DataApi api = new DataApi(c,s);
+    ForceApi api = new ForceApi(c,s);
 
 ## CRUD and Query Operations
 
