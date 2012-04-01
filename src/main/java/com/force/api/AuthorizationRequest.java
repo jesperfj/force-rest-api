@@ -13,8 +13,30 @@ public class AuthorizationRequest {
 		public String toString() { return value; }
 	}
 	
+	public enum Scope { 
+		ID ("id"),
+		API("api"), 
+		VISUALFORCE("visualforce"),
+		WEB("web"),
+		FULL("full"),
+		REFRESH_TOKEN("refresh_token"),
+		CHATTER_API("chatter_api");
+		String value;
+		
+		Scope(String s) { value = s; }
+		public Scope and(Scope addlScope){ 
+			if(this.value!=null && this.value.trim().length()>0){
+				this.value +=" "+addlScope.toString(); 
+			}else{
+				this.value=addlScope.toString();
+			}
+			return this;
+		}
+		public String toString() { return value; }
+	}
+	
 	ApiConfig apiConfig;
-	String scope;
+	Scope scope;
 	String state;
 	boolean immediate = false;
 	Display display;
@@ -25,7 +47,7 @@ public class AuthorizationRequest {
 	}
 	
 	public AuthorizationRequest scope(String scope) {
-		this.scope = scope;
+		this.scope = Scope.valueOf(scope);
 		return this;
 	}
 	public AuthorizationRequest state(String state) {
