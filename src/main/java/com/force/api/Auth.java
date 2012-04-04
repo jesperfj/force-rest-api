@@ -110,7 +110,7 @@ public class Auth {
 					"/services/oauth2/authorize"+
 					"?response_type=code"+
 					"&client_id="+URLEncoder.encode(req.apiConfig.getClientId(),"UTF-8")+
-					(req.scope!=null ? "&scope="+URLEncoder.encode(req.scope,"UTF-8") : "") +
+					(req.scope!=null ? "&scope="+URLEncoder.encode(req.scope.toString(),"UTF-8") : "") +
 					"&redirect_uri="+URLEncoder.encode(req.apiConfig.getRedirectURI(),"UTF-8")+
 					(req.state!=null ? "&state="+URLEncoder.encode(req.state,"UTF-8") : "") +
 					(req.immediate ? "&immediate=true" : "") +
