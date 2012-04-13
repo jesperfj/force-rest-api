@@ -252,6 +252,15 @@ gets you back to master from detached HEAD.
 
 # Release History
 
+## 0.0.17
+
+* Modified deserialization of query results to better supper queries that return graphs of records.
+
+## 0.0.16
+
+* Added more testing, including an end-to-end oauth flow test using HtmlUnit
+* Scope is now an enum
+
 ## 0.0.15
 
 * ApiSession now serializable, so it can be cached in Memcached and similar
