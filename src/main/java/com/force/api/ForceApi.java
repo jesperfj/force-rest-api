@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonNode;
@@ -13,6 +15,8 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.codehaus.jackson.node.JsonNodeFactory;
+import org.codehaus.jackson.node.ObjectNode;
 
 import com.force.api.http.Http;
 import com.force.api.http.HttpRequest;
@@ -210,7 +214,7 @@ public class ForceApi {
 			}
 			List<T> records = new ArrayList<T>();
 			for(JsonNode elem : root.get("records")) {
-				records.add(jsonMapper.readValue(elem,clazz));
+				records.add(jsonMapper.readValue(normalizeCompositeResponse(elem),clazz));
 			}
 			result.setRecords(records);
 			return result;
@@ -296,5 +300,92 @@ public class ForceApi {
 		} else {
 			return res;
 		}
+	}
+	
+	/**
+	 * Normalizes the JSON response in case it contains responses from
+	 * Relationsip queries. For e.g.
+	 * 
+	 * <code>
+	 * Query:
+	 *   select Id,Name,(select Id,Email,FirstName from Contacts) from Account
+	 *   
+	 * Json Response Returned:
+	 * 
+	 * {
+	 *	  "totalSize" : 1,
+	 *	  "done" : true,
+	 *	  "records" : [ {
+	 *	    "attributes" : {
+	 *	      "type" : "Account",
+	 *	      "url" : "/services/data/v24.0/sobjects/Account/0017000000TcinJAAR"
+	 *	    },
+	 *	    "Id" : "0017000000TcinJAAR",
+	 *	    "Name" : "test_acc_04_01",
+	 *	    "Contacts" : {
+	 *	      "totalSize" : 1,
+	 *	      "done" : true,
+	 *	      "records" : [ {
+	 *	        "attributes" : {
+	 *	          "type" : "Contact",
+	 *	          "url" : "/services/data/v24.0/sobjects/Contact/0037000000zcgHwAAI"
+	 *	        },
+	 *	        "Id" : "0037000000zcgHwAAI",
+	 *	        "Email" : "contact@email.com",
+	 *	        "FirstName" : "John"
+	 *	      } ]
+	 *	    }
+	 *	  } ]
+	 *	}
+	 * </code>
+	 * 
+	 * Will get normalized to:
+	 * 
+	 * <code>
+	 * {
+	 *	  "totalSize" : 1,
+	 *	  "done" : true,
+	 *	  "records" : [ {
+	 *	    "attributes" : {
+	 *	      "type" : "Account",
+	 *	      "url" : "/services/data/v24.0/sobjects/Account/accountId"
+	 *	    },
+	 *	    "Id" : "accountId",
+	 *	    "Name" : "test_acc_04_01",
+	 *	    "Contacts" : [ {
+	 *	        "attributes" : {
+	 *	          "type" : "Contact",
+	 *	          "url" : "/services/data/v24.0/sobjects/Contact/contactId"
+	 *	        },
+	 *	        "Id" : "contactId",
+	 *	        "Email" : "contact@email.com",
+	 *	        "FirstName" : "John"
+	 *	    } ]
+	 *	  } ]
+	 *	} 
+	 * </code
+	 * 
+	 * This allows Jackson to deserialize the response into it's corresponding Object representation
+	 * 
+	 * @param node 
+	 * @return
+	 */
+	private final JsonNode normalizeCompositeResponse(JsonNode node){
+		Iterator<Entry<String, JsonNode>> elements = node.getFields();
+		ObjectNode newNode = JsonNodeFactory.instance.objectNode();
+		Entry<String, JsonNode> currNode;
+		while(elements.hasNext()){
+			currNode = elements.next();
+
+			newNode.put(currNode.getKey(), 
+						(		currNode.getValue().isObject() && 
+								currNode.getValue().get("records")!=null
+						)?
+								currNode.getValue().get("records"):
+									currNode.getValue()
+					);
+		}
+		return newNode;
+		
 	}
 }
