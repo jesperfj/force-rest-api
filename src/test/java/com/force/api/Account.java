@@ -1,5 +1,7 @@
 package com.force.api;
 
+import java.util.List;
+
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -14,6 +16,9 @@ public class Account {
 	String externalId;	
 	@JsonProperty(value="AnnualRevenue")
 	private Double annualRevenue;
+	
+	@JsonProperty("Contacts")
+	List<Contact> contacts;
 	
 	public String getId() {
 		return id;
@@ -42,6 +47,12 @@ public class Account {
 	}
 	public void setExternalId(String externalId) {
 		this.externalId = externalId;
+	}
+	public List<Contact> getContacts() {
+		return contacts;
+	}
+	public void setContacts(List<Contact> contacts) {
+		this.contacts = contacts;
 	}
 
 }
