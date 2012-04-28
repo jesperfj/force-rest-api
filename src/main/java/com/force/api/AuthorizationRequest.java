@@ -20,7 +20,8 @@ public class AuthorizationRequest {
 		WEB("web"),
 		FULL("full"),
 		REFRESH_TOKEN("refresh_token"),
-		CHATTER_API("chatter_api");
+		CHATTER_API("chatter_api"),
+		DEFAULT("id refresh_token");
 		String value;
 		
 		Scope(String s) { value = s; }

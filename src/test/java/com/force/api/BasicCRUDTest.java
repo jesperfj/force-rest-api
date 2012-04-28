@@ -5,6 +5,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -15,24 +17,24 @@ import org.junit.Test;
 public class BasicCRUDTest {
 
 	static final String TEST_NAME = "force-rest-api basic crud test";
-
+	
+	static ForceApi api;
+	
+	@Before
+	public void init() {
+		api = new ForceApi(new ApiConfig()
+		.setUsername(Fixture.get("username"))
+		.setPassword(Fixture.get("password")));
+	}
+	
+	/*
 	@Test
 	public void basicCRUDTest() {
-
-		ForceApi api = new ForceApi(new ApiConfig()
-			.setUsername(Fixture.get("username"))
-			.setPassword(Fixture.get("password"))
-			.setClientId(Fixture.get("clientId"))
-			.setClientSecret(Fixture.get("clientSecret")));
 
 		if(api.query("SELECT name FROM Account WHERE name LIKE '"+TEST_NAME+"%'",Account.class).getTotalSize()>0) {
 			fail("Looks like org is not clean. Manually delete account record with name '"+TEST_NAME+"' before running this test");
 		}
 		
-		try {
-			
-			// TEST CREATE
-			
 			Account a = new Account();
 			a.setName(TEST_NAME);
 			a.setExternalId("1234");
@@ -80,17 +82,39 @@ public class BasicCRUDTest {
 			
 			// check that the record value was properly set
 			assertTrue(1414213.56==api.query("SELECT annualRevenue FROM Account WHERE externalId__c = '2345'",Account.class).getRecords().get(0).getAnnualRevenue());
-			
-		}
-		finally {
-			QueryResult<Account> res = api.query("SELECT id FROM Account WHERE name LIKE '"+TEST_NAME+"%'", Account.class);
-			for(Account a : res.getRecords()) {
-				api.deleteSObject("account", a.getId());
-			}
-		}
+		
+	}
+	*/
+	
+	@Test
+	public void crudWithRelationships() {
+		Account a = new Account();
+		a.setName(TEST_NAME);
+		String id = api.createSObject("account", a);
+		a.setId(id);
+		Contact ct = new Contact("force@test.com","FirstName","LastName");
+		ct.setAccount(a);
+		
+		String ctId = api.createSObject("Contact", ct);
+		ct.setId(ctId);
+		assertTrue(ctId!=null);
+		
+		Address address = new Address();
+		address.setContact(ct);
+		String addressId = api.createSObject("Address__c", address);
+		assertTrue(addressId!=null);
 		
 	}
 	
 	
+	@AfterClass
+	public static void deleteRecords() {
+		QueryResult<Account> res = api.query("SELECT id FROM Account WHERE name LIKE '"+TEST_NAME+"%'", Account.class);
+		for(Account a : res.getRecords()) {
+			api.deleteSObject("Account", a.getId());
+		}
+	}
+
+
 	
 }
