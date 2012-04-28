@@ -40,7 +40,10 @@ import com.force.api.http.HttpResponse;
 public class ForceApi {
 
 	private static final ObjectMapper jsonMapper;
-
+	private static final String __R = "__r";
+	private static final String __C = "__c";
+	private static final String ID_SUFFIX = "Id";
+	
 	static {
 		jsonMapper = new ObjectMapper();
 		jsonMapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
@@ -114,13 +117,14 @@ public class ForceApi {
 			// But it would be nice to have a streaming implementation. We can do that
 			// by using ObjectMapper.writeValue() passing in output stream, but then we have
 			// polluted the Http layer.
-			CreateResponse result = jsonMapper.readValue(apiRequest(new HttpRequest()
-					.url(uriBase()+"/sobjects/"+type)
-					.method("POST")
-					.header("Accept", "application/json")
-					.header("Content-Type", "application/json")
-					.expectsCode(201)
-					.content(jsonMapper.writeValueAsBytes(sObject))).getStream(),CreateResponse.class);
+			CreateResponse result = jsonMapper.readValue(
+					apiRequest(new HttpRequest().url(uriBase()+"/sobjects/"+type)
+												.method("POST")
+												.header("Accept", "application/json")
+												.header("Content-Type", "application/json")
+												.expectsCode(201)
+												.content(sanitizeSobjectJson(sObject))
+					).getStream(),CreateResponse.class);
 
 			if (result.isSuccess()) {
 				return (result.getId());
@@ -387,5 +391,61 @@ public class ForceApi {
 		}
 		return newNode;
 		
+	}
+	/**
+	 * If the incoming SObject contains relationships (i.e. references to Objects that are parents or children
+	 * this method sanitizes the JSON so that only the keys for the parent are sent in the JSON versus the
+	 * object itself. For e.g.
+	 * 
+	 * A Contact object with it's Account parent set would be represented in JSON as:
+	 * 
+	 * {
+	 * 		"Email":"force@test.com",
+	 * 		"FirstName":"FirstName",
+	 * 		"LastName":"LastName",
+	 * 		"Account":{
+	 * 			"Id":"0017000000oy2oPAAQ",
+	 * 			"Name":"force-rest-api basic crud test"
+	 * 		}
+	 * }
+	 * 
+	 * After Sanitization, the JSON String would be:
+	 * 
+	 * {
+	 * 		"Email":"force@test.com",
+	 * 		"FirstName":"FirstName",
+	 * 		"LastName":"LastName",
+	 * 		"AccountId":"0017000000oy2oPAAQ"
+	 * }
+	 * 
+	 * For CustomObjects, the __r will be replaced with __c
+	 * 
+	 * @param sObj - SObject that needs to be sanitized
+	 * 
+	 * @return The sanitized Json  
+	 * @throws JsonGenerationException
+	 * @throws JsonMappingException
+	 * @throws IOException
+	 */
+	private final byte[] sanitizeSobjectJson(Object sObj) throws JsonGenerationException, JsonMappingException, IOException{
+		JsonNode node = jsonMapper.convertValue(sObj, JsonNode.class);
+		Iterator<Entry<String, JsonNode>> elements = node.getFields();
+		ObjectNode newNode = JsonNodeFactory.instance.objectNode();
+		Entry<String, JsonNode> currNode;
+		while(elements.hasNext()){
+			currNode = elements.next();
+			if(currNode.getValue().isObject()){
+				if(currNode.getKey().endsWith(__R)){
+					newNode.put(currNode.getKey().replaceAll(__R,__C), currNode.getValue().get("Id").asText());
+				}else{
+					newNode.put(currNode.getKey()+ID_SUFFIX, currNode.getValue().get("Id").asText());
+				}
+			}else{
+				newNode.put(currNode.getKey(),currNode.getValue());
+			}
+			
+		}
+		return jsonMapper.writeValueAsString(newNode).getBytes();
+
 	}
 }
