@@ -7,6 +7,9 @@ import org.codehaus.jackson.annotate.JsonProperty;
 
 public class Contact {
 
+    @JsonProperty(value="Id")
+    private String id;
+    
 	@JsonProperty("Email")
 	private String email;
 	
@@ -18,7 +21,16 @@ public class Contact {
 
 	@JsonProperty("AccountId")
 	private String accountId;
-	
+
+    @JsonProperty("Account")
+    private Account account;
+
+    public String getId() {
+        return id;
+    }
+    public void setId(String id) {
+        this.id = id;
+    }
 	
 	public String getLastName() {
 		return lastName;
@@ -44,14 +56,13 @@ public class Contact {
 		this.firstName = firstName;
 	}
 
-	/*public Account getAccount() {
+	public Account getAccount() {
 		return account;
 	}
 
 	public void setAccount(Account account) {
 		this.account = account;
-	}*/
-
+	}
 	
 	public String getAccountId() {
 		return this.accountId;

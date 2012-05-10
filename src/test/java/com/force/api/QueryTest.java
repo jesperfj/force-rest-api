@@ -47,16 +47,20 @@ public class QueryTest {
 		a.setId(id);
 		Contact ct = new Contact("force@test.com","FirstName","LastName");
 		ct.setAccountId(a.id);
-		api.createSObject("Contact", ct);
-		List<Account> result = api.query(String.format("SELECT Name, (SELECT AccountId, Email, FirstName, LastName FROM Contacts) FROM Account WHERE Id='%s'",a.id),
+        ct.setId(api.createSObject("Contact", ct));
+		List<Account> childResult = api.query(String.format("SELECT Name, (SELECT AccountId, Email, FirstName, LastName FROM Contacts) FROM Account WHERE Id='%s'",a.id),
 										 Account.class).getRecords();
 		// Note, attribute names are capitalized by the Force.com REST API
-        assertEquals(1, result.get(0).contacts.size());
-        assertEquals("force@test.com", result.get(0).contacts.get(0).getEmail());
-        assertEquals("FirstName", result.get(0).contacts.get(0).getFirstName());
-        assertEquals("LastName", result.get(0).contacts.get(0).getLastName());
-        assertEquals(a.id, result.get(0).contacts.get(0).getAccountId());
-	}
-	
+        assertEquals(1, childResult.get(0).contacts.size());
+        assertEquals("force@test.com", childResult.get(0).contacts.get(0).getEmail());
+        assertEquals("FirstName", childResult.get(0).contacts.get(0).getFirstName());
+        assertEquals("LastName", childResult.get(0).contacts.get(0).getLastName());
+        assertEquals(a.id, childResult.get(0).contacts.get(0).getAccountId());
 
+        List<Contact> parentResult = api.query(String.format("SELECT AccountId, Account.Id, Account.Name FROM Contact WHERE Id='%s'",ct.getId()), Contact.class).getRecords();
+        assertEquals(1, parentResult.size());
+        assertEquals(a.getId(), parentResult.get(0).getAccountId());
+        assertEquals(a.getId(), parentResult.get(0).getAccount().getId());
+        assertEquals(a.getName(), parentResult.get(0).getAccount().getName());
+	}
 }
