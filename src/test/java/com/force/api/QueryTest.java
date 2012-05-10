@@ -51,11 +51,11 @@ public class QueryTest {
 		List<Account> result = api.query(String.format("SELECT Name, (SELECT AccountId, Email, FirstName, LastName FROM Contacts) FROM Account WHERE Id='%s'",a.id),
 										 Account.class).getRecords();
 		// Note, attribute names are capitalized by the Force.com REST API
-		assertEquals(result.get(0).contacts.size(),1);
-		assertEquals(result.get(0).contacts.get(0).getEmail(),"force@test.com");
-		assertEquals(result.get(0).contacts.get(0).getFirstName(),"FirstName");
-		assertEquals(result.get(0).contacts.get(0).getLastName(),"LastName");
-		assertEquals(result.get(0).contacts.get(0).getAccountId(),a.id);
+        assertEquals(1, result.get(0).contacts.size());
+        assertEquals("force@test.com", result.get(0).contacts.get(0).getEmail());
+        assertEquals("FirstName", result.get(0).contacts.get(0).getFirstName());
+        assertEquals("LastName", result.get(0).contacts.get(0).getLastName());
+        assertEquals(a.id, result.get(0).contacts.get(0).getAccountId());
 	}
 	
 
