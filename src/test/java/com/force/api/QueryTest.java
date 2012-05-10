@@ -1,16 +1,16 @@
 package com.force.api;
 
-import static org.junit.Assert.*;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class QueryTest {
 
@@ -48,7 +48,7 @@ public class QueryTest {
 		Contact ct = new Contact("force@test.com","FirstName","LastName");
 		ct.setAccountId(a.id);
 		api.createSObject("Contact", ct);
-		List<Account> result = api.query(String.format("SELECT name,(select Id,Email from Contacts) FROM Account where Id='%s'",a.id),
+		List<Account> result = api.query(String.format("SELECT Name, (SELECT AccountId, Email, FirstName, LastName FROM Contacts) FROM Account WHERE Id='%s'",a.id),
 										 Account.class).getRecords();
 		// Note, attribute names are capitalized by the Force.com REST API
 		assertEquals(result.get(0).contacts.size(),1);
