@@ -252,6 +252,11 @@ gets you back to master from detached HEAD.
 
 # Release History
 
+## 0.0.18
+
+* Some relationship queries work now. See QueryTest for an example.
+* Tested with Jackson 1.9.7
+
 ## 0.0.17
 
 * Modified deserialization of query results to better supper queries that return graphs of records.
