@@ -15,11 +15,11 @@ public class DiscoverSObject<T> {
         this.recentItems = recentItems;
     }
 
-    DescribeSObjectBasic getObjectDescribe() {
+    public DescribeSObjectBasic getObjectDescribe() {
         return describeSObjectBasic;
     }
 
-    List<T> getRecentItems() {
+    public List<T> getRecentItems() {
         return recentItems;
     }
 }
