@@ -9,8 +9,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class QueryTest {
 
@@ -37,9 +36,23 @@ public class QueryTest {
 		// Note, attribute names are capitalized by the Force.com REST API
 		assertNotNull(result.get(0).getName());
 	}
-	
-	
-	@Test
+
+    @Test
+    public void testQueryMore() throws Exception {
+        final QueryResult<Account> iniResult = api.query("SELECT name FROM Account LIMIT 2001", Account.class);
+        assertEquals(2000, iniResult.getRecords().size());
+        assertEquals(2001, iniResult.getTotalSize());
+        assertFalse(iniResult.isDone());
+        assertNotNull(iniResult.getNextRecordsUrl());
+
+        final QueryResult<Map> moreResult = api.queryMore(iniResult.getNextRecordsUrl());
+        assertEquals(1, moreResult.getRecords().size());
+        assertEquals(2001, moreResult.getTotalSize());
+        assertTrue(moreResult.isDone());
+        assertNull(moreResult.getNextRecordsUrl());
+    }
+
+    @Test
 	public void testRelationshipQuery() throws JsonGenerationException, JsonMappingException, IOException {
 		Account a = new Account();
 		a.setName("force-rest-api-test-account");

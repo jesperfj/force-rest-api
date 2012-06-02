@@ -1,14 +1,8 @@
 package com.force.api;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.force.api.http.Http;
+import com.force.api.http.HttpRequest;
+import com.force.api.http.HttpResponse;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
@@ -18,24 +12,29 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.force.api.http.Http;
-import com.force.api.http.HttpRequest;
-import com.force.api.http.HttpResponse;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * main class for making API calls.
- * 
+ *
  * This class is cheap to instantiate and throw away. It holds a user's session
  * as state and thus should never be reused across multiple user sessions,
  * unless that's explicitly what you want to do.
- * 
+ *
  * For web apps, you should instantiate this class on every request and feed it
  * the session information as obtained from a session cookie or similar. An
  * exception to this rule is if you make all API calls as a single API user.
  * Then you can keep a static reference to this class.
- * 
+ *
  * @author jjoergensen
- * 
+ *
  */
 public class ForceApi {
 
@@ -45,7 +44,7 @@ public class ForceApi {
 		jsonMapper = new ObjectMapper();
 		jsonMapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
 	}
-	
+
 	final ApiConfig config;
 	ApiSession session;
 	private boolean autoRenew = false;
@@ -66,13 +65,13 @@ public class ForceApi {
 		config = apiConfig;
 		session = Auth.authenticate(apiConfig);
 		autoRenew  = true;
-		
+
 	}
 
 
 	public Identity getIdentity() {
 		try {
-			
+
 			@SuppressWarnings("unchecked")
 			Map<String,Object> resp = jsonMapper.readValue(
 					apiRequest(new HttpRequest()
@@ -80,7 +79,7 @@ public class ForceApi {
 						.method("GET")
 						.header("Accept", "application/json")
 					).getStream(),Map.class);
-			
+
 			return jsonMapper.readValue(
 					apiRequest(new HttpRequest()
 						.url((String) resp.get("identity"))
@@ -94,9 +93,9 @@ public class ForceApi {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		
+
 	}
-	
+
 
 	public ResourceRepresentation getSObject(String type, String id) throws ResourceException {
 		// Should we return null or throw an exception if the record is not found?
@@ -166,7 +165,7 @@ public class ForceApi {
 	public CreateOrUpdateResult createOrUpdateSObject(String type, String externalIdField, String externalIdValue, Object sObject) {
 		try {
 			// See createSObject for note on streaming ambition
-			HttpResponse res = 
+			HttpResponse res =
 				apiRequest(new HttpRequest()
 					.url(uriBase()+"/sobjects/"+type+"/"+externalIdField+"/"+URLEncoder.encode(externalIdValue,"UTF-8")+"?_HttpMethod=PATCH")
 					.method("POST")
@@ -183,7 +182,7 @@ public class ForceApi {
 				System.out.println("Message: "+res.getString());
 				throw new RuntimeException();
 			}
-			
+
 		} catch (JsonGenerationException e) {
 			throw new ResourceException(e);
 		} catch (JsonMappingException e) {
@@ -194,47 +193,59 @@ public class ForceApi {
 	}
 
 	public <T> QueryResult<T> query(String query, Class<T> clazz) {
+        try {
+            return queryAny(uriBase() + "/query/?q=" + URLEncoder.encode(query, "UTF-8"), clazz);
+        } catch (UnsupportedEncodingException e) {
+            throw new ResourceException(e);
+        }
+    }
 
-		try {
-			HttpResponse res = apiRequest(new HttpRequest()
-					.url(uriBase()+"/query/?q="+URLEncoder.encode(query,"UTF-8"))
-					.method("GET")
-					.header("Accept", "application/json")
-					.expectsCode(200));
-
-			// We build the result manually, because we can't pass the type information easily into 
-			// the JSON parser mechanism.
-
-			QueryResult<T> result = new QueryResult<T>();
-			JsonNode root = jsonMapper.readTree(res.getStream());
-			result.setDone(root.get("done").getBooleanValue());
-			result.setTotalSize(root.get("totalSize").getIntValue());
-			if(root.get("nextRecordsUrl")!=null) {
-				result.setNextRecordsUrl(root.get("nextRecordsUrl").getTextValue());
-			}
-			List<T> records = new ArrayList<T>();
-			for(JsonNode elem : root.get("records")) {
-				records.add(jsonMapper.readValue(normalizeCompositeResponse(elem),clazz));
-			}
-			result.setRecords(records);
-			return result;
-		} catch (JsonParseException e) {
-			throw new ResourceException(e);
-		} catch (JsonMappingException e) {
-			throw new ResourceException(e);
-		} catch (UnsupportedEncodingException e) {
-			throw new ResourceException(e);
-		} catch (IOException e) {
-			throw new ResourceException(e);
-		}
-
-	}
-	
 	public QueryResult<Map> query(String query) {
 		return query(query, Map.class);
 	}
-	
-	public DescribeGlobal describeGlobal() {
+
+    public <T> QueryResult<T> queryMore(String nextRecordsUrl, Class<T> clazz) {
+        return queryAny(session.getApiEndpoint() + nextRecordsUrl, clazz);
+    }
+
+    public QueryResult<Map> queryMore(String nextRecordsUrl) {
+        return queryMore(nextRecordsUrl, Map.class);
+    }
+
+    private <T> QueryResult<T> queryAny(String queryUrl, Class<T> clazz) {
+        try {
+            HttpResponse res = apiRequest(new HttpRequest()
+                    .url(queryUrl)
+                    .method("GET")
+                    .header("Accept", "application/json")
+                    .expectsCode(200));
+
+            // We build the result manually, because we can't pass the type information easily into
+            // the JSON parser mechanism.
+
+            QueryResult<T> result = new QueryResult<T>();
+            JsonNode root = jsonMapper.readTree(res.getStream());
+            result.setDone(root.get("done").getBooleanValue());
+            result.setTotalSize(root.get("totalSize").getIntValue());
+            if (root.get("nextRecordsUrl") != null) {
+                result.setNextRecordsUrl(root.get("nextRecordsUrl").getTextValue());
+            }
+            List<T> records = new ArrayList<T>();
+            for (JsonNode elem : root.get("records")) {
+                records.add(jsonMapper.readValue(normalizeCompositeResponse(elem), clazz));
+            }
+            result.setRecords(records);
+            return result;
+        } catch (JsonParseException e) {
+            throw new ResourceException(e);
+        } catch (JsonMappingException e) {
+            throw new ResourceException(e);
+        } catch (IOException e) {
+            throw new ResourceException(e);
+        }
+    }
+
+    public DescribeGlobal describeGlobal() {
 		try {
 			return jsonMapper.readValue(apiRequest(new HttpRequest()
 					.url(uriBase()+"/sobjects/")
