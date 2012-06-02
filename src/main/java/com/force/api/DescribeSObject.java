@@ -142,6 +142,7 @@ public class DescribeSObject extends DescribeSObjectBasic {
         private Integer length;
         private String name;
         private String type;
+        private String soapType;
         private String defaultValue;
         private String label;
         private Boolean updateable;
@@ -182,6 +183,10 @@ public class DescribeSObject extends DescribeSObjectBasic {
 
         public String getType() {
             return type;
+        }
+
+        public String getSoapType() {
+            return soapType;
         }
 
         public String getDefaultValue() {

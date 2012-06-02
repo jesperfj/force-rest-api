@@ -30,6 +30,7 @@ public class DescribeTest {
 		DescribeSObject ds = api.describeSObject("Contact");
 		assertEquals("Contact", ds.getName());
 		assertNotNull(ds.getAllFields());
+		assertNotNull(ds.getAllFields().iterator().next().getSoapType());
 	}
 
     @Test
