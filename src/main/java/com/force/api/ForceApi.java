@@ -1,14 +1,8 @@
 package com.force.api;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.force.api.http.Http;
+import com.force.api.http.HttpRequest;
+import com.force.api.http.HttpResponse;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
@@ -18,9 +12,14 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.force.api.http.Http;
-import com.force.api.http.HttpRequest;
-import com.force.api.http.HttpResponse;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * main class for making API calls.
@@ -250,7 +249,31 @@ public class ForceApi {
 			throw new ResourceException(e);
 		}
 	}
-	
+
+    public <T> DiscoverSObject<T> discoverSObject(String sobject, Class<T> clazz) {
+        try {
+            HttpResponse res = apiRequest(new HttpRequest()
+                    .url(uriBase() + "/sobjects/" + sobject)
+                    .method("GET")
+                    .header("Accept", "application/json")
+                    .expectsCode(200));
+
+            final JsonNode root = jsonMapper.readTree(res.getStream());
+            final DescribeSObjectBasic describeSObjectBasic = jsonMapper.readValue(root.get("objectDescribe"), DescribeSObjectBasic.class);
+            final List<T> recentItems = new ArrayList<T>();
+            for(JsonNode item : root.get("recentItems")) {
+                recentItems.add(jsonMapper.readValue(item, clazz));
+            }
+            return new DiscoverSObject<T>(describeSObjectBasic, recentItems);
+        } catch (JsonParseException e) {
+            throw new ResourceException(e);
+        } catch (JsonMappingException e) {
+            throw new ResourceException(e);
+        } catch (IOException e) {
+            throw new ResourceException(e);
+        }
+    }
+
 	public DescribeSObject describeSObject(String sobject) {
 		try {
 			return jsonMapper.readValue(apiRequest(new HttpRequest()
