@@ -269,7 +269,7 @@ public class DescribeSObject {
         // soapType;
         private Boolean createable;
         private Boolean deprecatedAndHidden;
-        // picklistValues;
+        private List<PicklistValue> picklistValues;
         private Boolean autoNumber;
         private Boolean defaultedOnCreate;
         private Boolean groupable;
@@ -352,6 +352,10 @@ public class DescribeSObject {
             return deprecatedAndHidden;
         }
 
+        public List<PicklistValue> getPicklistValues() {
+            return picklistValues;
+        }
+
         public Boolean isAutoNumber() {
             return autoNumber;
         }
@@ -398,6 +402,41 @@ public class DescribeSObject {
 
         public Boolean isSortable() {
             return sortable;
+        }
+    }
+
+    /**
+     *
+     * This class represents a picklist value as given by a describe api call.
+     *
+     * @author jjauregui
+     */
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class PicklistValue {
+        private String value;
+        private Boolean active;
+        private String label;
+        private Boolean defaultValue;
+
+        public String getValue() {
+            return value;
+        }
+
+        public Boolean isActive() {
+            return active;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public Boolean isDefaultValue() {
+            return defaultValue;
+        }
+
+        public String toString() {
+            return "[Value=" + value + ", isActive=" + active + ", Label=" +
+                label + ", isDefaultValue=" + defaultValue + "]";
         }
     }
     
