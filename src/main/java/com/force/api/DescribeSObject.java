@@ -372,6 +372,10 @@ public class DescribeSObject {
             return relationshipName;
         }
         
+        public List<String> getReferenceTo() {
+            return referenceTo;
+        }
+
         public List<String> getReferenceToEntity() {
             return referenceTo;
         }
@@ -402,6 +406,10 @@ public class DescribeSObject {
 
         public Boolean isSortable() {
             return sortable;
+        }
+
+        public String toString() {
+            return name + ":" + type;
         }
     }
 
