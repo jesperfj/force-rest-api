@@ -252,6 +252,11 @@ gets you back to master from detached HEAD.
 
 # Release History
 
+## 0.0.19
+
+* @ryanbrainard added QueryMore and various other enhancements to make it work better with [RichSObjects](https://github.com/ryanbrainard/richsobjects)
+* @Burn0ut07 added PickListEntry support to DescribeSObject
+
 ## 0.0.18
 
 * Some relationship queries work now. See QueryTest for an example.
