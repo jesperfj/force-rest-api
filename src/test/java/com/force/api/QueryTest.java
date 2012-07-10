@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -39,15 +40,28 @@ public class QueryTest {
 
     @Test
     public void testQueryMore() throws Exception {
-        final QueryResult<Account> iniResult = api.query("SELECT name FROM Account LIMIT 2001", Account.class);
-        assertEquals(2000, iniResult.getRecords().size());
-        assertEquals(2001, iniResult.getTotalSize());
+        final int queryBatchSize = 2000;
+        final int exceedQueryBatchSize = 2001;
+
+        // make sure we have enough accounts before testing queries.
+        // this does not tear down because this is an expensive operations tests should be run against test org.
+        final int numAccts = api.query("SELECT count() FROM Account", Account.class).getTotalSize();
+        if (numAccts < exceedQueryBatchSize) {
+            int accountsNeeded = exceedQueryBatchSize - numAccts;
+            for (int i = 0; i < accountsNeeded; i++) {
+                api.createSObject("Account", Collections.singletonMap("Name", "TEST-ACCOUNT-" + i));
+            }
+        }
+
+        final QueryResult<Account> iniResult = api.query("SELECT name FROM Account LIMIT " + exceedQueryBatchSize, Account.class);
+        assertEquals(queryBatchSize, iniResult.getRecords().size());
+        assertEquals(exceedQueryBatchSize, iniResult.getTotalSize());
         assertFalse(iniResult.isDone());
         assertNotNull(iniResult.getNextRecordsUrl());
 
         final QueryResult<Map> moreResult = api.queryMore(iniResult.getNextRecordsUrl());
-        assertEquals(1, moreResult.getRecords().size());
-        assertEquals(2001, moreResult.getTotalSize());
+        assertEquals(exceedQueryBatchSize - queryBatchSize, moreResult.getRecords().size());
+        assertEquals(exceedQueryBatchSize, moreResult.getTotalSize());
         assertTrue(moreResult.isDone());
         assertNull(moreResult.getNextRecordsUrl());
     }
