@@ -254,8 +254,8 @@ gets you back to master from detached HEAD.
 
 ## 0.0.19
 
-* @ryanbrainard added QueryMore and various other enhancements to make it work better with [RichSObjects](https://github.com/ryanbrainard/richsobjects)
-* @Burn0ut07 added PickListEntry support to DescribeSObject
+* [ryanbrainard](https://github.com/ryanbrainard) added QueryMore and various other enhancements to make it work better with [RichSObjects](https://github.com/ryanbrainard/richsobjects)
+* [Burn0ut07](https://github.com/Burn0ut07) added PickListEntry support to DescribeSObject
 
 ## 0.0.18
 
