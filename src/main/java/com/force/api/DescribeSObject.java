@@ -269,7 +269,7 @@ public class DescribeSObject {
         // soapType;
         private Boolean createable;
         private Boolean deprecatedAndHidden;
-        private List<PicklistValue> picklistValues;
+        private List<PicklistEntry> picklistValues;
         private Boolean autoNumber;
         private Boolean defaultedOnCreate;
         private Boolean groupable;
@@ -352,7 +352,7 @@ public class DescribeSObject {
             return deprecatedAndHidden;
         }
 
-        public List<PicklistValue> getPicklistValues() {
+        public List<PicklistEntry> getPicklistValues() {
             return picklistValues;
         }
 
@@ -407,10 +407,6 @@ public class DescribeSObject {
         public Boolean isSortable() {
             return sortable;
         }
-
-        public String toString() {
-            return name + ":" + type;
-        }
     }
 
     /**
@@ -420,11 +416,12 @@ public class DescribeSObject {
      * @author jjauregui
      */
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class PicklistValue {
+    public static class PicklistEntry {
         private String value;
         private Boolean active;
         private String label;
         private Boolean defaultValue;
+        private byte[] validFor;
 
         public String getValue() {
             return value;
@@ -442,9 +439,8 @@ public class DescribeSObject {
             return defaultValue;
         }
 
-        public String toString() {
-            return "[Value=" + value + ", isActive=" + active + ", Label=" +
-                label + ", isDefaultValue=" + defaultValue + "]";
+        public byte[] getValidFor() {
+            return validFor;
         }
     }
     
