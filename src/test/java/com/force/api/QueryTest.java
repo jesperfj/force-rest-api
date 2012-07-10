@@ -6,11 +6,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class QueryTest {
 
@@ -37,9 +37,36 @@ public class QueryTest {
 		// Note, attribute names are capitalized by the Force.com REST API
 		assertNotNull(result.get(0).getName());
 	}
-	
-	
-	@Test
+
+    @Test
+    public void testQueryMore() throws Exception {
+        final int queryBatchSize = 2000;
+        final int exceedQueryBatchSize = 2001;
+
+        // make sure we have enough accounts before testing queries.
+        // this does not tear down because this is an expensive operations tests should be run against test org.
+        final int numAccts = api.query("SELECT count() FROM Account", Account.class).getTotalSize();
+        if (numAccts < exceedQueryBatchSize) {
+            int accountsNeeded = exceedQueryBatchSize - numAccts;
+            for (int i = 0; i < accountsNeeded; i++) {
+                api.createSObject("Account", Collections.singletonMap("Name", "TEST-ACCOUNT-" + i));
+            }
+        }
+
+        final QueryResult<Account> iniResult = api.query("SELECT name FROM Account LIMIT " + exceedQueryBatchSize, Account.class);
+        assertEquals(queryBatchSize, iniResult.getRecords().size());
+        assertEquals(exceedQueryBatchSize, iniResult.getTotalSize());
+        assertFalse(iniResult.isDone());
+        assertNotNull(iniResult.getNextRecordsUrl());
+
+        final QueryResult<Map> moreResult = api.queryMore(iniResult.getNextRecordsUrl());
+        assertEquals(exceedQueryBatchSize - queryBatchSize, moreResult.getRecords().size());
+        assertEquals(exceedQueryBatchSize, moreResult.getTotalSize());
+        assertTrue(moreResult.isDone());
+        assertNull(moreResult.getNextRecordsUrl());
+    }
+
+    @Test
 	public void testRelationshipQuery() throws JsonGenerationException, JsonMappingException, IOException {
 		Account a = new Account();
 		a.setName("force-rest-api-test-account");
