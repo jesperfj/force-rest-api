@@ -15,7 +15,7 @@ public class AuthorizationRequest {
 	
 	public enum Scope { 
 		ID ("id"),
-		API("api"), 
+		API("service"),
 		VISUALFORCE("visualforce"),
 		WEB("web"),
 		FULL("full"),

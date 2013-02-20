@@ -1,12 +1,9 @@
 package com.force.api;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.google.gson.Gson;
 
 import com.force.api.http.HttpResponse;
 
@@ -19,7 +16,6 @@ import com.force.api.http.HttpResponse;
  */
 public class ResourceRepresentation {
 	
-	public static final ObjectMapper jsonMapper = new ObjectMapper();
 
 	HttpResponse response;
 
@@ -28,39 +24,15 @@ public class ResourceRepresentation {
 	}
 
 	public <T> T as(Class<T> clazz) {
-		try {
-			return (T) jsonMapper.readValue(response.getStream(), clazz);
-		} catch (JsonParseException e) {
-			throw new ResourceException(e);
-		} catch (JsonMappingException e) {
-			throw new ResourceException(e);
-		} catch (IOException e) {
-			throw new ResourceException(e);
-		}
+		return (T) new Gson().fromJson(response.getString(), clazz);
 	}
 	
 	public Map<?,?> asMap() {
-		try {
-			return jsonMapper.readValue(response.getStream(), Map.class);
-		} catch (JsonParseException e) {
-			throw new ResourceException(e);
-		} catch (JsonMappingException e) {
-			throw new ResourceException(e);
-		} catch (IOException e) {
-			throw new ResourceException(e);
-		}
+		return new Gson().fromJson(response.getString(), Map.class);
 	}
 
 	public List<?> asList() {
-		try {
-			return jsonMapper.readValue(response.getStream(), List.class);
-		} catch (JsonParseException e) {
-			throw new ResourceException(e);
-		} catch (JsonMappingException e) {
-			throw new ResourceException(e);
-		} catch (IOException e) {
-			throw new ResourceException(e);
-		}
+	    return new Gson().fromJson(response.getString(), List.class);
 	}
 
 }

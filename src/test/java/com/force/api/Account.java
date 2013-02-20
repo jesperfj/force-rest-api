@@ -2,22 +2,20 @@ package com.force.api;
 
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 
-@JsonIgnoreProperties(ignoreUnknown=true)
 public class Account {
 
-	@JsonProperty(value="Id")
+	@SerializedName("Id")
 	String id;
-	@JsonProperty(value="Name")
+    @SerializedName("Name")
 	String name;
-	@JsonProperty(value="externalId__c")
-	String externalId;	
-	@JsonProperty(value="AnnualRevenue")
+    @SerializedName("externalId__c")
+	String externalId;
+    @SerializedName("AnnualRevenue")
 	private Double annualRevenue;
-	
-	@JsonProperty("Contacts")
+
+    @SerializedName("Contacts")
 	List<Contact> contacts;
 	
 	public String getId() {

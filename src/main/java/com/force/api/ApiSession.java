@@ -1,12 +1,14 @@
 package com.force.api;
 
+import com.google.gson.annotations.SerializedName;
+
 public class ApiSession implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	String accessToken;
-	String apiEndpoint;
-	String refreshToken;
+	@SerializedName("access_token") String accessToken;
+	@SerializedName("instance_url") String apiEndpoint;
+    @SerializedName("refresh_token") String refreshToken;
 
 	public ApiSession() {}
 	

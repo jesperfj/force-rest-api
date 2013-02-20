@@ -10,40 +10,36 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Map;
 
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.force.api.http.HttpResponse;
+import com.google.gson.Gson;
 
 import com.force.api.http.Http;
 import com.force.api.http.HttpRequest;
+import com.google.gson.GsonBuilder;
 
 public class Auth {
 
-	private static final ObjectMapper jsonMapper = new ObjectMapper();
+    final static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
 
-	static public final ApiSession oauthLoginPasswordFlow(ApiConfig c) {
+
+    static public final ApiSession oauthLoginPasswordFlow(ApiConfig c) {
 		if(c.getClientId()==null) throw new IllegalStateException("clientId cannot be null");
 		if(c.getClientSecret()==null) throw new IllegalStateException("clientSecret cannot be null");
 		if(c.getUsername()==null) throw new IllegalStateException("username cannot be null");
 		if(c.getPassword()==null) throw new IllegalStateException("password cannot be null");
 		try {
 			@SuppressWarnings("unchecked")
-			Map<String,Object> resp = jsonMapper.readValue(
-					Http.send(HttpRequest.formPost()
-						.url(c.getLoginEndpoint()+"/services/oauth2/token")
-						.param("grant_type","password")
-						.param("client_id",c.getClientId())
-						.param("client_secret", c.getClientSecret())
-						.param("username",c.getUsername())
-						.param("password",c.getPassword())
-					).getStream(),Map.class);
-			return new ApiSession((String)resp.get("access_token"),(String)resp.get("instance_url"));
-			
-		} catch (JsonParseException e) {
-			throw new RuntimeException(e);
-		} catch (JsonMappingException e) {
-			throw new RuntimeException(e);
-		} catch (IOException e) {
+            HttpResponse response =    Http.send(HttpRequest.formPost()
+                    .url(c.getLoginEndpoint()+"/services/oauth2/token")
+                    .param("grant_type","password")
+                    .param("client_id",c.getClientId())
+                    .param("client_secret", c.getClientSecret())
+                    .param("username",c.getUsername())
+                    .param("password",c.getPassword()));
+            ApiSession apiSession = gson.fromJson(response.getString(),ApiSession.class);
+            return apiSession;
+
+		}  catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -127,27 +123,17 @@ public class Auth {
 		if(res.code==null) throw new IllegalStateException("code cannot be null");
 		// TODO: throw a (runtime) exception with detailed info if auth failed
 		try {
-			Map<?,?> resp = jsonMapper.readValue(
-					Http.send(HttpRequest.formPost()
-						.url(res.apiConfig.getLoginEndpoint()+"/services/oauth2/token")
-						.header("Accept","application/json")
-						.param("grant_type","authorization_code")
-						.param("client_id",res.apiConfig.getClientId())
-						.param("client_secret", res.apiConfig.getClientSecret())
-						.param("redirect_uri",res.apiConfig.getRedirectURI())
-						.preEncodedParam("code",res.code)
-					).getStream(),Map.class);
+            HttpResponse response =    Http.send(HttpRequest.formPost()
+                    .url(res.apiConfig.getLoginEndpoint()+"/services/oauth2/token")
+                    .header("Accept","application/json")
+                    .param("grant_type","authorization_code")
+                    .param("client_id",res.apiConfig.getClientId())
+                    .param("client_secret", res.apiConfig.getClientSecret())
+                    .param("redirect_uri",res.apiConfig.getRedirectURI())
+                    .preEncodedParam("code",res.code));
+            return gson.fromJson(response.getString(),ApiSession.class);
 
-			return new ApiSession()
-					.setRefreshToken((String)resp.get("refresh_token"))
-					.setAccessToken((String)resp.get("access_token"))
-					.setApiEndpoint((String)resp.get("instance_url"));
-			
-		} catch (JsonParseException e) {
-			throw new RuntimeException(e);
-		} catch (JsonMappingException e) {
-			throw new RuntimeException(e);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -157,26 +143,16 @@ public class Auth {
 		if(config.getClientSecret()==null) throw new IllegalStateException("clientSecret cannot be null");
 		// TODO: throw a (runtime) exception with detailed info if auth failed
 		try {
-			Map<?,?> resp = jsonMapper.readValue(
-					Http.send(HttpRequest.formPost()
-						.url(config.getLoginEndpoint()+"/services/oauth2/token")
-						.header("Accept","application/json")
-						.param("grant_type","refresh_token")
-						.param("client_id",config.getClientId())
-						.param("client_secret", config.getClientSecret())
-						.param("refresh_token", refreshToken)
-					).getStream(),Map.class);
+            HttpResponse response =    Http.send(HttpRequest.formPost()
+                    .url(config.getLoginEndpoint()+"/services/oauth2/token")
+                    .header("Accept","application/json")
+                    .param("grant_type","refresh_token")
+                    .param("client_id",config.getClientId())
+                    .param("client_secret", config.getClientSecret())
+                    .param("refresh_token", refreshToken));
+            return gson.fromJson(response.getString(),ApiSession.class);
 
-			return new ApiSession()
-					.setAccessToken((String)resp.get("access_token"))
-					.setApiEndpoint((String)resp.get("instance_url"))
-					.setRefreshToken(refreshToken);
-			
-		} catch (JsonParseException e) {
-			throw new RuntimeException(e);
-		} catch (JsonMappingException e) {
-			throw new RuntimeException(e);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}

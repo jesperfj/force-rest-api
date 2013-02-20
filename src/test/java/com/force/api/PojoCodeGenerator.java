@@ -35,7 +35,7 @@ import com.force.api.DescribeSObject;
 import com.force.api.DescribeSObject.Field;
 
 /**
- * Generates plain old java objects from api describe calls
+ * Generates plain old java objects from service describe calls
  * 
  * @author gwester
  * @since 172

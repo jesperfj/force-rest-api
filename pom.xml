@@ -1,72 +1,117 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.force.api</groupId>
+
+    <groupId>force-rest-api</groupId>
     <artifactId>force-rest-api</artifactId>
-    <version>0.0.20-SNAPSHOT</version>
-    <name>force-rest-api</name>
-    <scm>
-        <connection>scm:git:https://github.com/jesperfj/force-rest-api.git</connection>
-        <developerConnection>scm:git:git@github.com:jesperfj/force-rest-api.git</developerConnection>
-        <tag>HEAD</tag>
-        <url>https://github.com/jesperfj/force-rest-api.git</url>
-    </scm>
-
-    <distributionManagement>
-      <repository>
-        <id>gh-pages</id>
-        <url>file:///${basedir}/release-repo/repository/</url>
-      </repository>
-    </distributionManagement>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-core-asl</artifactId>
-            <version>[1.9.1,1.9.7]</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
-            <version>[1.9.1,1.9.7]</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.10</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-        	<groupId>htmlunit</groupId>
-        	<artifactId>htmlunit</artifactId>
-        	<version>1.14</version>
-        	<scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlet</artifactId>
-            <version>7.4.5.v20110725</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
-            <scope>test</scope>
-        </dependency>
-
-    </dependencies>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>bundle</packaging>
+    <name>${project.artifactId}</name>
     <build>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
                 <configuration>
+                    <compilerVersion>1.6</compilerVersion>
                     <source>1.6</source>
                     <target>1.6</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-scr-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Implementation-Version>${project.version}</Implementation-Version>
+                        <Implementation-Title>${project.name}</Implementation-Title>
+                        <Implementation-Vendor>${project.groupId}</Implementation-Vendor>
+                        <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Version>${project.version}</Bundle-Version>
+                        <Bundle-Category>${project.groupId}</Bundle-Category>
+                        <Bundle-Name>${project.groupId}.${project.artifactId}</Bundle-Name>
+                        <Bundle-Description>${project.groupId}.${project.artifactId}</Bundle-Description>
+                        <Export-Package>com.force.api.*
+                        </Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <!-- Attached to the install phase, the generated bundle will automatically
+                be deployed and installed to the specified Sling / CRX instance. This plugin
+                is specially relevant during development and makes development more agile
+                and helps streamlining the development flow. -->
+            <plugin>
+                <groupId>org.apache.sling</groupId>
+                <artifactId>maven-sling-plugin</artifactId>
+            </plugin>
         </plugins>
     </build>
+    <dependencies>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>1.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- test stuff -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!--<dependency>
+            <groupId>jetty</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5-6.0.2</version>
+            <scope>test</scope>
+        </dependency>  -->
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>8.1.0.RC2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>htmlunit</groupId>
+            <artifactId>htmlunit</artifactId>
+            <version>1.14</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>2.2.2</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- test stuff -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.8.2</version>
+                <scope>provided</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

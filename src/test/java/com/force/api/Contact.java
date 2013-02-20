@@ -1,28 +1,26 @@
 package com.force.api;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 
-@JsonIgnoreProperties(ignoreUnknown=true)
 
 public class Contact {
 
-    @JsonProperty(value="Id")
+    @SerializedName("Id")
     private String id;
-    
-	@JsonProperty("Email")
+
+    @SerializedName("Email")
 	private String email;
-	
-	@JsonProperty("FirstName")
+
+    @SerializedName("FirstName")
 	private String firstName;
 
-	@JsonProperty("LastName")
+    @SerializedName("LastName")
 	private String lastName;
 
-	@JsonProperty("AccountId")
+    @SerializedName("AccountId")
 	private String accountId;
 
-    @JsonProperty("Account")
+    @SerializedName("Account")
     private Account account;
 
     public String getId() {

@@ -2,5 +2,6 @@ target
 .classpath
 .project
 .settings
+*.iml
 test.properties
 release-repo
