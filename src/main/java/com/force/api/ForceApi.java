@@ -28,8 +28,6 @@ import java.util.Map.Entry;
  */
 public class ForceApi {
 
-
-
 	final ApiConfig config;
 	ApiSession session;
 	private boolean autoRenew = false;

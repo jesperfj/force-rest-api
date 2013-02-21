@@ -3,8 +3,6 @@ package com.force.api;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gson.Gson;
-
 import com.force.api.http.HttpResponse;
 
 /**
@@ -15,24 +13,23 @@ import com.force.api.http.HttpResponse;
  *
  */
 public class ResourceRepresentation {
-	
 
-	HttpResponse response;
+    HttpResponse response;
 
 	public ResourceRepresentation(HttpResponse value) {
 		response = value;
 	}
 
 	public <T> T as(Class<T> clazz) {
-		return (T) new Gson().fromJson(response.getString(), clazz);
+		return (T) ForceApi.gson.fromJson(response.getString(), clazz);
 	}
 	
 	public Map<?,?> asMap() {
-		return new Gson().fromJson(response.getString(), Map.class);
+		return ForceApi.gson.fromJson(response.getString(), Map.class);
 	}
 
 	public List<?> asList() {
-	    return new Gson().fromJson(response.getString(), List.class);
+	    return ForceApi.gson.fromJson(response.getString(), List.class);
 	}
 
 }
