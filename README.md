@@ -1,6 +1,9 @@
 # Force.com REST API Connector
 
 Lightweight library for building Force.com apps with OAuth authentication and data access through the Force.com REST API.
+Forked
+* to replace jackson by gson
+* to make it a felix/osgi bundle
 
 # Usage
 
@@ -10,39 +13,6 @@ You can either include as a dependency and pull the module from its github maven
 
 The version number is bumped regularly. Check the tags list or commit messages for latest version.
 
-### Maven
-
-    <repositories>
-        <repository>
-            <id>force-rest-api</id>
-            <name>force-rest-api repository on GitHub</name>
-            <url>http://jesperfj.github.com/force-rest-api/repository/</url>            
-        </repository>
-    </repositories>
-
-    ...
-    
-    <dependency>
-        <groupId>com.force.api</groupId>
-        <artifactId>force-rest-api</artifactId>
-        <version>0.0.15</version>
-    </dependency>
-
-## Build and link locally
-
-    $ git clone https://github.com/jesperfj/force-rest-api.git
-    $ cd force-rest-api
-    $ mvn install -DskipTests
-
-### Maven
-
-The latest HEAD always builds to a snapshot:
-
-    <dependency>
-        <groupId>com.force.api</groupId>
-        <artifactId>force-rest-api</artifactId>
-        <version>0.0.16-SNAPSHOT</version>
-    </dependency>
 
 ## Authentication and Instantiation
 
@@ -170,7 +140,8 @@ This project currently only has integration-y tests (they hit the actual API). T
 
 ### Login and password
 
-Add your Force.com developer org login and password. Needless to say, don't use credentials for a production org containing sensitive data. If you don't have a developer org, [sign up for one](http://www.developerforce.com/events/regular/registration.php?d=70130000000EjHb). It's free.
+Add your Force.com developer org login and password. Needless to say, don't use credentials for a production org containing sensitive data.
+If you don't have a developer org, [sign up for one](http://www.developerforce.com/events/regular/registration.php?d=70130000000EjHb). It's free.
 
 ### Client ID and Secret
 
@@ -201,56 +172,11 @@ Now run tests with
 
     $ mvn test
 
-# Cutting a Release
-
-This project uses the Maven release plugin with Github pages as Maven repo to facilitate quick releases. Snapshots are never released. They are reserved for local builds. See [Christian Kaltepoth's post](http://chkal.blogspot.com/2010/09/maven-repositories-on-github.html) for an excellent guide to setting up Github pages as a maven repo. To cut a release: (adjust repo references as necessary below if you're on a fork or doing this on your own repo)
-
-### Clone this repo
-
-    $ git clone git@github.com:jesperfj/force-rest-api.git
-
-### Clone the github pages branch of this repo into `release-repo` sub-dir
-
-    $ cd force-rest-api
-    $ git clone -b gh-pages git@github.com:jesperfj/force-rest-api.git release-repo
-
-### Prepare a new release
-
-Set up your test properties as described above in the testing section. Tests must pass. Edit `pom.xml` and adjust the SCM information to match your repo and github info if different from this one. Run
-
-    $ mvn release:prepare
-
-This will create a couple of commits and push to your github repo. A new release has now been created and snapshotted in github, but it has not yet actually been built and deployed.
-
-### Build and deploy the new release
-
-You can't use `mvn release:perform` because it will be missing your test fixture. Instead just do it manually. Check out the commit that was tagged as the new release. Something like:
-
-    $ git checkout force-rest-api-0.0.4
-
-Build and deploy
-
-    $ mvn clean deploy -DupdateReleaseInfo
-
-Commit the new release and push to gh-pages
-
-    $ cd release-repo
-    $ git add .
-    $ git commit -m "Release 0.0.4"
-    $ git push origin gh-pages
-
-### Clean up
-
-    $ cd ..
-    $ mvn release:clean
-
-(deletes temporary and backup files)
-
-    $ git checkout master
-
-gets you back to master from detached HEAD.
 
 # Release History
+
+## 1.gson.0
+* [francoisledroff] (https://github.com/francoisledroff) replaced jackson by gson, made it a felix/osgi bundle
 
 ## 0.0.19
 
