@@ -3,22 +3,12 @@ package com.force.api;
 import com.force.api.http.Http;
 import com.force.api.http.HttpRequest;
 import com.force.api.http.HttpResponse;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.node.JsonNodeFactory;
-import org.codehaus.jackson.node.ObjectNode;
+import com.google.gson.*;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 /**
@@ -38,16 +28,11 @@ import java.util.Map.Entry;
  */
 public class ForceApi {
 
-	private static final ObjectMapper jsonMapper;
-
-	static {
-		jsonMapper = new ObjectMapper();
-		jsonMapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
-	}
-
 	final ApiConfig config;
 	ApiSession session;
 	private boolean autoRenew = false;
+
+    final static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
 
 	public ForceApi(ApiConfig config, ApiSession session) {
 		this.config = config;
@@ -69,32 +54,23 @@ public class ForceApi {
 	}
 
 
-	public Identity getIdentity() {
-		try {
+    public Identity getIdentity()
+    {
+        @SuppressWarnings("unchecked")
+        HttpResponse response = apiRequest(new HttpRequest()
+                .url(uriBase())
+                .method("GET")
+                .header("Accept", "application/json")
+        );
+        Map<String, Object> resp = gson.fromJson(response.getString(), Map.class);
 
-			@SuppressWarnings("unchecked")
-			Map<String,Object> resp = jsonMapper.readValue(
-					apiRequest(new HttpRequest()
-						.url(uriBase())
-						.method("GET")
-						.header("Accept", "application/json")
-					).getStream(),Map.class);
-
-			return jsonMapper.readValue(
-					apiRequest(new HttpRequest()
-						.url((String) resp.get("identity"))
-						.method("GET")
-						.header("Accept", "application/json")
-					).getStream(), Identity.class);
-		} catch (JsonParseException e) {
-			throw new RuntimeException(e);
-		} catch (JsonMappingException e) {
-			throw new RuntimeException(e);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-
-	}
+        return gson.fromJson(
+                apiRequest(new HttpRequest()
+                        .url((String) resp.get("identity"))
+                        .method("GET")
+                        .header("Accept", "application/json")
+                ).getString(), Identity.class);
+    }
 
 
 	public ResourceRepresentation getSObject(String type, String id) throws ResourceException {
@@ -107,52 +83,42 @@ public class ForceApi {
 	}
 
 	public String createSObject(String type, Object sObject) {
-		try {
-			// We're trying to keep Http classes clean with no reference to JSON/Jackson
+
+			// We're trying to keep Http classes clean with no reference to JSON
 			// Therefore, we serialize to bytes before we pass object to HttpRequest().
 			// But it would be nice to have a streaming implementation. We can do that
 			// by using ObjectMapper.writeValue() passing in output stream, but then we have
 			// polluted the Http layer.
-			CreateResponse result = jsonMapper.readValue(apiRequest(new HttpRequest()
+            byte[] sObjectAsJsonBytes = gson.toJson(sObject).getBytes();
+ 			CreateResponse result = gson.fromJson(apiRequest(new HttpRequest()
 					.url(uriBase()+"/sobjects/"+type)
 					.method("POST")
 					.header("Accept", "application/json")
 					.header("Content-Type", "application/json")
 					.expectsCode(201)
-					.content(jsonMapper.writeValueAsBytes(sObject))).getStream(),CreateResponse.class);
+					.content(sObjectAsJsonBytes)).getString(),CreateResponse.class);
 
 			if (result.isSuccess()) {
 				return (result.getId());
 			} else {
 				throw new SObjectException(result.getErrors());
 			}
-		} catch (JsonGenerationException e) {
-			throw new ResourceException(e);
-		} catch (JsonMappingException e) {
-			throw new ResourceException(e);
-		} catch (IOException e) {
-			throw new ResourceException(e);
-		}
+
 	}
 
 	public void updateSObject(String type, String id, Object sObject) {
-		try {
+
 			// See createSObject for note on streaming ambition
+            byte[] sObjectAsJsonBytes = gson.toJson(sObject).getBytes();
 			apiRequest(new HttpRequest()
 				.url(uriBase()+"/sobjects/"+type+"/"+id+"?_HttpMethod=PATCH")
 				.method("POST")
 				.header("Accept", "application/json")
 				.header("Content-Type", "application/json")
 				.expectsCode(204)
-				.content(jsonMapper.writeValueAsBytes(sObject))
+				.content(sObjectAsJsonBytes)
 			);
-		} catch (JsonGenerationException e) {
-			throw new ResourceException(e);
-		} catch (JsonMappingException e) {
-			throw new ResourceException(e);
-		} catch (IOException e) {
-			throw new ResourceException(e);
-		}
+
 	}
 
 	public void deleteSObject(String type, String id) {
@@ -165,13 +131,14 @@ public class ForceApi {
 	public CreateOrUpdateResult createOrUpdateSObject(String type, String externalIdField, String externalIdValue, Object sObject) {
 		try {
 			// See createSObject for note on streaming ambition
+            byte[] sObjectAsJsonBytes = gson.toJson(sObject).getBytes();
 			HttpResponse res =
 				apiRequest(new HttpRequest()
 					.url(uriBase()+"/sobjects/"+type+"/"+externalIdField+"/"+URLEncoder.encode(externalIdValue,"UTF-8")+"?_HttpMethod=PATCH")
 					.method("POST")
 					.header("Accept", "application/json")
 					.header("Content-Type", "application/json")
-					.content(jsonMapper.writeValueAsBytes(sObject))
+					.content(sObjectAsJsonBytes)
 				);
 			if(res.getResponseCode()==201) {
 				return CreateOrUpdateResult.CREATED;
@@ -183,11 +150,7 @@ public class ForceApi {
 				throw new RuntimeException();
 			}
 
-		} catch (JsonGenerationException e) {
-			throw new ResourceException(e);
-		} catch (JsonMappingException e) {
-			throw new ResourceException(e);
-		} catch (IOException e) {
+		}  catch (IOException e) {
 			throw new ResourceException(e);
 		}
 	}
@@ -212,98 +175,73 @@ public class ForceApi {
         return queryMore(nextRecordsUrl, Map.class);
     }
 
+
     private <T> QueryResult<T> queryAny(String queryUrl, Class<T> clazz) {
-        try {
-            HttpResponse res = apiRequest(new HttpRequest()
-                    .url(queryUrl)
-                    .method("GET")
-                    .header("Accept", "application/json")
-                    .expectsCode(200));
 
-            // We build the result manually, because we can't pass the type information easily into
-            // the JSON parser mechanism.
+        HttpResponse res = apiRequest(new HttpRequest()
+                .url(queryUrl)
+                .method("GET")
+                .header("Accept", "application/json")
+                .expectsCode(200));
 
-            QueryResult<T> result = new QueryResult<T>();
-            JsonNode root = jsonMapper.readTree(res.getStream());
-            result.setDone(root.get("done").getBooleanValue());
-            result.setTotalSize(root.get("totalSize").getIntValue());
-            if (root.get("nextRecordsUrl") != null) {
-                result.setNextRecordsUrl(root.get("nextRecordsUrl").getTextValue());
-            }
-            List<T> records = new ArrayList<T>();
-            for (JsonNode elem : root.get("records")) {
-                records.add(jsonMapper.readValue(normalizeCompositeResponse(elem), clazz));
-            }
-            result.setRecords(records);
-            return result;
-        } catch (JsonParseException e) {
-            throw new ResourceException(e);
-        } catch (JsonMappingException e) {
-            throw new ResourceException(e);
-        } catch (IOException e) {
-            throw new ResourceException(e);
+        // We build the result manually, because we can't pass the type information easily into
+        // the JSON parser mechanism.
+
+        QueryResult<T> result = new QueryResult<T>();
+        JsonObject root = new JsonParser().parse(res.getString()).getAsJsonObject();
+        result.setDone(root.get("done").getAsBoolean());
+        result.setTotalSize(root.get("totalSize").getAsInt());
+        if (root.get("nextRecordsUrl") != null)
+        {
+            result.setNextRecordsUrl(root.get("nextRecordsUrl").getAsString());
         }
+        List<T> records = new ArrayList<T>();
+        for (JsonElement elem : root.get("records").getAsJsonArray())
+        {
+            records.add(gson.fromJson(normalizeCompositeResponse(elem.getAsJsonObject()), clazz));
+        }
+        result.setRecords(records);
+        return result;
+
     }
 
-    public DescribeGlobal describeGlobal() {
-		try {
-			return jsonMapper.readValue(apiRequest(new HttpRequest()
-					.url(uriBase()+"/sobjects/")
-					.method("GET")
-					.header("Accept", "application/json")).getStream(),DescribeGlobal.class);
-		} catch (JsonParseException e) {
-			throw new ResourceException(e);
-		} catch (JsonMappingException e) {
-			throw new ResourceException(e);
-		} catch (UnsupportedEncodingException e) {
-			throw new ResourceException(e);
-		} catch (IOException e) {
-			throw new ResourceException(e);
-		}
-	}
-
-    public <T> DiscoverSObject<T> discoverSObject(String sobject, Class<T> clazz) {
-        try {
-            HttpResponse res = apiRequest(new HttpRequest()
-                    .url(uriBase() + "/sobjects/" + sobject)
-                    .method("GET")
-                    .header("Accept", "application/json")
-                    .expectsCode(200));
-
-            final JsonNode root = jsonMapper.readTree(res.getStream());
-            final DescribeSObjectBasic describeSObjectBasic = jsonMapper.readValue(root.get("objectDescribe"), DescribeSObjectBasic.class);
-            final List<T> recentItems = new ArrayList<T>();
-            for(JsonNode item : root.get("recentItems")) {
-                recentItems.add(jsonMapper.readValue(item, clazz));
-            }
-            return new DiscoverSObject<T>(describeSObjectBasic, recentItems);
-        } catch (JsonParseException e) {
-            throw new ResourceException(e);
-        } catch (JsonMappingException e) {
-            throw new ResourceException(e);
-        } catch (IOException e) {
-            throw new ResourceException(e);
-        }
+    public DescribeGlobal describeGlobal()
+    {
+        return gson.fromJson(apiRequest(new HttpRequest()
+                .url(uriBase() + "/sobjects/")
+                .method("GET")
+                .header("Accept", "application/json")).getString(), DescribeGlobal.class);
     }
 
-	public DescribeSObject describeSObject(String sobject) {
-		try {
-			return jsonMapper.readValue(apiRequest(new HttpRequest()
-					.url(uriBase()+"/sobjects/"+sobject+"/describe")
-					.method("GET")
-					.header("Accept", "application/json")).getStream(),DescribeSObject.class);
-		} catch (JsonParseException e) {
-			throw new ResourceException(e);
-		} catch (JsonMappingException e) {
-			throw new ResourceException(e);
-		} catch (UnsupportedEncodingException e) {
-			throw new ResourceException(e);
-		} catch (IOException e) {
-			throw new ResourceException(e);
-		}
-	}
-	
-	private final String uriBase() {
+    public <T> DiscoverSObject<T> discoverSObject(String sobject, Class<T> clazz)
+    {
+        HttpResponse res = apiRequest(new HttpRequest()
+                .url(uriBase() + "/sobjects/" + sobject)
+                .method("GET")
+                .header("Accept", "application/json")
+                .expectsCode(200));
+
+        JsonObject root = new JsonParser().parse(res.getString()).getAsJsonObject();
+
+        final DescribeSObjectBasic describeSObjectBasic = gson.fromJson(root.get("objectDescribe"), DescribeSObjectBasic.class);
+        final List<T> recentItems = new ArrayList<T>();
+        for (JsonElement item : root.get("recentItems").getAsJsonArray())
+        {
+            recentItems.add(gson.fromJson(item, clazz));
+        }
+        return new DiscoverSObject<T>(describeSObjectBasic, recentItems);
+    }
+
+    public DescribeSObject describeSObject(String sobject)
+    {
+       return gson.fromJson(apiRequest(new HttpRequest()
+                .url(uriBase() + "/sobjects/" + sobject + "/describe")
+                .method("GET")
+                .header("Accept", "application/json")).getString(), DescribeSObject.class);
+
+    }
+
+    private final String uriBase() {
 		return(session.getApiEndpoint()+"/services/data/"+config.getApiVersion());
 	}
 	
@@ -400,27 +338,25 @@ public class ForceApi {
 	 *	} 
 	 * </code
 	 * 
-	 * This allows Jackson to deserialize the response into it's corresponding Object representation
+	 * This allows Gson to deserialize the response into it's corresponding Object representation
 	 * 
 	 * @param node 
 	 * @return
 	 */
-	private final JsonNode normalizeCompositeResponse(JsonNode node){
-		Iterator<Entry<String, JsonNode>> elements = node.getFields();
-		ObjectNode newNode = JsonNodeFactory.instance.objectNode();
-		Entry<String, JsonNode> currNode;
-		while(elements.hasNext()){
-			currNode = elements.next();
+	private final JsonObject  normalizeCompositeResponse(JsonObject node){
 
-			newNode.put(currNode.getKey(), 
-						(		currNode.getValue().isObject() && 
-								currNode.getValue().get("records")!=null
+        Set<Entry<String, JsonElement>> elements= node.entrySet();
+		JsonObject newNode = new JsonObject();
+        for (Entry<String, JsonElement> currNode : elements)
+        {
+			newNode.add(currNode.getKey(),
+						(		currNode.getValue().isJsonObject() &&
+								currNode.getValue().getAsJsonObject().get("records")!=null
 						)?
-								currNode.getValue().get("records"):
+                                currNode.getValue().getAsJsonObject().get("records"):
 									currNode.getValue()
 					);
 		}
 		return newNode;
-		
 	}
 }

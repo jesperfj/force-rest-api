@@ -3,33 +3,36 @@ package com.force.api;
 import java.util.Date;
 import java.util.Map;
 
-import org.codehaus.jackson.annotate.JsonSetter;
+import com.google.gson.annotations.SerializedName;
 
-//@JsonIgnoreProperties(ignoreUnknown = true)
 public class Identity {
 	
 	String id;
-	boolean assertedUser;
-	String userId;
-	String organizationId;
+    @SerializedName("asserted_user")boolean assertedUser;
+    @SerializedName("user_id") String userId;
+    @SerializedName("organization_id") String organizationId;
 	String username;
-	String nickName;
-	String displayName;
+    @SerializedName("nick_name") String nickName;
+    @SerializedName("display_name") String displayName;
 	String email;
-	String firstName;
-	String lastName;
+    @SerializedName("first_name") String firstName;
+    @SerializedName("last_name") String lastName;
 	Status status;
 	Map<String, String> photos;
 	Map<String, String> urls;
 	boolean isActive;
-	String userType;
+    @SerializedName("user_type") String userType;
 	String language;
 	String locale;
 	long utcOffset;
-	Date lastModifiedDate;
+    @SerializedName("last_modified_date") Date lastModifiedDate;
+
+
+
 	
 	public class Status {
-		
+
+        @SerializedName("created_date")
 		Date createdDate;
 		String body;
 		public Date getCreatedDate() {
@@ -39,7 +42,6 @@ public class Identity {
 			return body;
 		}
 
-		@JsonSetter(value="created_date")
 		public void setCreatedDate(Date createdDate) {
 			this.createdDate = createdDate;
 		}
@@ -47,7 +49,6 @@ public class Identity {
 			this.body = body;
 		}
 
-		
 	}
 
 	public String getId() {
@@ -130,17 +131,14 @@ public class Identity {
 		this.id = id;
 	}
 
-	@JsonSetter(value="asserted_user")
 	public void setAssertedUser(boolean assertedUser) {
 		this.assertedUser = assertedUser;
 	}
 
-	@JsonSetter(value="user_id")
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 
-	@JsonSetter(value="organization_id")
 	public void setOrganizationId(String organizationId) {
 		this.organizationId = organizationId;
 	}
@@ -149,12 +147,10 @@ public class Identity {
 		this.username = username;
 	}
 
-	@JsonSetter(value="nick_name")
 	public void setNickName(String nickName) {
 		this.nickName = nickName;
 	}
 
-	@JsonSetter(value="display_name")
 	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
 	}
@@ -163,12 +159,10 @@ public class Identity {
 		this.email = email;
 	}
 
-	@JsonSetter(value="first_name")
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
 
-	@JsonSetter(value="last_name")
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
@@ -189,7 +183,6 @@ public class Identity {
 		this.isActive = isActive;
 	}
 
-	@JsonSetter(value="user_type")
 	public void setUserType(String userType) {
 		this.userType = userType;
 	}
@@ -206,7 +199,6 @@ public class Identity {
 		this.utcOffset = utcOffset;
 	}
 
-	@JsonSetter(value="last_modified_date")
 	public void setLastModifiedDate(Date lastModifiedDate) {
 		this.lastModifiedDate = lastModifiedDate;
 	}

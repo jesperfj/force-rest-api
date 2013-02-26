@@ -16,7 +16,7 @@ public class SessionRefreshTest {
 			.setClientSecret(Fixture.get("clientSecret")));
 
 		assertNotNull(api.getIdentity());
-		// This call is not available in public api
+		// This call is not available in public service
 		Auth.revokeToken(api.config, api.session.accessToken);
 
 		Identity id = null;
@@ -25,7 +25,7 @@ public class SessionRefreshTest {
 				id = api.getIdentity();
 			} catch(Throwable t) {
 				System.out.println("Got "+t);
-				System.out.println("Attempt "+(i+1)+"/5: api failed to refresh after revoking token.");
+				System.out.println("Attempt "+(i+1)+"/5: service failed to refresh after revoking token.");
 				try {
 					Thread.sleep(2000);
 				} catch(InterruptedException e) {}

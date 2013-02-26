@@ -25,8 +25,6 @@
  */
 package com.force.api;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
 import java.util.*;
 
 /**
@@ -36,7 +34,6 @@ import java.util.*;
  * @author gwester
  * @since 172
  */
-@JsonIgnoreProperties(ignoreUnknown=true)
 public class DescribeSObject extends DescribeSObjectBasic {
 
     private List<Field> fields;
@@ -137,7 +134,6 @@ public class DescribeSObject extends DescribeSObjectBasic {
      * @author gwester
      * @since 170
      */
-    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Field {
         private Integer length;
         private String name;
@@ -304,11 +300,10 @@ public class DescribeSObject extends DescribeSObjectBasic {
 
     /**
      *
-     * This class represents a picklist value as given by a describe api call.
+     * This class represents a picklist value as given by a describe service call.
      *
      * @author jjauregui
      */
-    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class PicklistEntry {
         private String value;
         private Boolean active;
@@ -344,7 +339,6 @@ public class DescribeSObject extends DescribeSObjectBasic {
      * @author gwester
      * @since 170
      */
-    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class ChildEntity {
         private String field;
         private String childSObject;

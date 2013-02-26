@@ -1,7 +1,5 @@
 package com.force.api;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -67,9 +65,9 @@ public class QueryTest {
     }
 
     @Test
-	public void testRelationshipQuery() throws JsonGenerationException, JsonMappingException, IOException {
+	public void testRelationshipQuery()  {
 		Account a = new Account();
-		a.setName("force-rest-api-test-account");
+		a.setName("force-rest-service-test-account");
 		String id = api.createSObject("account", a);
 		a.setId(id);
 		Contact ct = new Contact("force@test.com","FirstName","LastName");

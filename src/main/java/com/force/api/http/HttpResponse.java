@@ -1,37 +1,48 @@
 package com.force.api.http;
 
+
+import org.apache.commons.io.IOUtils;
+
+import java.io.IOException;
 import java.io.InputStream;
 
 public class HttpResponse {
 	
-	private String stringResponse;
 	private byte[] byteResponse;
-	private InputStream streamResponse;
 	private int responseCode;
 
 	public int getResponseCode() {
 		return responseCode;
 	}
 	public String getString() {
-		return stringResponse;
-	}
+        if (byteResponse!=null)
+            return new String(byteResponse);
+        else
+            return null;
+    }
 	public byte[] getByte() {
 		return byteResponse;
 	}
-	public InputStream getStream() {
-		return streamResponse;
-	}
+
 	public HttpResponse setString(String stringResponse) {
-		this.stringResponse = stringResponse;
+		this.byteResponse = stringResponse.getBytes();
 		return this;
 	}
 	public HttpResponse setByte(byte[] byteResponse) {
 		this.byteResponse = byteResponse;
 		return this;
 	}
-	public HttpResponse setStream(InputStream streamResponse) {
-		this.streamResponse = streamResponse;
-		return this;
+	public HttpResponse  setStream(InputStream streamResponse) {
+        try
+        {
+            this.byteResponse = IOUtils.toByteArray(streamResponse);
+            return this;
+        }
+        catch (IOException e)
+        {
+           throw new RuntimeException(e); //TODO ugly stuff
+        }
+
 	}
 	
 	public HttpResponse setResponseCode(int value) {

@@ -1,13 +1,10 @@
 package com.force.api;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
 import java.util.Map;
 
 /**
  * @author Ryan Brainard
  */
-@JsonIgnoreProperties(ignoreUnknown=true)
 public class DescribeSObjectBasic {
 
     private String name;

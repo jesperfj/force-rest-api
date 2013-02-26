@@ -14,7 +14,7 @@ import org.junit.Test;
  */
 public class BasicCRUDTest {
 
-	static final String TEST_NAME = "force-rest-api basic crud test";
+	static final String TEST_NAME = "force-rest-service basic crud test";
 
 	@Test
 	public void basicCRUDTest() {

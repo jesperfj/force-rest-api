@@ -1,10 +1,7 @@
 package com.force.api;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
 import java.util.List;
 
-@JsonIgnoreProperties(ignoreUnknown=true)
 public class DescribeGlobal {
 
     private String encoding;
