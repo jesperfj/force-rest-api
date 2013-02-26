@@ -6,13 +6,30 @@
 
     <groupId>force-rest-api</groupId>
     <artifactId>force-rest-api</artifactId>
-    <version>1.fld.0-SNAPSHOT</version>
+    <version>1.gson.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>${project.artifactId}</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
      </properties>
+
+    <scm>
+        <connection>scm:git:https://github.com/francoisledroff/force-rest-api.git</connection>
+        <url>scm:git:https://github.com/francoisledroff/force-rest-api.git</url>
+        <developerConnection>scm:git:https://github.com/francoisledroff/force-rest-api.git</developerConnection>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>hub-releases</id>
+            <url>http://bsi-nexus.corp.adobe.com:8080/nexus/content/repositories/hub-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>hub-snapshots</id>
+            <url>http://bsi-nexus.corp.adobe.com:8080/nexus/content/repositories/hub-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <build>
 
