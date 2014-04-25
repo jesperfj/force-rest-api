@@ -25,7 +25,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
-import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
+import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
 public class EndToEndOAuthFlowTest {
@@ -61,7 +61,7 @@ public class EndToEndOAuthFlowTest {
         final WebClient webClient = new WebClient();
         final HtmlPage page = (HtmlPage) webClient.getPage(url);
         HtmlForm form = page.getFormByName("login");
-        final HtmlSubmitInput submit = (HtmlSubmitInput) form.getInputByName("Login");
+        final HtmlButton submit = (HtmlButton) form.getButtonByName("Login");
         final HtmlTextInput username = (HtmlTextInput) form.getInputByName("username");
         final HtmlPasswordInput password = (HtmlPasswordInput) form.getInputByName("pw");
 
