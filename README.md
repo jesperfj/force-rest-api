@@ -25,7 +25,7 @@ The version number is bumped regularly. Check the tags list or commit messages f
     <dependency>
         <groupId>com.force.api</groupId>
         <artifactId>force-rest-api</artifactId>
-        <version>0.0.15</version>
+        <version>0.0.20</version>
     </dependency>
 
 ## Build and link locally
@@ -226,7 +226,7 @@ This will create a couple of commits and push to your github repo. A new release
 
 You can't use `mvn release:perform` because it will be missing your test fixture. Instead just do it manually. Check out the commit that was tagged as the new release. Something like:
 
-    $ git checkout force-rest-api-0.0.4
+    $ git checkout force-rest-api-0.0.21
 
 Build and deploy
 
@@ -236,7 +236,7 @@ Commit the new release and push to gh-pages
 
     $ cd release-repo
     $ git add .
-    $ git commit -m "Release 0.0.4"
+    $ git commit -m "Release 0.0.21"
     $ git push origin gh-pages
 
 ### Clean up
@@ -254,7 +254,7 @@ gets you back to master from detached HEAD.
 
 ## 0.0.20
 
-* [thysmichels](https://github.com/thysmichels) noticed that Spring 14 broke this library because src/main/java/com/force/api/http/Identity.java was set to strictly map to the underlying JSON resource. This class now uses `ignoreUnknown=true` so it should be more robust to changes.
+* [thysmichels](https://github.com/thysmichels) noticed that Spring 14 broke this library because [Identity.java](src/main/java/com/force/api/Identity.java) was set to strictly map to the underlying JSON resource. This class now uses `ignoreUnknown=true` so it should be more robust to changes.
 
 ## 0.0.19
 
