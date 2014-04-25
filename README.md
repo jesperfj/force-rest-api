@@ -252,6 +252,10 @@ gets you back to master from detached HEAD.
 
 # Release History
 
+## 0.0.20
+
+* [thysmichels](https://github.com/thysmichels) noticed that Spring 14 broke this library because src/main/java/com/force/api/http/Identity.java was set to strictly map to the underlying JSON resource. This class now uses `ignoreUnknown=true` so it should be more robust to changes.
+
 ## 0.0.19
 
 * [ryanbrainard](https://github.com/ryanbrainard) added QueryMore and various other enhancements to make it work better with [RichSObjects](https://github.com/ryanbrainard/richsobjects)
