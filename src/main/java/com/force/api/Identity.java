@@ -4,8 +4,9 @@ import java.util.Date;
 import java.util.Map;
 
 import org.codehaus.jackson.annotate.JsonSetter;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
-//@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Identity {
 	
 	String id;
