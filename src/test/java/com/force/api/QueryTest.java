@@ -20,7 +20,8 @@ public class QueryTest {
 	public void init() {
 		api = new ForceApi(new ApiConfig()
 		.setUsername(Fixture.get("username"))
-		.setPassword(Fixture.get("password")));
+		.setPassword(Fixture.get("password"))
+		.setLoginEndpoint(Fixture.get("loginEndpoint")));
 	}
 	
 	@Test

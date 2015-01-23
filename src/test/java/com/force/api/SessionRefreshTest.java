@@ -13,7 +13,8 @@ public class SessionRefreshTest {
 			.setUsername(Fixture.get("username"))
 			.setPassword(Fixture.get("password"))
 			.setClientId(Fixture.get("clientId"))
-			.setClientSecret(Fixture.get("clientSecret")));
+			.setClientSecret(Fixture.get("clientSecret"))
+			.setLoginEndpoint(Fixture.get("loginEndpoint")));
 
 		assertNotNull(api.getIdentity());
 		// This call is not available in public api
