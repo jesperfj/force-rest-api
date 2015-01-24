@@ -1,15 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.force.api</groupId>
+    <groupId>com.reachlocal</groupId>
     <artifactId>force-rest-api</artifactId>
-    <version>0.0.21-SNAPSHOT</version>
+    <version>MASTER-SNAPSHOT</version>
     <name>force-rest-api</name>
     <scm>
-        <connection>scm:git:https://github.com/jesperfj/force-rest-api.git</connection>
-        <developerConnection>scm:git:git@github.com:jesperfj/force-rest-api.git</developerConnection>
+        <connection>scm:git:https://github.com/reachlocal/force-rest-api.git</connection>
+        <developerConnection>scm:git:git@github.com:reachlocal/force-rest-api.git</developerConnection>
         <tag>HEAD</tag>
-        <url>https://github.com/jesperfj/force-rest-api.git</url>
+        <url>https://github.com/reachlocal/force-rest-api.git</url>
     </scm>
 
     <distributionManagement>
