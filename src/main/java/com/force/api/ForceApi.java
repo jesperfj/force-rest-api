@@ -303,16 +303,41 @@ public class ForceApi {
 		}
 	}
 
-	public HttpResponse postCustomResource(String resource, Object t)
-			throws JsonGenerationException, JsonMappingException, IOException {
-		return apiRequest(new HttpRequest().url(customApexBase(resource))
-				.method("POST").content(jsonMapper.writeValueAsBytes(t)));
+	public <T> T postCustomResource(String resource, Object t, Class<T> respObj)
+			throws ResourceException {
+		try {
+			return jsonMapper.readValue(
+					apiRequest(
+							new HttpRequest().url(customApexBase(resource))
+									.method("POST")
+									.content(jsonMapper.writeValueAsBytes(t)))
+							.getStream(), respObj);
+		} catch (JsonParseException e) {
+			throw new ResourceException(e);
+		} catch (JsonMappingException e) {
+			throw new ResourceException(e);
+		} catch (UnsupportedEncodingException e) {
+			throw new ResourceException(e);
+		} catch (IOException e) {
+			throw new ResourceException(e);
+		}
 	}
 
-	public HttpResponse getCustomResource(String resource)
-			throws JsonGenerationException, JsonMappingException, IOException {
-		return apiRequest(new HttpRequest().url(customApexBase(resource))
-				.method("GET"));
+	public <T> T getCustomResource(String resource, Class<T> respObj) {
+		try {
+			return jsonMapper.readValue(
+					apiRequest(
+							new HttpRequest().url(customApexBase(resource))
+									.method("GET")).getStream(), respObj);
+		} catch (JsonParseException e) {
+			throw new ResourceException(e);
+		} catch (JsonMappingException e) {
+			throw new ResourceException(e);
+		} catch (UnsupportedEncodingException e) {
+			throw new ResourceException(e);
+		} catch (IOException e) {
+			throw new ResourceException(e);
+		}
 	}
 
 	private final String uriBase() {
