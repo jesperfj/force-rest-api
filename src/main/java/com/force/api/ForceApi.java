@@ -320,7 +320,7 @@ public class ForceApi {
 	}
 
 	private final String customApexBase(String resource){
-		return session.getApiEndpoint()+"/service/apexrest/"+resource;
+		return session.getApiEndpoint()+"/services/apexrest/"+resource;
 	}
 	
 	private final HttpResponse apiRequest(HttpRequest req) {
