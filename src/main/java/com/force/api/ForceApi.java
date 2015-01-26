@@ -304,13 +304,22 @@ public class ForceApi {
 	}
 
 	public HttpResponse postCustomResource(String resource, Object t)
-			throws JsonGenerationException, JsonMappingException, IOException {
-		return apiRequest(new HttpRequest().url(customApexBase(resource))
-				.method("POST").content(jsonMapper.writeValueAsBytes(t)));
+			throws ResourceException {
+		try {
+			return apiRequest(new HttpRequest().url(customApexBase(resource))
+					.method("POST").content(jsonMapper.writeValueAsBytes(t)));
+		} catch (JsonParseException e) {
+			throw new ResourceException(e);
+		} catch (JsonMappingException e) {
+			throw new ResourceException(e);
+		} catch (UnsupportedEncodingException e) {
+			throw new ResourceException(e);
+		} catch (IOException e) {
+			throw new ResourceException(e);
+		}
 	}
 
-	public HttpResponse getCustomResource(String resource)
-			throws JsonGenerationException, JsonMappingException, IOException {
+	public HttpResponse getCustomResource(String resource) {
 		return apiRequest(new HttpRequest().url(customApexBase(resource))
 				.method("GET"));
 	}
