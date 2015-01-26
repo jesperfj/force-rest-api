@@ -13,7 +13,8 @@ public class DescribeTest {
 		.setUsername(Fixture.get("username"))
 		.setPassword(Fixture.get("password"))
 		.setClientId(Fixture.get("clientId"))
-		.setClientSecret(Fixture.get("clientSecret")));
+		.setClientSecret(Fixture.get("clientSecret"))
+		.setLoginEndpoint(Fixture.get("loginEndpoint")));
 
 	
 	@Test

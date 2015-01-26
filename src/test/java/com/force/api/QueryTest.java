@@ -1,16 +1,20 @@
 package com.force.api;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.junit.Before;
+import org.junit.Test;
 
 public class QueryTest {
 
@@ -20,7 +24,8 @@ public class QueryTest {
 	public void init() {
 		api = new ForceApi(new ApiConfig()
 		.setUsername(Fixture.get("username"))
-		.setPassword(Fixture.get("password")));
+		.setPassword(Fixture.get("password"))
+		.setLoginEndpoint(Fixture.get("loginEndpoint")));
 	}
 	
 	@Test
@@ -72,17 +77,27 @@ public class QueryTest {
 		a.setName("force-rest-api-test-account");
 		String id = api.createSObject("account", a);
 		a.setId(id);
-		Contact ct = new Contact("force@test.com","FirstName","LastName");
+		List<Contact> existingContacts = api.query(String.format("SELECT Name FROM Contact WHERE AccountId='%s'",a.id),Contact.class).getRecords();
+        Contact ct = new Contact("force@test.com","FirstName","LastName");
 		ct.setAccountId(a.id);
         ct.setId(api.createSObject("Contact", ct));
-		List<Account> childResult = api.query(String.format("SELECT Name, (SELECT AccountId, Email, FirstName, LastName FROM Contacts) FROM Account WHERE Id='%s'",a.id),
+        assertNotNull(ct.getId());
+		List<Account> childResult = api.query(String.format("SELECT Name, (SELECT Id, AccountId, Email, FirstName, LastName FROM Contacts) FROM Account WHERE Id='%s'",a.id),
 										 Account.class).getRecords();
 		// Note, attribute names are capitalized by the Force.com REST API
-        assertEquals(1, childResult.get(0).contacts.size());
-        assertEquals("force@test.com", childResult.get(0).contacts.get(0).getEmail());
-        assertEquals("FirstName", childResult.get(0).contacts.get(0).getFirstName());
-        assertEquals("LastName", childResult.get(0).contacts.get(0).getLastName());
-        assertEquals(a.id, childResult.get(0).contacts.get(0).getAccountId());
+        assertEquals(existingContacts.size()+1, childResult.get(0).contacts.size());
+
+        Contact result = null;
+        for(Contact c : childResult.get(0).contacts){
+        	if(c.getId().equals(ct.getId())){
+        		result = c;
+        	}
+        }
+        assertNotNull(result);
+        assertEquals("force@test.com", result.getEmail());
+        assertEquals("FirstName", result.getFirstName());
+        assertEquals("LastName", result.getLastName());
+        assertEquals(a.id, result.getAccountId());
 
         List<Contact> parentResult = api.query(String.format("SELECT AccountId, Account.Id, Account.Name FROM Contact WHERE Id='%s'",ct.getId()), Contact.class).getRecords();
         assertEquals(1, parentResult.size());

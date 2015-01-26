@@ -12,7 +12,8 @@ public class AuthTest {
 	public void testSoapLogin() {
 		ForceApi api = new ForceApi(new ApiConfig()
 			.setUsername(Fixture.get("username"))
-			.setPassword(Fixture.get("password")));
+			.setPassword(Fixture.get("password"))
+			.setLoginEndpoint(Fixture.get("loginEndpoint")));
 
 		assertNotNull(api.session);
 		assertNotNull(api.session.accessToken);
@@ -59,7 +60,8 @@ public class AuthTest {
 			.setUsername(Fixture.get("username"))
 			.setPassword(Fixture.get("password"))
 			.setClientId(Fixture.get("clientId"))
-			.setClientSecret(Fixture.get("clientSecret")));
+			.setClientSecret(Fixture.get("clientSecret"))
+			.setLoginEndpoint(Fixture.get("loginEndpoint")));
 
 		assertNotNull(api.session);
 		assertNotNull(api.session.accessToken);
@@ -71,7 +73,8 @@ public class AuthTest {
 	public void testExistingValidAccessToken() {
 		ApiConfig c = new ApiConfig()
 			.setUsername(Fixture.get("username"))
-			.setPassword(Fixture.get("password"));
+			.setPassword(Fixture.get("password"))
+			.setLoginEndpoint(Fixture.get("loginEndpoint"));
 
 		ForceApi api = new ForceApi(c);
 
@@ -91,7 +94,8 @@ public class AuthTest {
 			.setUsername(Fixture.get("username"))
 			.setPassword(Fixture.get("password"))
 			.setClientId(Fixture.get("clientId"))
-			.setClientSecret(Fixture.get("clientSecret"));
+			.setClientSecret(Fixture.get("clientSecret"))
+			.setLoginEndpoint(Fixture.get("loginEndpoint"));
 		ApiSession s = Auth.oauthLoginPasswordFlow(c);
 		ForceApi api = new ForceApi(c,s);
 		assertNotNull(api.getIdentity());

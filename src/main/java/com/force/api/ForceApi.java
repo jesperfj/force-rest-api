@@ -302,9 +302,25 @@ public class ForceApi {
 			throw new ResourceException(e);
 		}
 	}
-	
+
+	public HttpResponse postCustomResource(String resource, Object t)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		return apiRequest(new HttpRequest().url(customApexBase(resource))
+				.method("POST").content(jsonMapper.writeValueAsBytes(t)));
+	}
+
+	public HttpResponse getCustomResource(String resource)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		return apiRequest(new HttpRequest().url(customApexBase(resource))
+				.method("GET"));
+	}
+
 	private final String uriBase() {
 		return(session.getApiEndpoint()+"/services/data/"+config.getApiVersion());
+	}
+
+	private final String customApexBase(String resource){
+		return session.getApiEndpoint()+"/services/apexrest/"+resource;
 	}
 	
 	private final HttpResponse apiRequest(HttpRequest req) {

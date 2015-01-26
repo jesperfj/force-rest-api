@@ -4,4 +4,4 @@ password=secretcode
 clientId=long-alphanumeric-sequence
 clientSecret=shorter-numeric-sequence
 redirectURI=http://localhost:5000/_auth
-
+loginEndpoint=https://login.salesforce.com

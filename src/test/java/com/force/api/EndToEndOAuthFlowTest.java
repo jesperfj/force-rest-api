@@ -17,15 +17,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
-import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
 public class EndToEndOAuthFlowTest {
@@ -34,6 +35,7 @@ public class EndToEndOAuthFlowTest {
     String code;
     String state;
 
+    @Ignore
     @Test
     public void endToEndOAuthFlowTest() throws FailingHttpStatusCodeException, MalformedURLException, IOException {
 
@@ -48,7 +50,8 @@ public class EndToEndOAuthFlowTest {
         // you want to authenticate an unauthenticate user.
 
         ApiConfig config = new ApiConfig().setClientId(Fixture.get("clientId"))
-                .setClientSecret(Fixture.get("clientSecret")).setRedirectURI(Fixture.get("redirectURI"));
+                .setClientSecret(Fixture.get("clientSecret")).setRedirectURI(Fixture.get("redirectURI"))
+                .setLoginEndpoint(Fixture.get("loginEndpoint"));
 
         String url = Auth.startOAuthWebServerFlow(new AuthorizationRequest().apiConfig(config).state("test_state"));
         System.out.println(url);

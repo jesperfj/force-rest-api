@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -16,6 +17,7 @@ public class BasicCRUDTest {
 
 	static final String TEST_NAME = "force-rest-api basic crud test";
 
+	@Ignore
 	@Test
 	public void basicCRUDTest() {
 
@@ -23,7 +25,8 @@ public class BasicCRUDTest {
 			.setUsername(Fixture.get("username"))
 			.setPassword(Fixture.get("password"))
 			.setClientId(Fixture.get("clientId"))
-			.setClientSecret(Fixture.get("clientSecret")));
+			.setClientSecret(Fixture.get("clientSecret"))
+			.setLoginEndpoint(Fixture.get("loginEndpoint")));
 
 		if(api.query("SELECT name FROM Account WHERE name LIKE '"+TEST_NAME+"%'",Account.class).getTotalSize()>0) {
 			fail("Looks like org is not clean. Manually delete account record with name '"+TEST_NAME+"' before running this test");
