@@ -310,6 +310,8 @@ public class ForceApi {
 					apiRequest(
 							new HttpRequest().url(customApexBase(resource))
 									.method("POST")
+									.header("Accept", "application/json")
+									.header("Content-Type", "application/json")
 									.content(jsonMapper.writeValueAsBytes(t)))
 							.getStream(), respObj);
 		} catch (JsonParseException e) {
@@ -328,7 +330,9 @@ public class ForceApi {
 			return jsonMapper.readValue(
 					apiRequest(
 							new HttpRequest().url(customApexBase(resource))
-									.method("GET")).getStream(), respObj);
+									.method("GET")
+									.header("Accept", "application/json"))
+							.getStream(), respObj);
 		} catch (JsonParseException e) {
 			throw new ResourceException(e);
 		} catch (JsonMappingException e) {
