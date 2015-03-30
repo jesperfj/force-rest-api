@@ -13,6 +13,9 @@ import java.net.URL;
 public class Http {
 	
 	static final byte[] readResponse(InputStream stream) throws IOException {
+		if(stream ==null){
+			return new byte[0];
+		}
 		BufferedInputStream bin = new BufferedInputStream(stream);
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		byte[] buf = new byte[10000];
@@ -64,8 +67,12 @@ public class Http {
 				}
 			} else {
 				System.out.println("Bad response code: " + code + " on request:\n" + req);
+				InputStream i = conn.getErrorStream();
+				if(i==null){
+					i=conn.getInputStream();
+				}
 				HttpResponse r = new HttpResponse().setString(
-						new String(readResponse(conn.getErrorStream()), "UTF-8")).setResponseCode(code);
+						new String(readResponse(i), "UTF-8")).setResponseCode(code);
 				return r;
 			}
 		} catch (MalformedURLException e) {
