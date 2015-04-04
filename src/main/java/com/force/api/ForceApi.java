@@ -38,7 +38,7 @@ import java.util.Map.Entry;
  */
 public class ForceApi {
 
-	private static final ObjectMapper jsonMapper;
+	protected static final ObjectMapper jsonMapper;
 
 	static {
 		jsonMapper = new ObjectMapper();
@@ -302,12 +302,45 @@ public class ForceApi {
 			throw new ResourceException(e);
 		}
 	}
-	
-	private final String uriBase() {
+
+	/**
+	 * Make custom REST API call.
+	 * @param service service path to be called - i.e. /process/approvals/
+	 * @param httpMethod HTTP method name - i.e. POST
+	 * @param input input object
+	 * @param expectsCode expected HTTP code
+	 * @param outputClass class of the response
+	 * @return marshaled response
+	 */
+	protected <O,I> O call(final String service, final String httpMethod, final I input,
+						   final int expectsCode, final Class<O> outputClass) {
+		try {
+			final byte[] contentBytes = jsonMapper.writeValueAsBytes(input);
+			final HttpRequest httpRequest = new HttpRequest()
+					.url(uriBase() + service)
+					.method(httpMethod)
+					.header("Accept", "application/json")
+					.header("Content-Type", "application/json")
+					.content(contentBytes);
+			if (expectsCode > 0) {
+				httpRequest.expectsCode(expectsCode);
+			}
+			final HttpResponse response = apiRequest(httpRequest);
+			return new ResourceRepresentation(response).as(outputClass);
+		} catch (JsonGenerationException e) {
+			throw new ResourceException(e);
+		} catch (JsonMappingException e) {
+			throw new ResourceException(e);
+		} catch (IOException e) {
+			throw new ResourceException(e);
+		}
+	}
+
+	protected final String uriBase() {
 		return(session.getApiEndpoint()+"/services/data/"+config.getApiVersion());
 	}
 	
-	private final HttpResponse apiRequest(HttpRequest req) {
+	protected final HttpResponse apiRequest(HttpRequest req) {
 		req.setAuthorization("OAuth "+session.getAccessToken());
 		HttpResponse res = Http.send(req);
 		if(res.getResponseCode()==401) {
@@ -405,7 +438,7 @@ public class ForceApi {
 	 * @param node 
 	 * @return
 	 */
-	private final JsonNode normalizeCompositeResponse(JsonNode node){
+	protected final JsonNode normalizeCompositeResponse(JsonNode node){
 		Iterator<Entry<String, JsonNode>> elements = node.getFields();
 		ObjectNode newNode = JsonNodeFactory.instance.objectNode();
 		Entry<String, JsonNode> currNode;
