@@ -28,7 +28,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
-public class EndToEndOAuthFlowTest {
+public class EndToEndOAuthFlowExample {
 
     // These variables are accessed by multiple threads as part of oauth test
     String code;

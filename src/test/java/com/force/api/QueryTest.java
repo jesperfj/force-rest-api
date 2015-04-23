@@ -48,6 +48,7 @@ public class QueryTest {
         final int numAccts = api.query("SELECT count() FROM Account", Account.class).getTotalSize();
         if (numAccts < exceedQueryBatchSize) {
             int accountsNeeded = exceedQueryBatchSize - numAccts;
+            System.out.println("Adding "+accountsNeeded+" test accounts to org. This will take a bit of time but is a one time operation");
             for (int i = 0; i < accountsNeeded; i++) {
                 api.createSObject("Account", Collections.singletonMap("Name", "TEST-ACCOUNT-" + i));
             }

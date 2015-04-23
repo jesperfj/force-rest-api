@@ -166,7 +166,20 @@ This assumes you have an Account class defined with proper Jackson deserializati
 
 ## Run Tests
 
-This project currently only has integration-y tests (they hit the actual API). To make them work copy `src/test/resources/test.properties.sample` to `src/test/resources/test.properties` and replace the properties in the file with actual values
+This project currently only has integration-y tests (they hit the actual API). To make them work copy `src/test/resources/test.properties.sample` to `src/test/resources/test.properties` and replace the properties in the file with actual values.
+
+Run tests with
+
+```
+mvn test
+```
+
+There is an additional interactive test that tests an end-to-end OAuth authorization round trip. Run it with:
+
+```
+mvn -Dtest=com.force.api.EndToEndOAuthFlowExample test
+```
+
 
 ### Login and password
 
