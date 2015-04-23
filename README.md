@@ -168,19 +168,6 @@ This assumes you have an Account class defined with proper Jackson deserializati
 
 This project currently only has integration-y tests (they hit the actual API). To make them work copy `src/test/resources/test.properties.sample` to `src/test/resources/test.properties` and replace the properties in the file with actual values.
 
-Run tests with
-
-```
-mvn test
-```
-
-There is an additional interactive test that tests an end-to-end OAuth authorization round trip. Run it with:
-
-```
-mvn -Dtest=com.force.api.EndToEndOAuthFlowExample test
-```
-
-
 ### Login and password
 
 Add your Force.com developer org login and password. Needless to say, don't use credentials for a production org containing sensitive data. If you don't have a developer org, [sign up for one](http://www.developerforce.com/events/regular/registration.php?d=70130000000EjHb). It's free.
@@ -213,6 +200,12 @@ Use the Force.com Web UI to add a custom field called `externalId__c` and mark i
 Now run tests with
 
     $ mvn test
+
+### Interactive end-to-end OAuth handshake Test
+
+This test is not run as part of the test suite because it requires manual intervention. Run it like this:
+
+    mvn -Dtest=com.force.api.EndToEndOAuthFlowExample test
 
 # Cutting a Release
 
