@@ -31,6 +31,7 @@ public class Auth {
 			Map<String,Object> resp = jsonMapper.readValue(
 					Http.send(HttpRequest.formPost()
 						.url(c.getLoginEndpoint()+"/services/oauth2/token")
+						.header("Accept","application/json")
 						.param("grant_type","password")
 						.param("client_id",c.getClientId())
 						.param("client_secret", c.getClientSecret())
@@ -53,7 +54,7 @@ public class Auth {
 		if(c.getUsername()==null) throw new IllegalStateException("username cannot be null");
 		if(c.getPassword()==null) throw new IllegalStateException("password cannot be null");
 		try {
-			URL url = new URL(c.getLoginEndpoint()+"/services/Soap/u/23.0");
+			URL url = new URL(c.getLoginEndpoint()+"/services/Soap/u/33.0");
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setDoOutput(true);
 			conn.addRequestProperty("Content-Type", "text/xml");

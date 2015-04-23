@@ -308,7 +308,7 @@ public class ForceApi {
 	}
 	
 	private final HttpResponse apiRequest(HttpRequest req) {
-		req.setAuthorization("OAuth "+session.getAccessToken());
+		req.setAuthorization("Bearer "+session.getAccessToken());
 		HttpResponse res = Http.send(req);
 		if(res.getResponseCode()==401) {
 			// Perform one attempt to auto renew session if possible
@@ -319,7 +319,7 @@ public class ForceApi {
 				} else {
 					session = Auth.authenticate(config);
 				}
-				req.setAuthorization("OAuth "+session.getAccessToken());
+				req.setAuthorization("Bearer "+session.getAccessToken());
 				res = Http.send(req);
 			}
 		}

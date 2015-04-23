@@ -51,25 +51,30 @@ public class EndToEndOAuthFlowTest {
                 .setClientSecret(Fixture.get("clientSecret")).setRedirectURI(Fixture.get("redirectURI"));
 
         String url = Auth.startOAuthWebServerFlow(new AuthorizationRequest().apiConfig(config).state("test_state"));
-        System.out.println(url);
+
+
+        // The HtmlUnit stuff below broke when SFDC introduced the S1 mobile app and added a
+        // mobile app detection. I am giving up on maintaining it. Instead this test
+        // will need manual intervention for now. See below the comments.
 
         // --------------------------------------------------------------------
         // In a real web app, you just pass the url back as a redirect to the
         // client Here we emulate the client browser using HtmlUnit to perform
         // a scripted interactive login.
 
-        final WebClient webClient = new WebClient();
-        final HtmlPage page = (HtmlPage) webClient.getPage(url);
-        HtmlForm form = page.getFormByName("login");
-        final HtmlButton submit = (HtmlButton) form.getButtonByName("Login");
-        final HtmlTextInput username = (HtmlTextInput) form.getInputByName("username");
-        final HtmlPasswordInput password = (HtmlPasswordInput) form.getInputByName("pw");
-
-        username.setValueAttribute(Fixture.get("username"));
-        password.setValueAttribute(Fixture.get("password"));
-
-        Page result = submit.click();
-        System.out.println("Result of login: " + result.getWebResponse().getStatusCode());
+//        final WebClient webClient = new WebClient();
+//        final HtmlPage page = (HtmlPage) webClient.getPage(url);
+//        System.out.println(page.toString());
+//        HtmlForm form = page.getFormByName("login");
+//        final HtmlButton submit = (HtmlButton) form.getButtonByName("Login");
+//        final HtmlTextInput username = (HtmlTextInput) form.getInputByName("username");
+//        final HtmlPasswordInput password = (HtmlPasswordInput) form.getInputByName("pw");
+//
+//        username.setValueAttribute(Fixture.get("username"));
+//        password.setValueAttribute(Fixture.get("password"));
+//
+//        Page result = submit.click();
+//        System.out.println("Result of login: " + result.getWebResponse().getStatusCode());
 
         // --------------------------------------------------------------------
         // HtmlUnit will follow all redirects, so the page returned should be
@@ -83,6 +88,17 @@ public class EndToEndOAuthFlowTest {
         // Jetty and by then the Jetty thread has already called
         // setOauthResponse. But for good measure we do synchronized access
         // combined with a check-and-wait loop.
+
+        // Switching to manual intervention:
+
+        System.out.println("Paste the following URL into your browser:");
+        System.out.println();
+        System.out.println(url);
+        System.out.println();
+
+        System.out.println("Authenticate with test credentials, then authorize oauth client");
+
+
         synchronized (this) {
             while (code == null) {
                 try {
