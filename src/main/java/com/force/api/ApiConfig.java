@@ -121,7 +121,7 @@ public class ApiConfig {
 	}
 
 	public String getApiVersionString() {
-		return apiVersionString != null ? apiVersionString : apiVersionString.toString();
+		return apiVersionString != null ? apiVersionString : apiVersion.toString();
 	}
 
 	
