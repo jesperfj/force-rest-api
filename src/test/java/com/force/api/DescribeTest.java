@@ -47,7 +47,7 @@ public class DescribeTest {
 		PojoCodeGenerator gen = new PojoCodeGenerator();
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		try {
-			gen.generateCode(s, ds, new ApiConfig().getApiVersion(),null);
+			gen.generateCode(s, ds, new ApiConfig().getApiVersionString(),null);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
