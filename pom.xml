@@ -3,12 +3,12 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.force.api</groupId>
     <artifactId>force-rest-api</artifactId>
-    <version>0.0.21</version>
+    <version>0.0.22-SNAPSHOT</version>
     <name>force-rest-api</name>
     <scm>
         <connection>scm:git:https://github.com/jesperfj/force-rest-api.git</connection>
         <developerConnection>scm:git:git@github.com:jesperfj/force-rest-api.git</developerConnection>
-        <tag>force-rest-api-0.0.21</tag>
+        <tag>HEAD</tag>
         <url>https://github.com/jesperfj/force-rest-api.git</url>
     </scm>
 
