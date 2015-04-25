@@ -49,7 +49,7 @@ public class PojoCodeGenerator {
     	out.write(content.getBytes("UTF-8"));
     }
     
-    public boolean generateCode(OutputStream out, DescribeSObject describe, ApiVersion apiVersion, String packageName) throws IOException {
+    public boolean generateCode(OutputStream out, DescribeSObject describe, String apiVersion, String packageName) throws IOException {
         if(describe == null) {
             return false;
         }

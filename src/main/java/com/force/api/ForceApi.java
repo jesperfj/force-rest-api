@@ -304,7 +304,7 @@ public class ForceApi {
 	}
 	
 	private final String uriBase() {
-		return(session.getApiEndpoint()+"/services/data/"+config.getApiVersion());
+		return(session.getApiEndpoint()+"/services/data/"+config.getApiVersionString());
 	}
 	
 	private final HttpResponse apiRequest(HttpRequest req) {

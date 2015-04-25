@@ -6,6 +6,7 @@ import java.net.URLDecoder;
 public class ApiConfig {
 
 	ApiVersion apiVersion = ApiVersion.DEFAULT_VERSION;
+	String apiVersionString;
 	String username;
 	String password;
 	String loginEndpoint = "https://login.salesforce.com";
@@ -51,12 +52,17 @@ public class ApiConfig {
 		this.redirectURI = redirectURI;
 		return this;
 	}
-	
+
 	public ApiConfig setApiVersion(ApiVersion value) {
 		apiVersion = value;
 		return this;
 	}
-	
+
+	public ApiConfig setApiVersionString(String value) {
+		apiVersionString = value;
+		return this;
+	}
+
 	public ApiConfig setUsername(String value) {
 		username = value;
 		return this;
@@ -106,10 +112,17 @@ public class ApiConfig {
 		return redirectURI;
 	}
 
+	/**
+	 * @deprecated use #getApiVersionString instead
+	 * @return enum representing api version
+	 */
 	public ApiVersion getApiVersion() {
 		return apiVersion;
 	}
 
+	public String getApiVersionString() {
+		return apiVersionString != null ? apiVersionString : apiVersionString.toString();
+	}
 
 	
 }
