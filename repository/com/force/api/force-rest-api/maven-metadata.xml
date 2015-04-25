@@ -3,7 +3,7 @@
   <groupId>com.force.api</groupId>
   <artifactId>force-rest-api</artifactId>
   <versioning>
-    <release>0.0.20</release>
+    <release>0.0.21</release>
     <versions>
       <version>0.0.2</version>
       <version>0.0.3</version>
@@ -24,7 +24,8 @@
       <version>0.0.18</version>
       <version>0.0.19</version>
       <version>0.0.20</version>
+      <version>0.0.21</version>
     </versions>
-    <lastUpdated>20140425101744</lastUpdated>
+    <lastUpdated>20150425235020</lastUpdated>
   </versioning>
 </metadata>

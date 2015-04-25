@@ -1,0 +1,77 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.force.api</groupId>
+    <artifactId>force-rest-api</artifactId>
+    <version>0.0.21</version>
+    <name>force-rest-api</name>
+    <scm>
+        <connection>scm:git:https://github.com/jesperfj/force-rest-api.git</connection>
+        <developerConnection>scm:git:git@github.com:jesperfj/force-rest-api.git</developerConnection>
+        <tag>force-rest-api-0.0.21</tag>
+        <url>https://github.com/jesperfj/force-rest-api.git</url>
+    </scm>
+
+    <distributionManagement>
+      <repository>
+        <id>gh-pages</id>
+        <url>file:///${basedir}/release-repo/repository/</url>
+      </repository>
+    </distributionManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-core-asl</artifactId>
+            <version>[1.9.1,1.9.7]</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>[1.9.1,1.9.7]</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.10</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+        	<groupId>net.sourceforge.htmlunit</groupId>
+        	<artifactId>htmlunit</artifactId>
+        	<version>2.14</version>
+        	<scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>8.1.14.v20131031</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.2</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>
