@@ -258,6 +258,13 @@ gets you back to master from detached HEAD.
 
 # Release History
 
+## 0.0.21
+
+* Made various fixes to get tests passing again after a long period of inactivity
+* end-to-end oauth test has been renamed to exlude it from test suite. Run it manually instead. It no longer uses HtmlUnit but instead requires manual intervention
+* ApiVersion is now up to date up to v33.0.
+* API version can now be set as a string. Setting it as an ApiVersion enum has been deprecated. There doesn't seem to be much value in strongly typing the api version.
+
 ## 0.0.20
 
 * [thysmichels](https://github.com/thysmichels) noticed that Spring 14 broke this library because [Identity.java](src/main/java/com/force/api/Identity.java) was set to strictly map to the underlying JSON resource. This class now uses `ignoreUnknown=true` so it should be more robust to changes.
