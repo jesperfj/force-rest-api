@@ -24,7 +24,6 @@ public class AuthTest {
 	public void testForceURL() {
 		
 		ApiConfig c = new ApiConfig().setForceURL("force://login.salesforce.com?user=testuser@domain.com&password=pwd123");
-		c.setApiVersionString("v32.0");
 		assertEquals("testuser@domain.com",c.username);
 		assertEquals("pwd123", c.password);
 		assertEquals("https://login.salesforce.com",c.loginEndpoint);
