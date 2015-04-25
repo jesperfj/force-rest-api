@@ -53,6 +53,10 @@ public class Auth {
 	static public final ApiSession soaploginPasswordFlow(ApiConfig c) {
 		if(c.getUsername()==null) throw new IllegalStateException("username cannot be null");
 		if(c.getPassword()==null) throw new IllegalStateException("password cannot be null");
+		StringBuilder password = new StringBuilder(c.getPassword());
+		if (c.getApiSecurityToken() != null){
+			password.append(c.getApiSecurityToken());
+		}
 		try {
 			URL url = new URL(c.getLoginEndpoint()+"/services/Soap/u/33.0");
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -68,7 +72,7 @@ public class Auth {
 					"    <env:Body>\n"+
 			        "        <n1:login xmlns:n1=\"urn:partner.soap.sforce.com\">\n"+
 			        "            <n1:username>"+c.getUsername()+"</n1:username>\n"+
-			        "            <n1:password>"+c.getPassword()+"</n1:password>\n"+
+			        "            <n1:password>"+password.toString()+"</n1:password>\n"+
 			        "        </n1:login>\n"+
 			        "    </env:Body>\n"+
 			        "</env:Envelope>\n").getBytes("UTF-8");

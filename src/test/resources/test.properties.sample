@@ -3,5 +3,5 @@ username=user@domain.com
 password=secretcode
 clientId=long-alphanumeric-sequence
 clientSecret=shorter-numeric-sequence
+apiSecurityToken=security-token-for-soap-requests
 redirectURI=http://localhost:5000/_auth
-

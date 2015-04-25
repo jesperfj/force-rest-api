@@ -12,7 +12,8 @@ public class AuthTest {
 	public void testSoapLogin() {
 		ForceApi api = new ForceApi(new ApiConfig()
 			.setUsername(Fixture.get("username"))
-			.setPassword(Fixture.get("password")));
+			.setPassword(Fixture.get("password"))
+			.setApiSecurityToken(Fixture.get("apiSecurityToken")));
 
 		assertNotNull(api.session);
 		assertNotNull(api.session.accessToken);
@@ -71,7 +72,8 @@ public class AuthTest {
 	public void testExistingValidAccessToken() {
 		ApiConfig c = new ApiConfig()
 			.setUsername(Fixture.get("username"))
-			.setPassword(Fixture.get("password"));
+			.setPassword(Fixture.get("password"))
+			.setApiSecurityToken(Fixture.get("apiSecurityToken"));
 
 		ForceApi api = new ForceApi(c);
 

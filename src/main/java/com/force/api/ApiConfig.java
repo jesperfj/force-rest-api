@@ -12,6 +12,7 @@ public class ApiConfig {
 	String clientId;
 	String clientSecret;
 	String redirectURI;
+	String apiSecurityToken;
 
 	public ApiConfig clone() {
 		return new ApiConfig()
@@ -21,7 +22,8 @@ public class ApiConfig {
 			.setLoginEndpoint(loginEndpoint)
 			.setClientId(clientId)
 			.setClientSecret(clientSecret)
-			.setRedirectURI(redirectURI);
+			.setRedirectURI(redirectURI)
+			.setApiSecurityToken(apiSecurityToken);
 	}
 	
 	public ApiConfig setForceURL(String url) {
@@ -82,6 +84,11 @@ public class ApiConfig {
 		return this;
 	}
 
+	public ApiConfig setApiSecurityToken(String value) {
+		apiSecurityToken = value;
+		return this;
+	}
+
 	public String getUsername() {
 		return username;
 	}
@@ -106,10 +113,9 @@ public class ApiConfig {
 		return redirectURI;
 	}
 
+	public String getApiSecurityToken() { return apiSecurityToken; }
+
 	public ApiVersion getApiVersion() {
 		return apiVersion;
 	}
-
-
-	
 }
