@@ -258,6 +258,10 @@ gets you back to master from detached HEAD.
 
 # Release History
 
+## 0.0.22
+
+* Include Javadoc in release jars
+
 ## 0.0.21
 
 * Made various fixes to get tests passing again after a long period of inactivity
