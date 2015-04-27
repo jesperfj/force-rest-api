@@ -166,7 +166,7 @@ This assumes you have an Account class defined with proper Jackson deserializati
 
 ## Run Tests
 
-This project currently only has integration-y tests (they hit the actual API). To make them work copy `src/test/resources/test.properties.sample` to `src/test/resources/test.properties` and replace the properties in the file with actual values
+This project currently only has integration-y tests (they hit the actual API). To make them work copy `src/test/resources/test.properties.sample` to `src/test/resources/test.properties` and replace the properties in the file with actual values.
 
 ### Login and password
 
@@ -200,6 +200,12 @@ Use the Force.com Web UI to add a custom field called `externalId__c` and mark i
 Now run tests with
 
     $ mvn test
+
+### Interactive end-to-end OAuth handshake Test
+
+This test is not run as part of the test suite because it requires manual intervention. Run it like this:
+
+    mvn -Dtest=com.force.api.EndToEndOAuthFlowExample test
 
 # Cutting a Release
 
@@ -251,6 +257,17 @@ Commit the new release and push to gh-pages
 gets you back to master from detached HEAD.
 
 # Release History
+
+## 0.0.22
+
+* Include Javadoc in release jars
+
+## 0.0.21
+
+* Made various fixes to get tests passing again after a long period of inactivity
+* end-to-end oauth test has been renamed to exlude it from test suite. Run it manually instead. It no longer uses HtmlUnit but instead requires manual intervention
+* ApiVersion is now up to date up to v33.0.
+* API version can now be set as a string. Setting it as an ApiVersion enum has been deprecated. There doesn't seem to be much value in strongly typing the api version.
 
 ## 0.0.20
 
