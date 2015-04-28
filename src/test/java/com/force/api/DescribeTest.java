@@ -39,6 +39,9 @@ public class DescribeTest {
         assertEquals("Contact", ds.getObjectDescribe().getName());
         assertNotNull(ds.getRecentItems());
         assertTrue(ds.getRecentItems().iterator().next().getId().startsWith("003"));
+		for (Contact recentContact: ds.getRecentItems()){
+			assertNotNull(recentContact.getName());
+		}
     }
 
     @Test

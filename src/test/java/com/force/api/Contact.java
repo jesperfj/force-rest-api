@@ -25,6 +25,9 @@ public class Contact {
     @JsonProperty("Account")
     private Account account;
 
+	@JsonProperty("Name")
+	private String name;
+
     public String getId() {
         return id;
     }
@@ -71,7 +74,11 @@ public class Contact {
 	public void setAccountId(String accountId) {
 		this.accountId = accountId;
 	}
-	
+
+	public String getName() { return name; }
+
+	public void setName(String name) { this.name = name; }
+
 	public Contact(){
 		super();
 	}
