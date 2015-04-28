@@ -258,6 +258,10 @@ gets you back to master from detached HEAD.
 
 # Release History
 
+## 0.0.23
+
+* Upgrade to Jackson 2. Thanks to [emckissick](https://github.com/emckissick) for the pull request.
+
 ## 0.0.22
 
 * Include Javadoc in release jars
