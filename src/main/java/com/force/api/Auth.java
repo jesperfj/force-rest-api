@@ -39,7 +39,7 @@ public class Auth {
 						.param("username",c.getUsername())
 						.param("password",c.getPassword())
 					).getStream(),Map.class);
-			return new ApiSession((String)resp.get("access_token"),(String)resp.get("instance_url"));
+			return new ApiSession(c,(String)resp.get("access_token"),(String)resp.get("instance_url"));
 			
 		} catch (JsonParseException e) {
 			throw new RuntimeException(e);
@@ -93,7 +93,7 @@ public class Auth {
 			//System.out.println("userId: "+userId);
 			//System.out.println("organizationId: "+organizationId);
 							
-			return new ApiSession(accessToken, apiEndpoint);
+			return new ApiSession(c,accessToken,apiEndpoint);
 			
 			} catch (MalformedURLException e) {
 				throw new RuntimeException(e);
@@ -141,6 +141,7 @@ public class Auth {
 					).getStream(),Map.class);
 
 			return new ApiSession()
+					.setApiConfig(res.apiConfig)
 					.setRefreshToken((String)resp.get("refresh_token"))
 					.setAccessToken((String)resp.get("access_token"))
 					.setApiEndpoint((String)resp.get("instance_url"));
@@ -170,6 +171,7 @@ public class Auth {
 					).getStream(),Map.class);
 
 			return new ApiSession()
+					.setApiConfig(config)
 					.setAccessToken((String)resp.get("access_token"))
 					.setApiEndpoint((String)resp.get("instance_url"))
 					.setRefreshToken(refreshToken);
