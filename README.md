@@ -4,28 +4,12 @@ Lightweight library for building Force.com apps with OAuth authentication and da
 
 # Usage
 
-You can either include as a dependency and pull the module from its github maven repo or you can build locally.
+Releases are published on Maven Central. Include in your project with:
 
-## Dependency on published release
-
-The version number is bumped regularly. Check the tags list or commit messages for latest version.
-
-### Maven
-
-    <repositories>
-        <repository>
-            <id>force-rest-api</id>
-            <name>force-rest-api repository on GitHub</name>
-            <url>http://jesperfj.github.com/force-rest-api/repository/</url>            
-        </repository>
-    </repositories>
-
-    ...
-    
     <dependency>
         <groupId>com.force.api</groupId>
         <artifactId>force-rest-api</artifactId>
-        <version>0.0.20</version>
+        <version>0.0.28</version>
     </dependency>
 
 ## Build and link locally
@@ -36,12 +20,12 @@ The version number is bumped regularly. Check the tags list or commit messages f
 
 ### Maven
 
-The latest HEAD always builds to a snapshot:
+The version number is never updated in SCM. It is only set during deploys. To match source code with version number, look at git tags. Local builds will always build as 0-SNAPSHOT.
 
     <dependency>
         <groupId>com.force.api</groupId>
         <artifactId>force-rest-api</artifactId>
-        <version>0.0.16-SNAPSHOT</version>
+        <version>0-SNAPSHOT</version>
     </dependency>
 
 ## Authentication and Instantiation
