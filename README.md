@@ -221,9 +221,9 @@ This will update pom.xml locally to the new version and tag the repo with the ne
 
     $ mvn clean deploy -DperformRelease
 
-When you're done, reset the pom.xml changes with:
+When you're done, reset the local version change to pom.xml with:
 
-    $ git checkout -- pom.xml
+    $ mvn versions:revert
 
 Remember to push your recent changes and tags to origin:
 
