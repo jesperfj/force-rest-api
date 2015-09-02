@@ -7,7 +7,7 @@ Lightweight library for building Force.com apps with OAuth authentication and da
 Releases are published on Maven Central. Include in your project with:
 
     <dependency>
-        <groupId>com.force.api</groupId>
+        <groupId>com.frejo</groupId>
         <artifactId>force-rest-api</artifactId>
         <version>0.0.28</version>
     </dependency>
