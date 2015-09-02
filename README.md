@@ -209,6 +209,27 @@ This test is not run as part of the test suite because it requires manual interv
 
 # Cutting a Release
 
+This project now uses [Alex Fontaine's](http://axelfontaine.com/blog/final-nail.html) release process because the release plugin is a pretty insane piece of software that should never exist. The pom.xml version number checked into SCM is always `0-SNAPSHOT`. Mapping releases back to source code now relies on git tags only.
+
+The project is set up to release to Maven Central. If you have forked it and want to deploy your own version, you will need to update groupId and set up your own Sonatype credentials and GPG. Assuming this is all correctly set up. Here's how you cut a new release:
+
+First ensure all your code is checked in (with `git status` or the like). Then find the latest version number with `git tag` (or in Maven central depending on what you trust most). Bump the version number to that plus one:
+
+    $ mvn versions:set -DnewVersion=<new-version> scm:tag
+
+This will update pom.xml locally to the new version and tag the repo with the new version number. Now deploy:
+
+    $ mvn clean deploy -DperformRelease
+
+When you're done, reset the pom.xml changes with:
+
+    $ git checkout -- pom.xml
+
+Remember to push your recent changes and tags to origin:
+
+    $ git push origin master
+
+
 This project uses the Maven release plugin with Github pages as Maven repo to facilitate quick releases. Snapshots are never released. They are reserved for local builds. See [Christian Kaltepoth's post](http://chkal.blogspot.com/2010/09/maven-repositories-on-github.html) for an excellent guide to setting up Github pages as a maven repo. To cut a release: (adjust repo references as necessary below if you're on a fork or doing this on your own repo)
 
 ### Clone this repo
