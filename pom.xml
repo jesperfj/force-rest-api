@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.frejo</groupId>
 	<artifactId>force-rest-api</artifactId>
-	<version>0.0.24-SNAPSHOT</version>
+	<version>0.0.25</version>
 	<name>force-rest-api</name>
     <url>https://github.com/jesperfj/force-rest-api</url>
     <description>
@@ -27,7 +27,7 @@
 	<scm>
 		<connection>scm:git:https://github.com/jesperfj/force-rest-api.git</connection>
 		<developerConnection>scm:git:git@github.com:jesperfj/force-rest-api.git</developerConnection>
-		<tag>HEAD</tag>
+		<tag>force-rest-api-0.0.25</tag>
 		<url>https://github.com/jesperfj/force-rest-api.git</url>
 	</scm>
 
