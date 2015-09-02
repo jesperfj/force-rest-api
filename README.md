@@ -363,7 +363,7 @@ gets you back to master from detached HEAD.
 
 # License
 
-BSD 3-clause license
+[BSD 2-clause license](http://opensource.org/licenses/bsd-license.php)
 
 # Author
 
