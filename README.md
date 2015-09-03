@@ -18,15 +18,19 @@ Releases are published on Maven Central. Include in your project with:
     $ cd force-rest-api
     $ mvn install -DskipTests
 
-### Maven
-
-The version number is never updated in SCM. It is only set during deploys. To match source code with version number, look at git tags. Local builds will always build as 0-SNAPSHOT.
+The version number is never updated in SCM. So builds will always produce a module with version 0-SNAPSHOT. Add it as a dependency to your local builds with:
 
     <dependency>
-        <groupId>com.force.api</groupId>
+        <groupId>com.frejo</groupId>
         <artifactId>force-rest-api</artifactId>
         <version>0-SNAPSHOT</version>
     </dependency>
+
+To check out the source code for a particular version found in Maven Central, use the corresponding git tag, e.g:
+
+     $ git clone https://github.com/jesperfj/force-rest-api.git
+     $ cd force-rest-api
+     $ git checkout force-rest-api-0.0.28
 
 ## Authentication and Instantiation
 
