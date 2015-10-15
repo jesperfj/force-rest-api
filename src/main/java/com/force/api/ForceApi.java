@@ -164,6 +164,27 @@ public class ForceApi {
 		);
 	}
 
+	public DeleteResult deleteSObject(String type, String externalIdField, String externalIdValue) {
+		try {
+			HttpResponse res =
+				apiRequest(new HttpRequest()
+					.url(uriBase()+"/sobjects/"+type+"/"+externalIdField+"/"+URLEncoder.encode(externalIdValue,"UTF-8"))
+					.method("DELETE")
+					.header("Accept", "application/json")
+				);
+			if(res.getResponseCode()==204) {
+				return DeleteResult.DELETED;
+			} else {
+				System.out.println("Code: "+res.getResponseCode());
+				System.out.println("Message: "+res.getString());
+				throw new RuntimeException();
+			}
+
+		} catch (IOException e) {
+			throw new ResourceException(e);
+		}
+	}
+
 	public CreateOrUpdateResult createOrUpdateSObject(String type, String externalIdField, String externalIdValue, Object sObject) {
 		try {
 			// See createSObject for note on streaming ambition
