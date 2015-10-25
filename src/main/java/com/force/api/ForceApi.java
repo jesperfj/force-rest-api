@@ -1,18 +1,15 @@
 package com.force.api;
 
-import com.force.api.http.Http;
-import com.force.api.http.HttpRequest;
-import com.force.api.http.HttpResponse;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.force.api.http.HttpRequest;
+import com.force.api.http.HttpResponse;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -49,25 +46,19 @@ public class ForceApi {
 
 	final ApiConfig config;
 	ApiSession session;
-	private boolean autoRenew = false;
 
 	public ForceApi(ApiConfig config, ApiSession session) {
 		this.config = config;
 		this.session = session;
-		if(session.getRefreshToken()!=null) {
-			autoRenew = true;
-		}
 	}
 
 	public ForceApi(ApiSession session) {
-		this(new ApiConfig(), session);
+		this(session.getApiConfig()!=null ? session.getApiConfig() : new ApiConfig(), session);
 	}
 
 	public ForceApi(ApiConfig apiConfig) {
 		config = apiConfig;
 		session = Auth.authenticate(apiConfig);
-		autoRenew  = true;
-
 	}
 
 
@@ -76,17 +67,17 @@ public class ForceApi {
 
 			@SuppressWarnings("unchecked")
 			Map<String,Object> resp = jsonMapper.readValue(
-					apiRequest(new HttpRequest()
+					session.apiRequest(new HttpRequest()
 						.url(uriBase())
 						.method("GET")
 						.header("Accept", "application/json")
 					).getStream(),Map.class);
 
 			return jsonMapper.readValue(
-					apiRequest(new HttpRequest()
-						.url((String) resp.get("identity"))
-						.method("GET")
-						.header("Accept", "application/json")
+					session.apiRequest(new HttpRequest()
+									.url((String) resp.get("identity"))
+									.method("GET")
+									.header("Accept", "application/json")
 					).getStream(), Identity.class);
 		} catch (JsonParseException e) {
 			throw new RuntimeException(e);
@@ -102,10 +93,10 @@ public class ForceApi {
 	public ResourceRepresentation getSObject(String type, String id) throws ResourceException {
 		// Should we return null or throw an exception if the record is not found?
 		// Right now will just throw crazy runtimeexception with no explanation
-		return new ResourceRepresentation(apiRequest(new HttpRequest()
-					.url(uriBase()+"/sobjects/"+type+"/"+id)
-					.method("GET")
-					.header("Accept", "application/json")));
+		return new ResourceRepresentation(session.apiRequest(new HttpRequest()
+				.url(uriBase() + "/sobjects/" + type + "/" + id)
+				.method("GET")
+				.header("Accept", "application/json")));
 	}
 
 	public String createSObject(String type, Object sObject) {
@@ -115,8 +106,8 @@ public class ForceApi {
 			// But it would be nice to have a streaming implementation. We can do that
 			// by using ObjectMapper.writeValue() passing in output stream, but then we have
 			// polluted the Http layer.
-			CreateResponse result = jsonMapper.readValue(apiRequest(new HttpRequest()
-					.url(uriBase()+"/sobjects/"+type)
+			CreateResponse result = jsonMapper.readValue(session.apiRequest(new HttpRequest()
+					.url(uriBase() + "/sobjects/" + type)
 					.method("POST")
 					.header("Accept", "application/json")
 					.header("Content-Type", "application/json")
@@ -140,13 +131,13 @@ public class ForceApi {
 	public void updateSObject(String type, String id, Object sObject) {
 		try {
 			// See createSObject for note on streaming ambition
-			apiRequest(new HttpRequest()
-				.url(uriBase()+"/sobjects/"+type+"/"+id+"?_HttpMethod=PATCH")
-				.method("POST")
-				.header("Accept", "application/json")
-				.header("Content-Type", "application/json")
-				.expectsCode(204)
-				.content(jsonMapper.writeValueAsBytes(sObject))
+			session.apiRequest(new HttpRequest()
+							.url(uriBase() + "/sobjects/" + type + "/" + id + "?_HttpMethod=PATCH")
+							.method("POST")
+							.header("Accept", "application/json")
+							.header("Content-Type", "application/json")
+							.expectsCode(204)
+							.content(jsonMapper.writeValueAsBytes(sObject))
 			);
 		} catch (JsonGenerationException e) {
 			throw new ResourceException(e);
@@ -158,9 +149,9 @@ public class ForceApi {
 	}
 
 	public void deleteSObject(String type, String id) {
-		apiRequest(new HttpRequest()
-			.url(uriBase()+"/sobjects/"+type+"/"+id)
-			.method("DELETE")
+		session.apiRequest(new HttpRequest()
+						.url(uriBase() + "/sobjects/" + type + "/" + id)
+						.method("DELETE")
 		);
 	}
 
@@ -168,12 +159,12 @@ public class ForceApi {
 		try {
 			// See createSObject for note on streaming ambition
 			HttpResponse res =
-				apiRequest(new HttpRequest()
-					.url(uriBase()+"/sobjects/"+type+"/"+externalIdField+"/"+URLEncoder.encode(externalIdValue,"UTF-8")+"?_HttpMethod=PATCH")
-					.method("POST")
-					.header("Accept", "application/json")
-					.header("Content-Type", "application/json")
-					.content(jsonMapper.writeValueAsBytes(sObject))
+				session.apiRequest(new HttpRequest()
+								.url(uriBase() + "/sobjects/" + type + "/" + externalIdField + "/" + URLEncoder.encode(externalIdValue, "UTF-8") + "?_HttpMethod=PATCH")
+								.method("POST")
+								.header("Accept", "application/json")
+								.header("Content-Type", "application/json")
+								.content(jsonMapper.writeValueAsBytes(sObject))
 				);
 			if(res.getResponseCode()==201) {
 				return CreateOrUpdateResult.CREATED;
@@ -216,11 +207,11 @@ public class ForceApi {
 
     private <T> QueryResult<T> queryAny(String queryUrl, Class<T> clazz) {
         try {
-            HttpResponse res = apiRequest(new HttpRequest()
-                    .url(queryUrl)
-                    .method("GET")
-                    .header("Accept", "application/json")
-                    .expectsCode(200));
+            HttpResponse res = session.apiRequest(new HttpRequest()
+					.url(queryUrl)
+					.method("GET")
+					.header("Accept", "application/json")
+					.expectsCode(200));
 
             // We build the result manually, because we can't pass the type information easily into
             // the JSON parser mechanism.
@@ -249,8 +240,8 @@ public class ForceApi {
 
     public DescribeGlobal describeGlobal() {
 		try {
-			return jsonMapper.readValue(apiRequest(new HttpRequest()
-					.url(uriBase()+"/sobjects/")
+			return jsonMapper.readValue(session.apiRequest(new HttpRequest()
+					.url(uriBase() + "/sobjects/")
 					.method("GET")
 					.header("Accept", "application/json")).getStream(),DescribeGlobal.class);
 		} catch (JsonParseException e) {
@@ -266,11 +257,11 @@ public class ForceApi {
 
     public <T> DiscoverSObject<T> discoverSObject(String sobject, Class<T> clazz) {
         try {
-            HttpResponse res = apiRequest(new HttpRequest()
-                    .url(uriBase() + "/sobjects/" + sobject)
-                    .method("GET")
-                    .header("Accept", "application/json")
-                    .expectsCode(200));
+            HttpResponse res = session.apiRequest(new HttpRequest()
+					.url(uriBase() + "/sobjects/" + sobject)
+					.method("GET")
+					.header("Accept", "application/json")
+					.expectsCode(200));
 
             final JsonNode root = jsonMapper.readTree(res.getStream());
             final DescribeSObjectBasic describeSObjectBasic = jsonMapper.readValue(root.get("objectDescribe").traverse(),
@@ -291,8 +282,8 @@ public class ForceApi {
 
 	public DescribeSObject describeSObject(String sobject) {
 		try {
-			return jsonMapper.readValue(apiRequest(new HttpRequest()
-					.url(uriBase()+"/sobjects/"+sobject+"/describe")
+			return jsonMapper.readValue(session.apiRequest(new HttpRequest()
+					.url(uriBase() + "/sobjects/" + sobject + "/describe")
 					.method("GET")
 					.header("Accept", "application/json")).getStream(),DescribeSObject.class);
 		} catch (JsonParseException e) {
@@ -306,38 +297,8 @@ public class ForceApi {
 		}
 	}
 	
-	private final String uriBase() {
+	private String uriBase() {
 		return(session.getApiEndpoint()+"/services/data/"+config.getApiVersionString());
-	}
-	
-	private final HttpResponse apiRequest(HttpRequest req) {
-		req.setAuthorization("Bearer "+session.getAccessToken());
-		HttpResponse res = Http.send(req);
-		if(res.getResponseCode()==401) {
-			// Perform one attempt to auto renew session if possible
-			if(autoRenew) {
-				System.out.println("Session expired. Refreshing session...");
-				if(session.getRefreshToken()!=null) {
-					session = Auth.refreshOauthTokenFlow(config, session.getRefreshToken());
-				} else {
-					session = Auth.authenticate(config);
-				}
-				req.setAuthorization("Bearer "+session.getAccessToken());
-				res = Http.send(req);
-			}
-		}
-		if(res.getResponseCode()>299) {
-			if(res.getResponseCode()==401) {
-				throw new ApiTokenException(res.getString());
-			} else {
-				throw new ApiException(res.getResponseCode(), res.getString());
-			}
-		} else if(req.getExpectedCode()!=-1 && res.getResponseCode()!=req.getExpectedCode()) {
-			throw new RuntimeException("Unexpected response from Force API. Got response code "+res.getResponseCode()+
-					". Was expecing "+req.getExpectedCode());
-		} else {
-			return res;
-		}
 	}
 	
 	/**
@@ -408,7 +369,7 @@ public class ForceApi {
 	 * @param node 
 	 * @return
 	 */
-	private final JsonNode normalizeCompositeResponse(JsonNode node){
+	private JsonNode normalizeCompositeResponse(JsonNode node){
 		Iterator<Entry<String, JsonNode>> elements = node.fields();
 		ObjectNode newNode = JsonNodeFactory.instance.objectNode();
 		Entry<String, JsonNode> currNode;
