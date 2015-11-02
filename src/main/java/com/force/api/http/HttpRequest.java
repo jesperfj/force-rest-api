@@ -26,6 +26,7 @@ public class HttpRequest {
 	String url;
 	int expectedCode = -1; // -1 means no expected code specified.
 
+	StringBuilder getParams = new StringBuilder();
 	StringBuilder postParams = new StringBuilder();
 
 	private String authorization;
@@ -58,7 +59,13 @@ public class HttpRequest {
 	}
 
 	public String getUrl() {
-		return url;
+		StringBuilder result = new StringBuilder();
+		result.append(url);
+		if (getParams.length()>0) {
+			result.append('?');
+			result.append(getParams);
+		}
+		return result.toString();
 	}
 	
 	public HttpRequest expectsCode(int value) {
@@ -104,18 +111,35 @@ public class HttpRequest {
 	}
 
 	public HttpRequest param(String key, String value) {
-		if(contentBytes!=null) {
-			throw new IllegalStateException("Cannot add params to HttpRequest after content(byte[]) has been called with non-null value");
-		}
-		try {
-			if(postParams.length()>0) {
-				postParams.append("&"+key+"="+URLEncoder.encode(value, "UTF-8"));
-			} else {
-				postParams.append(key+"="+URLEncoder.encode(value, "UTF-8"));
+		if (method == null) {
+			throw new IllegalStateException("Cannot add a param before setting the HTTP method");
+
+		} else if ("GET".equals(method)) {
+			try {
+				if(getParams.length()>0) {
+					getParams.append("&"+key+"="+URLEncoder.encode(value, "UTF-8"));
+				} else {
+					getParams.append(key+"="+URLEncoder.encode(value, "UTF-8"));
+				}
+			} catch (UnsupportedEncodingException e) {
+				throw new RuntimeException(e);
 			}
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
+
+		} else if ("POST".equals(method)) {
+			if(contentBytes!=null) {
+				throw new IllegalStateException("Cannot add params to HttpRequest after content(byte[]) has been called with non-null value");
+			}
+			try {
+				if(postParams.length()>0) {
+					postParams.append("&"+key+"="+URLEncoder.encode(value, "UTF-8"));
+				} else {
+					postParams.append(key+"="+URLEncoder.encode(value, "UTF-8"));
+				}
+			} catch (UnsupportedEncodingException e) {
+				throw new RuntimeException(e);
+			}
 		}
+
 		return this;
 	}
 
@@ -141,7 +165,12 @@ public class HttpRequest {
 	
 	public String toString() {
 		StringBuilder b = new StringBuilder();
-		b.append(method+" "+url+"\n");
+		b.append(method+" "+url);
+		if (getParams.length()>0) {
+			b.append('?');
+			b.append(getParams.toString());
+		}
+		b.append('\n');
 		for(Header h : headers) {
 			b.append(h.key+": "+h.value+"\n");
 		}

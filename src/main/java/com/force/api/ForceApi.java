@@ -10,17 +10,15 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.Map.Entry;
 
 /**
@@ -305,7 +303,28 @@ public class ForceApi {
 			throw new ResourceException(e);
 		}
 	}
-	
+
+	public GetDeletedSObject getDeleted(String sobject, Date start, Date end) {
+		try {
+			String startParam = toIso8601(start);
+			String endParam = toIso8601(end);
+			return jsonMapper.readValue(apiRequest(new HttpRequest()
+					.url(uriBase() + "/sobjects/" + sobject + "/deleted/")
+					.method("GET")
+					.param("start", startParam)
+					.param("end", endParam)
+					.header("Accept", "application/json")).getStream(), GetDeletedSObject.class);
+		} catch (JsonParseException e) {
+			throw new ResourceException(e);
+		} catch (JsonMappingException e) {
+			throw new ResourceException(e);
+		} catch (UnsupportedEncodingException e) {
+			throw new ResourceException(e);
+		} catch (IOException e) {
+			throw new ResourceException(e);
+		}
+	}
+
 	private final String uriBase() {
 		return(session.getApiEndpoint()+"/services/data/"+config.getApiVersionString());
 	}
@@ -425,5 +444,13 @@ public class ForceApi {
 		}
 		return newNode;
 		
+	}
+
+	private static String toIso8601(Date date) {
+		TimeZone tz = TimeZone.getTimeZone("UTC");
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'+00:00'");
+		df.setTimeZone(tz);
+
+		return df.format(date);
 	}
 }
