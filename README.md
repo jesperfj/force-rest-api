@@ -220,6 +220,10 @@ Remember to push your recent changes and tags to origin:
 
 # Release History
 
+## 0.0.29
+
+* Update to Force.com API version 36
+
 ## 0.0.28
 
 * No feature changes
