@@ -220,6 +220,10 @@ Remember to push your recent changes and tags to origin:
 
 # Release History
 
+## 0.0.30
+
+* Fix NullPointerException in ApiConfig.setForceURL. Thanks [steventamm](https://github.com/steventamm).
+
 ## 0.0.29
 
 * Update to Force.com API version 36
