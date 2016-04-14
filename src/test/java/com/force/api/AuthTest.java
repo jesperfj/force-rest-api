@@ -45,12 +45,6 @@ public class AuthTest {
 		assertEquals("key123",c.clientId);
 		assertEquals("secret123", c.clientSecret);
 		
-		try {
-			c = new ApiConfig().setForceURL("login.salesforce.com:443?oauth_key=key123&oauth_secret=secret123");
-			fail();
-		} catch(Throwable t) {
-			assertEquals("java.lang.IllegalArgumentException", t.getClass().getName());
-		}
 	}
 	
 	@Test
