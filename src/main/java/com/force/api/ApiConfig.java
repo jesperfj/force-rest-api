@@ -29,17 +29,19 @@ public class ApiConfig {
 		try {
 			URI uri = new URI(url);
 			loginEndpoint = "https://"+uri.getHost()+(uri.getPort()>0 ? ":"+uri.getPort() : "");
-			String[] params = uri.getQuery().split("&");
-			for(String param : params) {
-				String[] kv = param.split("=");
-				if(kv[0].equals("user")) {
-					username = URLDecoder.decode(kv[1],"UTF-8");
-				} else if(kv[0].equals("password")) {
-					password = URLDecoder.decode(kv[1],"UTF-8");
-				} else if(kv[0].equals("oauth_key")) {
-					clientId = URLDecoder.decode(kv[1],"UTF-8");
-				} else if(kv[0].equals("oauth_secret")) {
-					clientSecret = URLDecoder.decode(kv[1],"UTF-8");
+			if (uri.getQuery() != null) {
+				String[] params = uri.getQuery().split("&");
+				for(String param : params) {
+					String[] kv = param.split("=");
+					if(kv[0].equals("user")) {
+						username = URLDecoder.decode(kv[1],"UTF-8");
+					} else if(kv[0].equals("password")) {
+						password = URLDecoder.decode(kv[1],"UTF-8");
+					} else if(kv[0].equals("oauth_key")) {
+						clientId = URLDecoder.decode(kv[1],"UTF-8");
+					} else if(kv[0].equals("oauth_secret")) {
+						clientSecret = URLDecoder.decode(kv[1],"UTF-8");
+					}
 				}
 			}
 		} catch (Exception e) {
