@@ -10,9 +10,10 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -41,6 +42,8 @@ import java.util.Map.Entry;
 public class ForceApi {
 
 	private static final ObjectMapper jsonMapper;
+
+	private static final Logger logger = LoggerFactory.getLogger(ForceApi.class);
 
 	static {
 		jsonMapper = new ObjectMapper();
@@ -180,8 +183,8 @@ public class ForceApi {
 			} else if(res.getResponseCode()==204) {
 				return CreateOrUpdateResult.UPDATED;
 			} else {
-				System.out.println("Code: "+res.getResponseCode());
-				System.out.println("Message: "+res.getString());
+				logger.debug("Code: {}",res.getResponseCode());
+				logger.debug("Message: {}",res.getString());
 				throw new RuntimeException();
 			}
 
@@ -315,8 +318,8 @@ public class ForceApi {
 		HttpResponse res = Http.send(req);
 		if(res.getResponseCode()==401) {
 			// Perform one attempt to auto renew session if possible
-			if(autoRenew) {
-				System.out.println("Session expired. Refreshing session...");
+			if (autoRenew) {
+				logger.debug("Session expired. Refreshing session...");
 				if(session.getRefreshToken()!=null) {
 					session = Auth.refreshOauthTokenFlow(config, session.getRefreshToken());
 				} else {
@@ -334,7 +337,7 @@ public class ForceApi {
 			}
 		} else if(req.getExpectedCode()!=-1 && res.getResponseCode()!=req.getExpectedCode()) {
 			throw new RuntimeException("Unexpected response from Force API. Got response code "+res.getResponseCode()+
-					". Was expecing "+req.getExpectedCode());
+					". Was expecting "+req.getExpectedCode());
 		} else {
 			return res;
 		}
@@ -342,8 +345,8 @@ public class ForceApi {
 	
 	/**
 	 * Normalizes the JSON response in case it contains responses from
-	 * Relationsip queries. For e.g.
-	 * 
+	 * relationship queries. For e.g.
+	 *
 	 * <code>
 	 * Query:
 	 *   select Id,Name,(select Id,Email,FirstName from Contacts) from Account

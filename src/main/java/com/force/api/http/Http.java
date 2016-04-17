@@ -1,5 +1,8 @@
 package com.force.api.http;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -11,6 +14,8 @@ import java.net.URL;
 
 
 public class Http {
+
+	static final Logger logger = LoggerFactory.getLogger(Http.class);
 	
 	static final byte[] readResponse(InputStream stream) throws IOException {
 		BufferedInputStream bin = new BufferedInputStream(stream);
@@ -63,7 +68,7 @@ public class Http {
 					return new HttpResponse().setStream(conn.getInputStream()).setResponseCode(code);
 				}
 			} else {
-				System.out.println("Bad response code: " + code + " on request:\n" + req);
+				logger.info("Bad response code: {} on request: {}", code, req);
 				HttpResponse r = new HttpResponse().setString(
 						new String(readResponse(conn.getErrorStream()), "UTF-8")).setResponseCode(code);
 				return r;

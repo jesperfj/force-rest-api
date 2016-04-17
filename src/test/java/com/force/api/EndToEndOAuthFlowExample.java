@@ -45,7 +45,7 @@ public class EndToEndOAuthFlowExample {
 
         // --------------------------------------------------------------------
         // This part is what you'd normally do somewhere in your web app when
-        // you want to authenticate an unauthenticate user.
+        // you want to authenticate an unauthenticated user.
 
         ApiConfig config = new ApiConfig().setClientId(Fixture.get("clientId"))
                 .setClientSecret(Fixture.get("clientSecret")).setRedirectURI(Fixture.get("redirectURI"));
