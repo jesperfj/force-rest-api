@@ -217,6 +217,14 @@ public class ForceApi {
         return queryMore(nextRecordsUrl, Map.class);
     }
 
+	public <T> QueryResult<T> queryAll(String query, Class<T> clazz) {
+		try {
+			return queryAny(uriBase() + "/queryAll/?q=" + URLEncoder.encode(query, "UTF-8"), clazz);
+		} catch (UnsupportedEncodingException e) {
+			throw new ResourceException(e);
+		}
+	}
+
     private <T> QueryResult<T> queryAny(String queryUrl, Class<T> clazz) {
         try {
             HttpResponse res = apiRequest(new HttpRequest()

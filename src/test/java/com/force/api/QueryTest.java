@@ -14,7 +14,9 @@ import static org.junit.Assert.*;
 
 public class QueryTest {
 
-	ForceApi api;
+    static final String TEST_NAME = "force-rest-api query test";
+
+    ForceApi api;
 	
 	@Before
 	public void init() {
@@ -91,4 +93,19 @@ public class QueryTest {
         assertEquals(a.getId(), parentResult.get(0).getAccount().getId());
         assertEquals(a.getName(), parentResult.get(0).getAccount().getName());
 	}
+
+    @Test
+    public void testQueryAll() {
+        Account a = new Account();
+        a.setName(TEST_NAME);
+        a.setExternalId("1234");
+        String id = api.createSObject("account", a);
+        assertNotNull(id);
+
+        api.deleteSObject("Account",id);
+
+        List<Account> result = api.queryAll("SELECT name FROM Account WHERE id = '"+id+"'",Account.class).getRecords();
+        // Note, attribute names are capitalized by the Force.com REST API
+        assertNotNull(result.get(0).getName());
+    }
 }

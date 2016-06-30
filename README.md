@@ -205,6 +205,10 @@ First ensure all your code is checked in (with `git status` or the like). Then f
 
     $ mvn versions:set -DnewVersion=<new-version> scm:tag
 
+For example:
+
+    $ mvn versions:set -DnewVersion=0.0.50 scm:tag
+
 This will update pom.xml locally to the new version and tag the repo with the new version number. Now deploy:
 
     $ mvn clean deploy -DperformRelease
