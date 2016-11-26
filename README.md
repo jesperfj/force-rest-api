@@ -241,7 +241,7 @@ Remember to push your recent changes and tags to origin:
 
 ## 0.0.32
 
-* Add explicit authentication error handling. Addresses #32
+* Add explicit authentication error handling. Addresses force-rest-api#32
 
 ## 0.0.31
 
