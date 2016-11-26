@@ -31,6 +31,10 @@
         <url>https://github.com/jesperfj/force-rest-api.git</url>
     </scm>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
