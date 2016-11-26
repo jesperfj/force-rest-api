@@ -189,6 +189,18 @@ Now run tests with
 
     $ mvn test
 
+### Create a second user for IP restrictions test
+
+To test IP restrictions failure handling you need additional test setup:
+
+* Go to Manage Users --> Profiles and create a new profile based on "Standard Platform User". Call it "IP Restricted User"
+* Set Login IP Ranges for the new profile to something obscure like 1.1.1.1-1.1.1.1. Hit save and confirm that it's ok even though your user is not logged in from this range.
+* Create a new user and reset password
+* Log in as the new user and generate a security token
+* Set username and password (with token appended) in test.properties.
+* Log back in with the admin user and go to Manage Users --> Profiles
+
+
 ### Interactive end-to-end OAuth handshake Test
 
 This test is not run as part of the test suite because it requires manual intervention. Run it like this:

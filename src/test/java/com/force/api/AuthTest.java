@@ -6,6 +6,8 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
+import java.io.IOException;
+
 public class AuthTest {
 
 	@Test
@@ -19,7 +21,19 @@ public class AuthTest {
 		assertNotNull(api.session.apiEndpoint);
 
 	}
-	
+
+	@Test
+	public void testIPRestrictionsOnSoap() {
+		try {
+			new ForceApi(new ApiConfig()
+					.setUsername(Fixture.get("iprestrictedUsername"))
+					.setPassword(Fixture.get("iprestrictedPassword")));
+			fail("SoapLogin: Did not throw AuthException as expected when logging in with IP restricted user");
+		} catch(AuthException e) {
+			// pass
+		}
+	}
+
 	@Test
 	public void testForceURL() {
 		
@@ -60,7 +74,22 @@ public class AuthTest {
 		assertNotNull(api.session.apiEndpoint);
 
 	}
-	
+
+	@Test
+	public void testIPRestrictionsOnOauth() {
+		try {
+			new ForceApi(new ApiConfig()
+					.setUsername(Fixture.get("iprestrictedUsername"))
+					.setPassword(Fixture.get("iprestrictedPassword"))
+					.setClientId(Fixture.get("clientId"))
+					.setClientSecret(Fixture.get("clientSecret")));
+			fail("oauthUserNamePasswordFlow Login: Did not throw AuthException as expected when logging in with IP restricted user");
+		} catch(AuthException e) {
+			// pass
+		}
+	}
+
+
 	@Test
 	public void testExistingValidAccessToken() {
 		ApiConfig c = new ApiConfig()
