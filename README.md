@@ -185,10 +185,6 @@ Use the Force.com Web UI to add a custom field called `externalId__c` and mark i
 
 * (sorry, you have to figure out how to do this yourself. Will add instructions or automate it later)
 
-Now run tests with
-
-    $ mvn test
-
 ### Create a second user for IP restrictions test
 
 To test IP restrictions failure handling you need additional test setup:
@@ -200,6 +196,13 @@ To test IP restrictions failure handling you need additional test setup:
 * Set username and password (with token appended) in test.properties.
 * Log back in with the admin user and go to Manage Users --> Profiles
 
+### Run Tests
+
+Now run tests with
+
+    $ mvn test
+
+You will see some log messages that look like errors or warnings. That's expected and does not indicate test failures.
 
 ### Interactive end-to-end OAuth handshake Test
 
