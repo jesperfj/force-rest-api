@@ -34,8 +34,6 @@ public class AuthTest {
 		}
 	}
 
-
-
 	@Test
 	public void testForceURL() {
 		
