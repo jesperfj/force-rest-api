@@ -239,6 +239,10 @@ Remember to push your recent changes and tags to origin:
 
 # Release History
 
+## 0.0.33
+
+* Update to Salesforce API v39
+
 ## 0.0.32
 
 * Add explicit authentication error handling. Addresses issue #32

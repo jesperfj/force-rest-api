@@ -1,6 +1,8 @@
 package com.force.api;
 
 public enum ApiVersion {
+  V39 ("v39.0"),
+  V38 ("v38.0"),
 	V37 ("v37.0"),
 	V36 ("v36.0"),
 	V35 ("v35.0"),
@@ -17,7 +19,7 @@ public enum ApiVersion {
 	V24 ("v24.0"),
 	V23 ("v23.0"),
 	V22 ("v22.0"), 
-	DEFAULT_VERSION ("v37.0");
+	DEFAULT_VERSION ("v39.0");
 
 	final String v;
 	
