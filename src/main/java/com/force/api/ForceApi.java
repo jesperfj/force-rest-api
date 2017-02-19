@@ -41,7 +41,7 @@ import java.util.Map.Entry;
  */
 public class ForceApi {
 
-	private static final ObjectMapper jsonMapper;
+	protected static final ObjectMapper jsonMapper;
 
 	private static final Logger logger = LoggerFactory.getLogger(ForceApi.class);
 
@@ -317,11 +317,11 @@ public class ForceApi {
 		}
 	}
 	
-	private final String uriBase() {
+	protected final String uriBase() {
 		return(session.getApiEndpoint()+"/services/data/"+config.getApiVersionString());
 	}
 	
-	private final HttpResponse apiRequest(HttpRequest req) {
+	protected final HttpResponse apiRequest(HttpRequest req) {
 		req.setAuthorization("Bearer "+session.getAccessToken());
 		HttpResponse res = Http.send(req);
 		if(res.getResponseCode()==401) {
@@ -419,7 +419,7 @@ public class ForceApi {
 	 * @param node 
 	 * @return
 	 */
-	private final JsonNode normalizeCompositeResponse(JsonNode node){
+	protected final JsonNode normalizeCompositeResponse(JsonNode node){
 		Iterator<Entry<String, JsonNode>> elements = node.fields();
 		ObjectNode newNode = JsonNodeFactory.instance.objectNode();
 		Entry<String, JsonNode> currNode;
