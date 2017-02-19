@@ -316,7 +316,40 @@ public class ForceApi {
 			throw new ResourceException(e);
 		}
 	}
-	
+
+	/**
+	 * Make custom REST API call.
+	 * @param service service path to be called - i.e. /process/approvals/
+	 * @param httpMethod HTTP method name - i.e. POST
+	 * @param input input object
+	 * @param expectsCode expected HTTP code
+	 * @param outputClass class of the response
+	 * @return marshaled response
+	 */
+	protected <O,I> O call(final String service, final String httpMethod, final I input,
+						   final int expectsCode, final Class<O> outputClass) {
+		try {
+			final byte[] contentBytes = jsonMapper.writeValueAsBytes(input);
+			final HttpRequest httpRequest = new HttpRequest()
+					.url(uriBase() + service)
+					.method(httpMethod)
+					.header("Accept", "application/json")
+					.header("Content-Type", "application/json")
+					.content(contentBytes);
+			if (expectsCode > 0) {
+				httpRequest.expectsCode(expectsCode);
+			}
+			final HttpResponse response = apiRequest(httpRequest);
+			return new ResourceRepresentation(response).as(outputClass);
+		} catch (JsonGenerationException e) {
+			throw new ResourceException(e);
+		} catch (JsonMappingException e) {
+			throw new ResourceException(e);
+		} catch (IOException e) {
+			throw new ResourceException(e);
+		}
+	}
+
 	protected final String uriBase() {
 		return(session.getApiEndpoint()+"/services/data/"+config.getApiVersionString());
 	}
