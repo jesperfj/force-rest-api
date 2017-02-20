@@ -9,7 +9,7 @@ Releases are published on Maven Central. Include in your project with:
     <dependency>
         <groupId>com.frejo</groupId>
         <artifactId>force-rest-api</artifactId>
-        <version>0.0.28</version>
+        <version>0.0.33</version>
     </dependency>
 
 ## Build and link locally
@@ -33,6 +33,18 @@ To check out the source code for a particular version found in Maven Central, us
      $ git checkout force-rest-api-0.0.28
 
 ## Authentication and Instantiation
+
+### API versions
+
+Force.com API updates its API version with every Salesforce release (3 times per year). The new version is supposed to always be backwards compatible, so in theory it is safe to always use the latest API version. However `force-rest-api` is designed to be conservative. The API version used may change with new versions of the library, but for a given version of the library, the version will always be `ApiVersion.DEFAULT_VERSION` unless you explicitly set it to something different. You set the API version when you instantiate an `ApiConfig`:
+
+    ApiConfig mycfg = new ApiConfig().setApiVersionString("v99.0");
+
+You can also use the `ApiVersion` enum to set the version:
+
+    ApiConfig mycfg = new ApiConfig().setApiVersion(ApiVersion.V38);
+
+But the enum may not have the version you need and there is no particular benefit to using it compared to using a simple String.
 
 ### Username / Password Authentication
 
