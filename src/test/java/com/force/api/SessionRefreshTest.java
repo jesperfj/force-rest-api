@@ -5,6 +5,8 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class SessionRefreshTest {
+
+	public static boolean notified = false;
 	
 	@Test
 	public void testSessionRefresh() {
@@ -33,7 +35,7 @@ public class SessionRefreshTest {
 			}
 		}
 		assertNotNull(id);
-		
+		assertTrue(notified);
 	}
 
 }

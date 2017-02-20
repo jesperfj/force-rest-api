@@ -5,6 +5,7 @@ package com.force.api;
  */
 public class TestRefreshListener implements SessionRefreshListener {
     public void sessionRefreshed(ApiSession session) {
+        SessionRefreshTest.notified = true;
         System.out.println("Session was refreshed! New access token: "+session.getAccessToken());
     }
 }
