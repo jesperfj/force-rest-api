@@ -29,4 +29,16 @@ public enum ApiVersion {
 	
 	public String toString() { return v; }
 
+    public static ApiVersion fromValue(String value) {
+        if (value == null) return null;
+
+        for (ApiVersion versionEnum : values()) {
+            if (value.equals(versionEnum.toString())) {
+                return versionEnum;
+            }
+        }
+
+        return null;
+    }
+
 }

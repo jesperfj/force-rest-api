@@ -7,6 +7,7 @@ import com.force.api.http.HttpResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -274,6 +275,51 @@ public class ForceApi {
 			throw new ResourceException(e);
 		}
 	}
+
+	public List<VersionRepresentation> discoverAvailableVersions() {
+		try {
+			return jsonMapper.readValue(apiRequest(new HttpRequest()
+					.url(session.getApiEndpoint()+"/services/data")
+					.method("GET")
+					.header("Accept", "application/json")).getStream(),
+					new TypeReference<List<VersionRepresentation>>() {});
+		} catch (JsonParseException e) {
+			throw new ResourceException(e);
+		} catch (JsonMappingException e) {
+			throw new ResourceException(e);
+		} catch (UnsupportedEncodingException e) {
+			throw new ResourceException(e);
+		} catch (IOException e) {
+			throw new ResourceException(e);
+		}
+	}
+
+	public VersionRepresentation getLatestVersion() {
+        List<VersionRepresentation> versions = discoverAvailableVersions();
+
+        // Return last in list
+        return versions.get(versions.size() - 1);
+    }
+
+    public VersionRepresentation getOldestVersion() {
+        List<VersionRepresentation> versions = discoverAvailableVersions();
+
+        // Return first in list
+        return versions.get(0);
+    }
+
+    public Boolean versionIsSupportedInOrg(String version) {
+
+        List<VersionRepresentation> versions = discoverAvailableVersions();
+
+        List<String> versionStrings = new ArrayList<String>();
+
+        for (VersionRepresentation versionRepresentation : versions) {
+            versionStrings.add(versionRepresentation.getVersion());
+        }
+
+        return versionStrings.contains(version);
+    }
 
     public <T> DiscoverSObject<T> discoverSObject(String sobject, Class<T> clazz) {
         try {
