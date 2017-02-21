@@ -26,7 +26,31 @@ public enum ApiVersion {
 	ApiVersion(String v) {
 		this.v=v;
 	}
+
+    /**
+     * For a particular year, Salesforce releases 3 versions in the following order - Winter, Spring, then Summer
+     * For example, for 2016, SF released Winter '16, Spring '16, and Summer '16. The first version was Summer '04.
+     * Version number is calculated with the following formula:
+     * Winter: 3(YEAR - 2004) - 1
+     * Spring: 3(YEAR - 2004)
+     * Summer: 3(YEAR - 2004) + 1
+     *
+     * @param year Fully qualified year, such as 2017
+     * @return String of version in format of v34.0
+     * @throws IllegalArgumentException if resulting version would be less than version 1
+     */
+    public static String resolveVersionString(ApiVersionSeason season, int year) {
+
+	    if (year < 2004 || (year == 2004 && season != ApiVersionSeason.SUMMER)) {
+	        throw new IllegalArgumentException("Salesforce Versions are only valid from Summer 2004 and on.");
+        }
+
+	    String version = "v" + (3 * (year - 2004) + season.offset) + ".0";
+
+        return version;
+    }
 	
 	public String toString() { return v; }
 
 }
+

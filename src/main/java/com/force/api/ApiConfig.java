@@ -65,6 +65,11 @@ public class ApiConfig {
 		return this;
 	}
 
+    public ApiConfig setApiVersionString(ApiVersionSeason season, int year) {
+        apiVersionString = ApiVersion.resolveVersionString(season, year);
+        return this;
+    }
+
 	public ApiConfig setUsername(String value) {
 		username = value;
 		return this;
