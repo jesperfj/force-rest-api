@@ -276,13 +276,13 @@ public class ForceApi {
 		}
 	}
 
-	public List<VersionRepresentation> discoverAvailableVersions() {
+	public SupportedVersions getSupportedVersions() {
 		try {
 			return jsonMapper.readValue(apiRequest(new HttpRequest()
 					.url(session.getApiEndpoint()+"/services/data")
 					.method("GET")
 					.header("Accept", "application/json")).getStream(),
-					new TypeReference<List<VersionRepresentation>>() {});
+					SupportedVersions.class);
 		} catch (JsonParseException e) {
 			throw new ResourceException(e);
 		} catch (JsonMappingException e) {
@@ -293,33 +293,6 @@ public class ForceApi {
 			throw new ResourceException(e);
 		}
 	}
-
-	public VersionRepresentation getLatestVersion() {
-        List<VersionRepresentation> versions = discoverAvailableVersions();
-
-        // Return last in list
-        return versions.get(versions.size() - 1);
-    }
-
-    public VersionRepresentation getOldestVersion() {
-        List<VersionRepresentation> versions = discoverAvailableVersions();
-
-        // Return first in list
-        return versions.get(0);
-    }
-
-    public Boolean versionIsSupportedInOrg(String version) {
-
-        List<VersionRepresentation> versions = discoverAvailableVersions();
-
-        List<String> versionStrings = new ArrayList<String>();
-
-        for (VersionRepresentation versionRepresentation : versions) {
-            versionStrings.add(versionRepresentation.getVersion());
-        }
-
-        return versionStrings.contains(version);
-    }
 
     public <T> DiscoverSObject<T> discoverSObject(String sobject, Class<T> clazz) {
         try {

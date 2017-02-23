@@ -2,8 +2,6 @@ package com.force.api;
 
 import org.junit.Test;
 
-import java.util.List;
-
 import static org.junit.Assert.*;
 
 /**
@@ -38,7 +36,7 @@ public class VersionTest {
     }
 
     @Test
-    public void testDiscoverListOfVersions() {
+    public void testListOfVersions() {
         ApiConfig c = new ApiConfig()
                 .setUsername(Fixture.get("username"))
                 .setPassword(Fixture.get("password"))
@@ -46,18 +44,14 @@ public class VersionTest {
 
         ForceApi api = new ForceApi(c);
 
-        List<VersionRepresentation> versions =
-                api.discoverAvailableVersions();
-
+        SupportedVersions versions = api.getSupportedVersions();
         assertNotNull(versions);
 
-        for (VersionRepresentation version : versions) {
-            System.out.println(version.getVersion());
-        }
+        for (ExtendedApiVersion version : versions) System.out.println(version.getVersionString());
     }
 
     @Test
-    public void testDiscoverOfLatestAndOldestVersions() {
+    public void testLatestAndOldestVersions() {
         ApiConfig c = new ApiConfig()
                 .setUsername(Fixture.get("username"))
                 .setPassword(Fixture.get("password"))
@@ -65,11 +59,11 @@ public class VersionTest {
 
         ForceApi api = new ForceApi(c);
 
-        VersionRepresentation oldest = api.getOldestVersion();
+        ExtendedApiVersion oldest = api.getSupportedVersions().oldest();
         assertNotNull(oldest);
         System.out.println(oldest.getVersion());
 
-        VersionRepresentation latest = api.getLatestVersion();
+        ExtendedApiVersion latest = api.getSupportedVersions().latest();
         assertNotNull(latest);
         System.out.println(latest.getVersion());
     }
@@ -82,7 +76,7 @@ public class VersionTest {
 
         ForceApi api = new ForceApi(c);
 
-        assertTrue(api.versionIsSupportedInOrg(c.getApiVersionString()));
+        assertTrue(api.getSupportedVersions().contains(c.getApiVersionString()));
     }
 
     @Test
@@ -93,6 +87,6 @@ public class VersionTest {
 
         ForceApi api = new ForceApi(c);
 
-        assertFalse(api.versionIsSupportedInOrg("v1324.0"));
+        assertFalse(api.getSupportedVersions().contains("v1324.0"));
     }
 }
