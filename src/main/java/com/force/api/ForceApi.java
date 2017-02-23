@@ -275,6 +275,24 @@ public class ForceApi {
 		}
 	}
 
+	public SupportedVersions getSupportedVersions() {
+		try {
+			return jsonMapper.readValue(apiRequest(new HttpRequest()
+					.url(session.getApiEndpoint()+"/services/data")
+					.method("GET")
+					.header("Accept", "application/json")).getStream(),
+					SupportedVersions.class);
+		} catch (JsonParseException e) {
+			throw new ResourceException(e);
+		} catch (JsonMappingException e) {
+			throw new ResourceException(e);
+		} catch (UnsupportedEncodingException e) {
+			throw new ResourceException(e);
+		} catch (IOException e) {
+			throw new ResourceException(e);
+		}
+	}
+
     public <T> DiscoverSObject<T> discoverSObject(String sobject, Class<T> clazz) {
         try {
             HttpResponse res = apiRequest(new HttpRequest()
