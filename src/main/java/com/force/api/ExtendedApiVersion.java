@@ -9,6 +9,8 @@ package com.force.api;
  * of versions as an enum. It will likely be phased out in favor of using plain version strings along with this class
  * for more extended version information.
  *
+ * This is a tweak to an original proposal by @cswendrowski.
+ *
  */
 public class ExtendedApiVersion implements Comparable<ExtendedApiVersion> {
 
@@ -27,6 +29,9 @@ public class ExtendedApiVersion implements Comparable<ExtendedApiVersion> {
     public ExtendedApiVersion(Season s, int y) {
         // Thank you @cswendrowski for this neat algorithm
         this.version = (float) (3*(y - 2004) + s.ordinal() - 1);
+        if(version < 20) {
+            throw new IllegalArgumentException("Only Winter 2011 (v20.0) and later versions are supported");
+        }
     }
 
     /**

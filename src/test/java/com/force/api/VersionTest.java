@@ -2,6 +2,8 @@ package com.force.api;
 
 import org.junit.Test;
 
+import javax.swing.text.TableView;
+
 import static org.junit.Assert.*;
 
 /**
@@ -101,5 +103,15 @@ public class VersionTest {
         assertEquals(v.getVersionString(), "v20.0");
 
 
+    }
+
+    @Test
+    public void testTooOldSeason() {
+        try {
+            ExtendedApiVersion v = new ExtendedApiVersion(ExtendedApiVersion.Season.SPRING, 2010);
+            fail("Exception expected when using invalid API version");
+        } catch(Throwable t) {
+            System.out.println("Correctly failed: "+t);
+        }
     }
 }
