@@ -44,7 +44,7 @@ You can also use the `ApiVersion` enum to set the version:
 
     ApiConfig mycfg = new ApiConfig().setApiVersion(ApiVersion.V38);
 
-But the enum may not have the version you need and there is no particular benefit to using it compared to using a simple String.
+But the enum may not always have the version you need and there is no particular benefit to using it compared to using a simple String.
 
 ### Username / Password Authentication
 
@@ -163,6 +163,22 @@ This assumes you have an Account class defined with proper Jackson deserializati
 
     QueryResult<Account> res = api.query("SELECT id FROM Account WHERE name LIKE 'Test account%'", Account.class);
 
+## Working with API versions
+
+You can inspect supported API versions and get more detailed info for each version using `SupportedVersions`:
+
+    SupportedVersions versions = api.getSupportedVersions();
+    System.out.println(versions.oldest());          // prints v20.0
+    System.out.println(versions.contains("v25.0")); // prints true
+
+The set of supported versions may vary based on where your organization is located. New versions are introduced 3 times a year and are rolled out gradually. During the rollout period, some organizations will have the latest version while others will not. The oldest supported version for REST API is v20.0. Salesforce API versions go further back than v20.0, but REST API does not support those older versions.
+
+There is a direct mapping between season/year and version numbers. You can translate between season/year and version number in this way:
+
+    ExtendedApiVersion v = new ExtendedApiversion(ExtendedApiVersion.Season.SPRING, 2012);
+    System.out.println(v.getVersionString());       // prints v21.0
+
+`ExtendedApiVersion` is called "Extended" because it goes beyond what `ApiVersion` offers and can represent more details about an API version, e.g. its season, year and URL base.
 
 ## Run Tests
 
