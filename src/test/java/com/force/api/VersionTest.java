@@ -2,8 +2,6 @@ package com.force.api;
 
 import org.junit.Test;
 
-import javax.swing.text.TableView;
-
 import static org.junit.Assert.*;
 
 /**
