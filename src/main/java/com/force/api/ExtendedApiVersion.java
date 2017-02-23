@@ -25,6 +25,7 @@ public class ExtendedApiVersion implements Comparable<ExtendedApiVersion> {
     }
 
     public ExtendedApiVersion(Season s, int y) {
+        // Thank you @cswendrowski for this neat algorithm
         this.version = (float) (3*(y - 2004) + s.ordinal() - 1);
     }
 
