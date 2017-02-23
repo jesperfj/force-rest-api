@@ -182,7 +182,7 @@ There is a direct mapping between season/year and version numbers. You can trans
 
 ## Run Tests
 
-This project currently only has integration-y tests (they hit the actual API). To make them work copy `src/test/resources/test.properties.sample` to `src/test/resources/test.properties` and replace the properties in the file with actual values.
+This project has a mix of unit tests and integration tests that hit the actual API. To make the integration tests work copy `src/test/resources/test.properties.sample` to `src/test/resources/test.properties` and replace the properties in the file with actual values.
 
 ### Login and password
 
