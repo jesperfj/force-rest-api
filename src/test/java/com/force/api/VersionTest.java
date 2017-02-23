@@ -38,58 +38,24 @@ public class VersionTest {
     }
 
     @Test
-    public void testListOfVersions() {
+    public void testSupportedVersions() {
         ApiConfig c = new ApiConfig()
                 .setUsername(Fixture.get("username"))
-                .setPassword(Fixture.get("password"))
-                .setApiVersionString("v38.0");
+                .setPassword(Fixture.get("password"));
 
         ForceApi api = new ForceApi(c);
 
         SupportedVersions versions = api.getSupportedVersions();
+        System.out.println("Default version: "+ApiVersion.DEFAULT_VERSION.toString());
         assertNotNull(versions);
+        assertTrue(versions.contains(ApiVersion.DEFAULT_VERSION.toString()));
+        assertNotNull(versions.oldest());
+        System.out.println("Oldest supported version: " + versions.oldest());
+        assertNotNull(versions.latest());
+        System.out.println("Latest supported version: " + versions.latest());
 
-        for (ExtendedApiVersion version : versions) System.out.println(version.getVersionString()+" "+version.getLabel());
-    }
-
-    @Test
-    public void testLatestAndOldestVersions() {
-        ApiConfig c = new ApiConfig()
-                .setUsername(Fixture.get("username"))
-                .setPassword(Fixture.get("password"))
-                .setApiVersionString("v38.0");
-
-        ForceApi api = new ForceApi(c);
-
-        ExtendedApiVersion oldest = api.getSupportedVersions().oldest();
-        assertNotNull(oldest);
-        System.out.println(oldest.getVersion());
-
-        ExtendedApiVersion latest = api.getSupportedVersions().latest();
-        assertNotNull(latest);
-        System.out.println(latest.getVersion());
-    }
-
-    @Test
-    public void testDefaultVersionIsSupported() {
-        ApiConfig c = new ApiConfig()
-                .setUsername(Fixture.get("username"))
-                .setPassword(Fixture.get("password"));
-
-        ForceApi api = new ForceApi(c);
-
-        assertTrue(api.getSupportedVersions().contains(c.getApiVersionString()));
-    }
-
-    @Test
-    public void testFakeVersionIsUnsupported() {
-        ApiConfig c = new ApiConfig()
-                .setUsername(Fixture.get("username"))
-                .setPassword(Fixture.get("password"));
-
-        ForceApi api = new ForceApi(c);
-
-        assertFalse(api.getSupportedVersions().contains("v1324.0"));
+        // Test that it correctly returns false on unknown version
+        assertFalse(versions.contains("v132423.0"));
     }
 
     @Test
@@ -113,5 +79,17 @@ public class VersionTest {
         } catch(Throwable t) {
             System.out.println("Correctly failed: "+t);
         }
+    }
+
+    @Test
+    public void testCompareLogic() {
+        ExtendedApiVersion version = new ExtendedApiVersion("v25.0");
+        ExtendedApiVersion later = new ExtendedApiVersion("v27.0");
+        ExtendedApiVersion earlier = new ExtendedApiVersion("v22.0");
+        ExtendedApiVersion same = new ExtendedApiVersion("v25.0");
+
+        assertTrue(version.compareTo(later) == -1);
+        assertTrue(version.compareTo(earlier) == 1);
+        assertTrue(version.compareTo(same) == 0);
     }
 }
