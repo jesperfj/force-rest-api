@@ -199,7 +199,7 @@ public class Auth {
 	
 	/**
 	 * revokes a token. Works with both access token and refresh token
-	 * @param config
+	 * @param config appropriate ApiConfig
 	 * @param token either an access token or a refresh token
 	 */
 	static public void revokeToken(ApiConfig config, String token) {
