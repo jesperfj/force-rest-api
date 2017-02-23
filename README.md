@@ -246,13 +246,17 @@ The project is set up to release to Maven Central. If you have forked it and wan
 
 First ensure all your code is checked in (with `git status` or the like). Then find the latest version number with `git tag` (or in Maven central depending on what you trust most). Bump the version number to that plus one:
 
-    $ mvn versions:set -DnewVersion=<new-version> scm:tag
+    $ mvn versions:set -DnewVersion=<new-version>
 
 For example:
 
-    $ mvn versions:set -DnewVersion=0.0.50 scm:tag
+    $ mvn versions:set -DnewVersion=0.0.50
 
-This will update pom.xml locally to the new version and tag the repo with the new version number. Now deploy:
+This will update pom.xml locally to the new version and leaving it uncommitted (which is what you want). Now run
+
+    $ mvn scm:tag
+
+This tags the local and remote repository with the full module name, e.g. force-rest-api-0.0.50. Now deploy:
 
     $ mvn clean deploy -DperformRelease
 
@@ -260,12 +264,17 @@ When you're done, reset the local version change to pom.xml with:
 
     $ mvn versions:revert
 
-Remember to push your recent changes and tags to origin:
+Just as a validation, try to push local changes including tags:
 
-    $ git push origin master
+    $ git push origin master --tags
 
+There should be nothing to push. If something is messed up, delete the tags in Github and in your local repo and start over.
 
 # Release History
+
+## 0.0.34
+
+* Introduced `ForceApi.getSupportedVersions` and friends to enabled more advanced version handling. Thanks to @cswendrowski for the contributions. See "Working with API versions" in this README.
 
 ## 0.0.33
 
