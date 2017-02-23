@@ -77,9 +77,6 @@ public class DescribeSObject extends DescribeSObjectBasic {
     }
 
 
-    /**
-     * Required fields.
-     */
     public Set<Field> getRequiredFieldsForCreateUpdate() {
         Set<Field> required = new HashSet<Field>();
         for (Field field : fields) {
@@ -90,9 +87,6 @@ public class DescribeSObject extends DescribeSObjectBasic {
         return required;
     }
 
-    /**
-     * Optional fields.
-     */
     public Set<Field> getOptionalFieldsForCreateUpdate() {
         Set<Field> optional = new HashSet<Field>();
         for (Field field : fields) {
@@ -105,9 +99,6 @@ public class DescribeSObject extends DescribeSObjectBasic {
         return optional;
     }
     
-    /**
-     * Parent entity references.
-     */
     public Set<Field> getParentEntitiesForCreateUpdate() {
         Set<Field> parentReference = new HashSet<Field>();
         for (Field field : fields) {

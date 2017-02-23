@@ -5,7 +5,7 @@ package com.force.api;
  * represents a single supported API version as reported by the <code>/services/data</code> resource
  * for the instance endpoint returned on authentication.
  *
- * {@link com.frejo.api.ApiVersion} was originally used to set the current API version and manage the complete list
+ * com.frejo.api.ApiVersion was originally used to set the current API version and manage the complete list
  * of versions as an enum. It will likely be phased out in favor of using plain version strings along with this class
  * for more extended version information.
  *
@@ -73,7 +73,7 @@ public class ExtendedApiVersion implements Comparable<ExtendedApiVersion> {
     /**
      * sets version number as a float. This would more correct have been called <code>setNumber</code> but
      * the field name in REST API is <code>version</code>.
-     * @param version
+     * @param version version number as float, e.g. 25.0
      */
     public void setVersion(float version) {
         this.version = version;
