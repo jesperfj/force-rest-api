@@ -47,7 +47,7 @@ public class VersionTest {
         SupportedVersions versions = api.getSupportedVersions();
         assertNotNull(versions);
 
-        for (ExtendedApiVersion version : versions) System.out.println(version.getVersionString());
+        for (ExtendedApiVersion version : versions) System.out.println(version.getVersionString()+" "+version.getLabel());
     }
 
     @Test
@@ -88,5 +88,18 @@ public class VersionTest {
         ForceApi api = new ForceApi(c);
 
         assertFalse(api.getSupportedVersions().contains("v1324.0"));
+    }
+
+    @Test
+    public void testSeasonLogic() {
+        ExtendedApiVersion v = new ExtendedApiVersion(ExtendedApiVersion.Season.SPRING, 2017);
+        System.out.println(ExtendedApiVersion.Season.SPRING.ordinal());
+        System.out.println(v.getVersionString());
+        assertEquals(v.getVersionString(), "v39.0");
+
+        v = new ExtendedApiVersion(ExtendedApiVersion.Season.WINTER, 2011);
+        assertEquals(v.getVersionString(), "v20.0");
+
+
     }
 }

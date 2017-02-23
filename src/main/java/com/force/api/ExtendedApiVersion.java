@@ -12,10 +12,20 @@ package com.force.api;
  */
 public class ExtendedApiVersion implements Comparable<ExtendedApiVersion> {
 
+    public enum Season {
+        WINTER(),
+        SPRING(),
+        SUMMER();
+    }
+
     public ExtendedApiVersion() {}
 
     public ExtendedApiVersion(float version) {
         this.version = version;
+    }
+
+    public ExtendedApiVersion(Season s, int y) {
+        this.version = (float) (3*(y - 2004) + s.ordinal() - 1);
     }
 
     /**
