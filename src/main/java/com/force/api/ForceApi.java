@@ -73,6 +73,45 @@ public class ForceApi {
 
 	}
 
+	public ResourceRepresentation get(String path) {
+		return new ResourceRepresentation(apiRequest(new HttpRequest()
+				.url(uriBase()+path)
+				.method("GET")
+				.header("Accept", "application/json")));
+	}
+
+	public ResourceRepresentation get(String path, String query) {
+		return new ResourceRepresentation(apiRequest(new HttpRequest()
+				.url(uriBase()+path+"?"+query)
+				.method("GET")
+				.header("Accept", "application/json")));
+	}
+
+	/**
+	 * sends a custom REST API POST request
+	 *
+	 * @param path     service path to be called - i.e. /process/approvals/
+	 * @param input    this object will be serialized as JSON and sent in tbe body of the request
+	 * @param expectedCode expected HTTP code. Set to -1 if code shouldn't be checked.
+	 * @return response from API wrapped in a ResourceRepresentation for multiple deserialization options
+	 */
+	public ResourceRepresentation post(String path, Object input, int expectedCode) {
+		try {
+			return new ResourceRepresentation(apiRequest(new HttpRequest()
+					.url(uriBase() + path)
+					.method("POST")
+					.header("Accept", "application/json")
+					.header("Content-Type", "application/json")
+					.expectsCode(expectedCode)
+					.content(jsonMapper.writeValueAsBytes(input))));
+		} catch (JsonGenerationException e) {
+			throw new ResourceException(e);
+		} catch (JsonMappingException e) {
+			throw new ResourceException(e);
+		} catch (IOException e) {
+			throw new ResourceException(e);
+		}
+	}
 
 	public Identity getIdentity() {
 		try {

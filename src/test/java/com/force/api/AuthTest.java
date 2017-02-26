@@ -71,7 +71,9 @@ public class AuthTest {
 
 		assertNotNull(api.session);
 		assertNotNull(api.session.accessToken);
+		System.out.println(api.session.accessToken);
 		assertNotNull(api.session.apiEndpoint);
+		System.out.println(api.session.apiEndpoint);
 
 	}
 
