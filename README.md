@@ -272,6 +272,12 @@ There should be nothing to push. If something is messed up, delete the tags in G
 
 # Release History
 
+## 0.0.35
+
+* Introduced generic REST api calls `get`, `delete`, `post`, `put` and `patch` on `ForceApi` for any arbitrary path. This allows force-rest-api to be used for the many non-sObject resources exposed in Force.com REST API.
+* Added `getSession()` convenience method on `ForceApi` as requested by several people. It took me a little while to become comfortable with it.
+* Added `curlHelper()` convenience method on `ForceApi` to easily print a curl command string with valid access token for debugging purposes.
+
 ## 0.0.34
 
 * Introduced `ForceApi.getSupportedVersions` and friends to enabled more advanced version handling. Thanks to @cswendrowski for the contributions. See "Working with API versions" in this README.
