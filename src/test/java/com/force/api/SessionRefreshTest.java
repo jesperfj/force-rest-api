@@ -19,7 +19,7 @@ public class SessionRefreshTest {
 			.setClientSecret(Fixture.get("clientSecret")));
 
 		assertNotNull(api.getIdentity());
-		// This call is not available in public api
+
 		Auth.revokeToken(api.config, api.session.accessToken);
 
 		Identity id = null;
