@@ -9,7 +9,7 @@ Releases are published on Maven Central. Include in your project with:
     <dependency>
         <groupId>com.frejo</groupId>
         <artifactId>force-rest-api</artifactId>
-        <version>0.0.34</version>
+        <version>0.0.36</version>
     </dependency>
 
 ## Build and link locally
@@ -244,7 +244,11 @@ This project now uses [Alex Fontaine's](http://axelfontaine.com/blog/final-nail.
 
 The project is set up to release to Maven Central. If you have forked it and want to deploy your own version, you will need to update groupId and set up your own Sonatype credentials and GPG. Assuming this is all correctly set up. Here's how you cut a new release:
 
-First ensure all your code is checked in (with `git status` or the like). Then find the latest version number with `git tag` (or in Maven central depending on what you trust most). Bump the version number to that plus one:
+First ensure all your code is checked in (with `git status` or the like). Then run tests one extra time and also test javadoc generation since it's easy to introduce errors in javadoc comments that will break the deploy:
+
+    $ mvn test javadoc:javadoc
+
+Now find the latest version number with `git tag` (or in Maven central depending on what you trust most). Bump the version number to that plus one:
 
     $ mvn versions:set -DnewVersion=<new-version>
 
