@@ -5,11 +5,14 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class SessionRefreshTest {
+
+	public static boolean notified = false;
 	
 	@Test
 	public void testSessionRefresh() {
 		
 		ForceApi api = new ForceApi(new ApiConfig()
+			.setSessionRefreshListener(new TestRefreshListener())
 			.setUsername(Fixture.get("username"))
 			.setPassword(Fixture.get("password"))
 			.setClientId(Fixture.get("clientId"))
@@ -32,7 +35,7 @@ public class SessionRefreshTest {
 			}
 		}
 		assertNotNull(id);
-		
+		assertTrue(notified);
 	}
 
 }

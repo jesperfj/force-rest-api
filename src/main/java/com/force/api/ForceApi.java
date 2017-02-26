@@ -434,6 +434,9 @@ public class ForceApi {
 				} else {
 					session = Auth.authenticate(config);
 				}
+				if(config.getSessionRefreshListener()!=null) {
+					config.getSessionRefreshListener().sessionRefreshed(session);
+				}
 				req.setAuthorization("Bearer "+session.getAccessToken());
 				res = Http.send(req);
 			}

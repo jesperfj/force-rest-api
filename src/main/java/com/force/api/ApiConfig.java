@@ -13,6 +13,7 @@ public class ApiConfig {
 	String clientId;
 	String clientSecret;
 	String redirectURI;
+	SessionRefreshListener sessionRefreshListener;
 
 	public ApiConfig clone() {
 		return new ApiConfig()
@@ -89,6 +90,10 @@ public class ApiConfig {
 		clientSecret = value;
 		return this;
 	}
+	public ApiConfig setSessionRefreshListener(SessionRefreshListener value) {
+		sessionRefreshListener = value;
+		return this;
+	}
 
 	public String getUsername() {
 		return username;
@@ -113,6 +118,9 @@ public class ApiConfig {
 	public String getRedirectURI() {
 		return redirectURI;
 	}
+
+	public SessionRefreshListener getSessionRefreshListener() { return sessionRefreshListener; }
+
 
 	/**
 	 * @deprecated use #getApiVersionString instead
