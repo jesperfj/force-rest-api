@@ -274,13 +274,13 @@ There should be nothing to push. If something is messed up, delete the tags in G
 
 ## 0.0.36
 
-* Introduced [SessionRefreshListener](src/main/java/com/force/api/SessionRefreshListener.java) so you can register a listener and be notified when ForceApi refreshes the access token. See the [test](src/test/java/com/force/api/SessionRefreshTest.java) for sample code
+* Introduced [SessionRefreshListener](src/main/java/com/force/api/SessionRefreshListener.java) so you can register a listener and be notified when ForceApi refreshes the access token. See the [test](src/test/java/com/force/api/SessionRefreshTest.java) for sample code.
 
 ## 0.0.35
 
-* Introduced generic REST api calls `get`, `delete`, `post`, `put` and `patch` on [ForceApi](src/main/java/com/force/api/ForceApi.java) for any arbitrary path. This allows force-rest-api to be used for the many non-sObject resources exposed in Force.com REST API.
-* Added `getSession()` convenience method on `ForceApi` as requested by several people. It took me a little while to become comfortable with it.
-* Added `curlHelper()` convenience method on `ForceApi` to easily print a curl command string with valid access token for debugging purposes.
+* Introduced generic REST api calls `get`, `delete`, `post`, `put` and `patch` on [ForceApi][forceapi] for any arbitrary path. This allows force-rest-api to be used for the many non-sObject resources exposed in Force.com REST API. See [ChatterTest](src/test/java/com/force/api/chatter/ChatterTest.java) for an example.
+* Added `getSession()` convenience method on [ForceApi][forceapi] as requested by several people. It took me a little while to become comfortable with it.
+* Added `curlHelper()` convenience method on [ForceApi][forceapi] to easily print a curl command string with valid access token for debugging purposes.
 
 ## 0.0.34
 
@@ -425,3 +425,5 @@ There should be nothing to push. If something is messed up, delete the tags in G
 # Author
 
 Jesper Joergensen
+
+[forceapi]: src/main/java/com/force/api/ForceApi.java
