@@ -118,7 +118,7 @@ public class ForceApi {
 	}
 
 	/**
-	 * sends a custom REST API PUT request
+	 * sends a custom REST API PUT request (no test for this method yet).
 	 *
 	 * @param path     service path to be called - i.e. /process/approvals/
 	 * @param input    this object will be serialized as JSON and sent in tbe body of the request
