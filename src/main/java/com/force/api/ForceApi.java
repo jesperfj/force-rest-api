@@ -110,7 +110,6 @@ public class ForceApi {
 	 *
 	 * @param path     service path to be called - i.e. /process/approvals/
 	 * @param input    this object will be serialized as JSON and sent in tbe body of the request
-	 * @param expectedCode expected HTTP code. Set to -1 if code shouldn't be checked.
 	 * @return response from API wrapped in a ResourceRepresentation for multiple deserialization options
 	 */
 	public ResourceRepresentation post(String path, Object input) {
@@ -133,7 +132,6 @@ public class ForceApi {
 	 *
 	 * @param path     service path to be called - i.e. /process/approvals/
 	 * @param input    this object will be serialized as JSON and sent in tbe body of the request
-	 * @param expectedCode expected HTTP code. Set to -1 if code shouldn't be checked.
 	 * @return response from API wrapped in a ResourceRepresentation for multiple deserialization options
 	 */
 	public ResourceRepresentation patch(String path, Object input) {
