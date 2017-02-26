@@ -34,6 +34,7 @@ public class ChatterFeed {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class FeedItem {
 
+        public String id;
         public Actor actor;
         public Body body;
     }

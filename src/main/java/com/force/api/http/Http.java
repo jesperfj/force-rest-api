@@ -8,12 +8,38 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 
 public class Http {
+
+	static {
+		try {
+			Field methodsField = HttpURLConnection.class.getDeclaredField("methods");
+			methodsField.setAccessible(true);
+			// get the methods field modifiers
+			Field modifiersField = Field.class.getDeclaredField("modifiers");
+			// bypass the "private" modifier
+			modifiersField.setAccessible(true);
+
+			// remove the "final" modifier
+			modifiersField.setInt(methodsField, methodsField.getModifiers() & ~Modifier.FINAL);
+
+         	/* valid HTTP methods */
+			String[] methods = {
+					"GET", "POST", "HEAD", "OPTIONS", "PUT", "DELETE", "TRACE", "PATCH"
+			};
+			// set the new methods - including patch
+			methodsField.set(null, methods);
+
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+	}
 
 	static final Logger logger = LoggerFactory.getLogger(Http.class);
 	
