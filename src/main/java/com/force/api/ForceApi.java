@@ -113,8 +113,8 @@ public class ForceApi {
 	 * @param expectedCode expected HTTP code. Set to -1 if code shouldn't be checked.
 	 * @return response from API wrapped in a ResourceRepresentation for multiple deserialization options
 	 */
-	public ResourceRepresentation post(String path, Object input, int expectedCode) {
-		return request("POST", path, input, expectedCode);
+	public ResourceRepresentation post(String path, Object input) {
+		return request("POST", path, input, 201);
 	}
 
 	/**
@@ -122,11 +122,10 @@ public class ForceApi {
 	 *
 	 * @param path     service path to be called - i.e. /process/approvals/
 	 * @param input    this object will be serialized as JSON and sent in tbe body of the request
-	 * @param expectedCode expected HTTP code. Set to -1 if code shouldn't be checked.
 	 * @return response from API wrapped in a ResourceRepresentation for multiple deserialization options
 	 */
-	public ResourceRepresentation put(String path, Object input, int expectedCode) {
-		return request("PUT", path, input, expectedCode);
+	public ResourceRepresentation put(String path, Object input) {
+		return request("PUT", path, input, 200);
 	}
 
 	/**
@@ -137,9 +136,9 @@ public class ForceApi {
 	 * @param expectedCode expected HTTP code. Set to -1 if code shouldn't be checked.
 	 * @return response from API wrapped in a ResourceRepresentation for multiple deserialization options
 	 */
-	public ResourceRepresentation patch(String path, Object input, int expectedCode) {
+	public ResourceRepresentation patch(String path, Object input) {
 		char sep = path.contains("?") ? '&' : '?';
-		return request("POST", path+sep+"_HttpMethod=PATCH", input, expectedCode);
+		return request("POST", path+sep+"_HttpMethod=PATCH", input, 200);
 	}
 
 	public ResourceRepresentation request(String method, String path, Object input, int expectedCode) {

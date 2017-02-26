@@ -40,7 +40,7 @@ public class ChatterTest {
         segment.text = "Hi from Chatter API";
         newItem.body.messageSegments.add(segment);
 
-        ChatterFeed.FeedItem resp = api.post("/chatter/feed-elements", newItem, 201).as(ChatterFeed.FeedItem.class);
+        ChatterFeed.FeedItem resp = api.post("/chatter/feed-elements", newItem).as(ChatterFeed.FeedItem.class);
         System.out.println(resp.actor.displayName+" just posted "+resp.body.text);
         assertEquals(segment.text, resp.body.text);
 
@@ -52,7 +52,7 @@ public class ChatterTest {
         updatedSegment.text = "I changed my mind";
         updatedItem.body.messageSegments.add(updatedSegment);
 
-        ChatterFeed.FeedItem updatedresp = api.patch("/chatter/feed-elements/" + resp.id, updatedItem, 200).as(ChatterFeed.FeedItem.class);
+        ChatterFeed.FeedItem updatedresp = api.patch("/chatter/feed-elements/" + resp.id, updatedItem).as(ChatterFeed.FeedItem.class);
         System.out.println(resp.actor.displayName+" just updated to "+updatedresp.body.text);
         assertEquals(updatedSegment.text, updatedresp.body.text);
 
