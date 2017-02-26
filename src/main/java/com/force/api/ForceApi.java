@@ -73,6 +73,91 @@ public class ForceApi {
 
 	}
 
+	public ApiSession getSession() {
+		return session;
+	}
+
+	public String curlHelper() {
+		return "curl -s -H 'Authorization: Bearer "+session.getAccessToken()+"' "+uriBase()+" | jq .";
+	}
+
+	public ResourceRepresentation get(String path) {
+		return new ResourceRepresentation(apiRequest(new HttpRequest()
+				.url(uriBase()+path)
+				.method("GET")
+				.header("Accept", "application/json")));
+	}
+
+	/**
+	 * sends a custom REST API DELETE request
+	 *
+	 * @param path     service path to be called - i.e. /process/approvals/
+	 * @return response from API wrapped in a ResourceRepresentation for multiple deserialization options. DELETE
+	 * responses are generally empty, so you may get an error if you try to deserialize into a class by calling
+	 * `as(...)` on ResourceRepresentation. The DELETE can be assumed to have succeeded if this method does not
+	 * throw an exception.
+	 */
+	public ResourceRepresentation delete(String path) {
+		return new ResourceRepresentation(apiRequest(new HttpRequest()
+				.url(uriBase() + path)
+				.method("DELETE")
+				.expectsCode(204)
+				.header("Accept", "application/json")));
+	}
+
+	/**
+	 * sends a custom REST API POST request
+	 *
+	 * @param path     service path to be called - i.e. /process/approvals/
+	 * @param input    this object will be serialized as JSON and sent in tbe body of the request
+	 * @param expectedCode expected HTTP code. Set to -1 if code shouldn't be checked.
+	 * @return response from API wrapped in a ResourceRepresentation for multiple deserialization options
+	 */
+	public ResourceRepresentation post(String path, Object input) {
+		return request("POST", path, input, 201);
+	}
+
+	/**
+	 * sends a custom REST API PUT request (no test for this method yet).
+	 *
+	 * @param path     service path to be called - i.e. /process/approvals/
+	 * @param input    this object will be serialized as JSON and sent in tbe body of the request
+	 * @return response from API wrapped in a ResourceRepresentation for multiple deserialization options
+	 */
+	public ResourceRepresentation put(String path, Object input) {
+		return request("PUT", path, input, 200);
+	}
+
+	/**
+	 * sends a custom REST API PATCH request
+	 *
+	 * @param path     service path to be called - i.e. /process/approvals/
+	 * @param input    this object will be serialized as JSON and sent in tbe body of the request
+	 * @param expectedCode expected HTTP code. Set to -1 if code shouldn't be checked.
+	 * @return response from API wrapped in a ResourceRepresentation for multiple deserialization options
+	 */
+	public ResourceRepresentation patch(String path, Object input) {
+		char sep = path.contains("?") ? '&' : '?';
+		return request("POST", path+sep+"_HttpMethod=PATCH", input, 200);
+	}
+
+	public ResourceRepresentation request(String method, String path, Object input, int expectedCode) {
+		try {
+			return new ResourceRepresentation(apiRequest(new HttpRequest()
+					.url(uriBase() + path)
+					.method(method)
+					.header("Accept", "application/json")
+					.header("Content-Type", "application/json")
+					.expectsCode(expectedCode)
+					.content(jsonMapper.writeValueAsBytes(input))));
+		} catch (JsonGenerationException e) {
+			throw new ResourceException(e);
+		} catch (JsonMappingException e) {
+			throw new ResourceException(e);
+		} catch (IOException e) {
+			throw new ResourceException(e);
+		}
+	}
 
 	public Identity getIdentity() {
 		try {
