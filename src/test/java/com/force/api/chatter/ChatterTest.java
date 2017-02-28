@@ -23,6 +23,7 @@ public class ChatterTest {
                 .setClientId(Fixture.get("clientId"))
                 .setClientSecret(Fixture.get("clientSecret")));
 
+        // Test simple get
         ChatterFeed feed = api.get("/chatter/feeds/user-profile/me/feed-elements").as(ChatterFeed.class);
 
         Identity me = api.getIdentity();
@@ -30,6 +31,7 @@ public class ChatterTest {
 
         assertEquals(feed.elements.get(0).actor.id, me.getUserId());
 
+        // Test posting a new feed item
         ChatterFeed.FeedItemInput newItem = new ChatterFeed.FeedItemInput();
         newItem.subjectId = me.getUserId();
         newItem.feedElementType = "FeedItem";
@@ -40,10 +42,17 @@ public class ChatterTest {
         segment.text = "Hi from Chatter API";
         newItem.body.messageSegments.add(segment);
 
-        ChatterFeed.FeedItem resp = api.post("/chatter/feed-elements", newItem).as(ChatterFeed.FeedItem.class);
+        // Normally you collapse the next two lines into a single line but we need a reference to resrep
+        // for the test just down below
+        ResourceRepresentation resrep = api.post("/chatter/feed-elements", newItem);
+        ChatterFeed.FeedItem resp = resrep.as(ChatterFeed.FeedItem.class);
         System.out.println(resp.actor.displayName+" just posted "+resp.body.text);
         assertEquals(segment.text, resp.body.text);
 
+        // New as of 0.0.37, response code is available in ResourceRepresentation
+        assertEquals(resrep.getResponseCode(),201);
+
+        // Test updating the feed item just posted
         ChatterFeed.FeedItemInput updatedItem = new ChatterFeed.FeedItemInput();
         updatedItem.body = new ChatterFeed.Body();
         updatedItem.body.messageSegments = new ArrayList<ChatterFeed.MessageSegment>();
@@ -56,11 +65,11 @@ public class ChatterTest {
         System.out.println(resp.actor.displayName+" just updated to "+updatedresp.body.text);
         assertEquals(updatedSegment.text, updatedresp.body.text);
 
-
-//        try {
-//            api.delete("/chatter/feed-elements/" + resp.id);
-//        } catch(ResourceException e){
-//                fail("Delete failed unexpectedly: "+e);
-//        }
+        // Test deleting the feed item just posted
+        try {
+            api.delete("/chatter/feed-elements/" + resp.id);
+        } catch(ResourceException e){
+                fail("Delete failed unexpectedly: "+e);
+        }
     }
 }

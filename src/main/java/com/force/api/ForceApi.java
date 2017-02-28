@@ -101,7 +101,6 @@ public class ForceApi {
 		return new ResourceRepresentation(apiRequest(new HttpRequest()
 				.url(uriBase() + path)
 				.method("DELETE")
-				.expectsCode(204)
 				.header("Accept", "application/json")));
 	}
 
@@ -113,7 +112,7 @@ public class ForceApi {
 	 * @return response from API wrapped in a ResourceRepresentation for multiple deserialization options
 	 */
 	public ResourceRepresentation post(String path, Object input) {
-		return request("POST", path, input, 201);
+		return request("POST", path, input);
 	}
 
 	/**
@@ -124,7 +123,7 @@ public class ForceApi {
 	 * @return response from API wrapped in a ResourceRepresentation for multiple deserialization options
 	 */
 	public ResourceRepresentation put(String path, Object input) {
-		return request("PUT", path, input, 200);
+		return request("PUT", path, input);
 	}
 
 	/**
@@ -136,17 +135,16 @@ public class ForceApi {
 	 */
 	public ResourceRepresentation patch(String path, Object input) {
 		char sep = path.contains("?") ? '&' : '?';
-		return request("POST", path+sep+"_HttpMethod=PATCH", input, 200);
+		return request("POST", path+sep+"_HttpMethod=PATCH", input);
 	}
 
-	public ResourceRepresentation request(String method, String path, Object input, int expectedCode) {
+	public ResourceRepresentation request(String method, String path, Object input) {
 		try {
 			return new ResourceRepresentation(apiRequest(new HttpRequest()
 					.url(uriBase() + path)
 					.method(method)
 					.header("Accept", "application/json")
 					.header("Content-Type", "application/json")
-					.expectsCode(expectedCode)
 					.content(jsonMapper.writeValueAsBytes(input))));
 		} catch (JsonGenerationException e) {
 			throw new ResourceException(e);

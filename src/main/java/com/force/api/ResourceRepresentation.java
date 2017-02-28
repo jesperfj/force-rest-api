@@ -62,4 +62,12 @@ public class ResourceRepresentation {
 		}
 	}
 
+	/**
+	 *
+	 * @return the HTTP response code of the underlying request if it was between 200 and 299. Any code outside of that
+	 * range will result in an ApiException being thrown before a ResourceRepresentation is instantiated.
+	 */
+	public int getResponseCode() {
+		return response.getResponseCode();
+	}
 }
