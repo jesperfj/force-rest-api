@@ -9,7 +9,7 @@ Releases are published on Maven Central. Include in your project with:
     <dependency>
         <groupId>com.frejo</groupId>
         <artifactId>force-rest-api</artifactId>
-        <version>0.0.36</version>
+        <version>0.0.37</version>
     </dependency>
 
 ## Build and link locally
