@@ -398,23 +398,41 @@ public class ForceApi {
             throw new ResourceException(e);
         }
     }
-
-	public DescribeSObject describeSObject(String sobject) {
-		try {
-			return jsonMapper.readValue(apiRequest(new HttpRequest()
-					.url(uriBase()+"/sobjects/"+sobject+"/describe")
-					.method("GET")
-					.header("Accept", "application/json")).getStream(),DescribeSObject.class);
-		} catch (JsonParseException e) {
-			throw new ResourceException(e);
-		} catch (JsonMappingException e) {
-			throw new ResourceException(e);
-		} catch (UnsupportedEncodingException e) {
-			throw new ResourceException(e);
-		} catch (IOException e) {
-			throw new ResourceException(e);
-		}
+    
+    /**
+     * Utilizes /sobjects/<sobjectName>/describe/ API to retrieve metadata information.
+     * 
+     * @param sobject Name of the sobject
+     * @return DescribeSObject loaded with metadata information.
+     */
+    public DescribeSObject describeSObject(String sobject) {
+	    return (DescribeSObject) describeSObject(sobject, DescribeSObject.class);
 	}
+	
+    /**
+     * A overridden method to pull out more information from /describe API.
+     * 
+     * @param sObjectName A String of sObject name you would want to Query
+     * @param clazz An instance of DescribeSObjectBasic is returned. This inherited class must contain the newly defined
+     *            Jackson mapping according to your need.
+     * @return DescribeSObjectBasic Object loaded with data.
+     */
+    public <T> DescribeSObjectBasic describeSObject(String sobject, Class<T> clazz) {
+        try {
+            HttpResponse res = apiRequest(new HttpRequest().url(uriBase() + "/sobjects/" + sobject + "/describe")
+                    .method("GET").header("Accept", "application/json").expectsCode(200));
+
+            final JsonNode root = jsonMapper.readTree(res.getStream());
+
+            return (DescribeSObjectBasic) jsonMapper.readValue(root.traverse(), clazz);
+        } catch (JsonParseException e) {
+            throw new ResourceException(e);
+        } catch (JsonMappingException e) {
+            throw new ResourceException(e);
+        } catch (IOException e) {
+            throw new ResourceException(e);
+        }
+    }
 	
 	private final String uriBase() {
 		return(session.getApiEndpoint()+"/services/data/"+config.getApiVersionString());
