@@ -276,6 +276,10 @@ There should be nothing to push. If something is messed up, delete the tags in G
 
 # Release History
 
+## 0.0.37
+
+* Remove specific response code checks from generic REST api calls. Different resources may return different response codes on the same verb, e.g. POST to chatter resources returns 201, but POST to `/process/approvals/` return 200. The library already checks the bounds of the response code and throws an exception if it is not between 200 and 299. The strict check on response codes is considered a bug introduced in 0.0.35 and fixed with this release.
+
 ## 0.0.36
 
 * Introduced [SessionRefreshListener](src/main/java/com/force/api/SessionRefreshListener.java) so you can register a listener and be notified when ForceApi refreshes the access token. See the [test](src/test/java/com/force/api/SessionRefreshTest.java) for sample code.
