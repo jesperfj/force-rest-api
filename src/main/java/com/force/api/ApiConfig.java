@@ -4,12 +4,13 @@ import java.net.URI;
 import java.net.URLDecoder;
 
 public class ApiConfig {
-
+	public final static String  DEFAULT_LOGIN_ENDPOINT= "https://login.salesforce.com";
+	
 	ApiVersion apiVersion = ApiVersion.DEFAULT_VERSION;
 	String apiVersionString;
 	String username;
 	String password;
-	String loginEndpoint = "https://login.salesforce.com";
+	String loginEndpoint = DEFAULT_LOGIN_ENDPOINT;
 	String clientId;
 	String clientSecret;
 	String redirectURI;

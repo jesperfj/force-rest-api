@@ -14,7 +14,20 @@ public class AuthTest {
 	public void testSoapLogin() {
 		ForceApi api = new ForceApi(new ApiConfig()
 			.setUsername(Fixture.get("username"))
-			.setPassword(Fixture.get("password")));
+			.setPassword(Fixture.get("password"))
+			.setLoginEndpoint(ApiConfig.DEFAULT_LOGIN_ENDPOINT));
+
+		assertNotNull(api.session);
+		assertNotNull(api.session.accessToken);
+		assertNotNull(api.session.apiEndpoint);
+
+	}
+	@Test
+	public void testSoapLoginWithSpecialEndpoint() {
+		ForceApi api = new ForceApi(new ApiConfig()
+			.setUsername(Fixture.get("username"))
+			.setPassword(Fixture.get("password"))
+			.setLoginEndpoint(Fixture.get("specialLoginEndPoint")));
 
 		assertNotNull(api.session);
 		assertNotNull(api.session.accessToken);
