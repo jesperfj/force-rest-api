@@ -6,3 +6,4 @@ iprestrictedPassword=passwordforiprestricteduser
 clientId=long-alphanumeric-sequence
 clientSecret=shorter-numeric-sequence
 redirectURI=http://localhost:5000/_auth
+specialLoginEndPoint=https://login.salesforce.com/services/Soap/c/28.0/0xxxxxxxp4

@@ -63,7 +63,10 @@ public class Auth {
 		if(c.getUsername()==null) throw new IllegalStateException("username cannot be null");
 		if(c.getPassword()==null) throw new IllegalStateException("password cannot be null");
 		try {
-			URL url = new URL(c.getLoginEndpoint()+"/services/Soap/u/33.0");
+			URL url = new URL(c.getLoginEndpoint()
+							 + (c.DEFAULT_LOGIN_ENDPOINT.equals(c.getLoginEndpoint())
+									 ? "/services/Soap/u/33.0" // TODO: shouldn´t this be replaced by a configuration(constant) ??
+								     : ""));
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setDoOutput(true);
 			conn.addRequestProperty("Content-Type", "text/xml");
