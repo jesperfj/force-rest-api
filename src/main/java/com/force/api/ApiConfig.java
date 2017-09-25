@@ -13,6 +13,7 @@ public class ApiConfig {
 	String clientId;
 	String clientSecret;
 	String redirectURI;
+	boolean includeNullValues = false;
 	SessionRefreshListener sessionRefreshListener;
 
 	public ApiConfig clone() {
@@ -90,6 +91,12 @@ public class ApiConfig {
 		clientSecret = value;
 		return this;
 	}
+	
+	public ApiConfig setIncludeNullValues(boolean includeNullValues) {
+		this.includeNullValues = includeNullValues;
+		return this;
+	}
+	
 	public ApiConfig setSessionRefreshListener(SessionRefreshListener value) {
 		sessionRefreshListener = value;
 		return this;
@@ -117,6 +124,10 @@ public class ApiConfig {
 	
 	public String getRedirectURI() {
 		return redirectURI;
+	}
+	
+	public boolean includeNullValues() {
+		return includeNullValues;
 	}
 
 	public SessionRefreshListener getSessionRefreshListener() { return sessionRefreshListener; }

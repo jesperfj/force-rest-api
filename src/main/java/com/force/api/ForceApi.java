@@ -41,15 +41,10 @@ import java.util.Map.Entry;
  */
 public class ForceApi {
 
-	private static final ObjectMapper jsonMapper;
+	private final ObjectMapper jsonMapper;
 
 	private static final Logger logger = LoggerFactory.getLogger(ForceApi.class);
-
-	static {
-		jsonMapper = new ObjectMapper();
-		jsonMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-	}
-
+	
 	final ApiConfig config;
 	ApiSession session;
 	private boolean autoRenew = false;
@@ -57,6 +52,7 @@ public class ForceApi {
 	public ForceApi(ApiConfig config, ApiSession session) {
 		this.config = config;
 		this.session = session;
+		this.jsonMapper = createJsonMapper(config);
 		if(session.getRefreshToken()!=null) {
 			autoRenew = true;
 		}
@@ -70,7 +66,15 @@ public class ForceApi {
 		config = apiConfig;
 		session = Auth.authenticate(apiConfig);
 		autoRenew  = true;
-
+		this.jsonMapper = createJsonMapper(apiConfig);
+	}
+	
+	private ObjectMapper createJsonMapper(ApiConfig config) {
+		final ObjectMapper newMapper = new ObjectMapper();
+		if(config.includeNullValues() != true) {
+			newMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+		}
+		return newMapper;
 	}
 
 	public ApiSession getSession() {
