@@ -163,6 +163,20 @@ This assumes you have an Account class defined with proper Jackson deserializati
 
     QueryResult<Account> res = api.query("SELECT id FROM Account WHERE name LIKE 'Test account%'", Account.class);
 
+### JSON serialization
+
+By default, ForceApi will remove all properties with value null from the payload before it gets sent to Salesforce for an update. If you would like more control over this, you can override that default:
+
+    ForceApi api = new ForceApi(new ApiConfig()
+    				.setIncludeNullValues(true));
+
+This setting will let you control for each field if you want to send its null values (e.g. to clear existing values) or not. You can then e.g. exclude null values on an individual field basis by using Jackson annotations:
+
+    // ... your data container class representing an SObject structure
+    @JsonProperty("isRestricted__c") 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Boolean isRestricted;
+
 ## Working with API versions
 
 You can inspect supported API versions and get more detailed info for each version using `SupportedVersions`:
