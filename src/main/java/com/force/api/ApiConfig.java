@@ -1,5 +1,8 @@
 package com.force.api;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.net.URI;
 import java.net.URLDecoder;
 
@@ -14,6 +17,12 @@ public class ApiConfig {
 	String clientSecret;
 	String redirectURI;
 	SessionRefreshListener sessionRefreshListener;
+	ObjectMapper objectMapper;
+
+	public ApiConfig() {
+		objectMapper = new ObjectMapper();
+		objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+	}
 
 	public ApiConfig clone() {
 		return new ApiConfig()
@@ -23,7 +32,8 @@ public class ApiConfig {
 			.setLoginEndpoint(loginEndpoint)
 			.setClientId(clientId)
 			.setClientSecret(clientSecret)
-			.setRedirectURI(redirectURI);
+			.setRedirectURI(redirectURI)
+			.setObjectMapper(objectMapper);
 	}
 	
 	public ApiConfig setForceURL(String url) {
@@ -95,6 +105,11 @@ public class ApiConfig {
 		return this;
 	}
 
+	public ApiConfig setObjectMapper(ObjectMapper objectMapper) {
+		this.objectMapper = objectMapper;
+		return this;
+	}
+
 	public String getUsername() {
 		return username;
 	}
@@ -121,6 +136,8 @@ public class ApiConfig {
 
 	public SessionRefreshListener getSessionRefreshListener() { return sessionRefreshListener; }
 
+	public ObjectMapper getObjectMapper() { return objectMapper; }
+
 
 	/**
 	 * @deprecated use #getApiVersionString instead
@@ -134,5 +151,5 @@ public class ApiConfig {
 		return apiVersionString != null ? apiVersionString : apiVersion.toString();
 	}
 
-	
+
 }
