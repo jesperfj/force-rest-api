@@ -41,14 +41,9 @@ import java.util.Map.Entry;
  */
 public class ForceApi {
 
-	private static final ObjectMapper jsonMapper;
+	private final ObjectMapper jsonMapper;
 
 	private static final Logger logger = LoggerFactory.getLogger(ForceApi.class);
-
-	static {
-		jsonMapper = new ObjectMapper();
-		jsonMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-	}
 
 	final ApiConfig config;
 	ApiSession session;
@@ -56,6 +51,7 @@ public class ForceApi {
 
 	public ForceApi(ApiConfig config, ApiSession session) {
 		this.config = config;
+		jsonMapper = config.getObjectMapper();
 		this.session = session;
 		if(session.getRefreshToken()!=null) {
 			autoRenew = true;
@@ -68,6 +64,7 @@ public class ForceApi {
 
 	public ForceApi(ApiConfig apiConfig) {
 		config = apiConfig;
+		jsonMapper = config.getObjectMapper();
 		session = Auth.authenticate(apiConfig);
 		autoRenew  = true;
 
@@ -85,7 +82,8 @@ public class ForceApi {
 		return new ResourceRepresentation(apiRequest(new HttpRequest()
 				.url(uriBase()+path)
 				.method("GET")
-				.header("Accept", "application/json")));
+				.header("Accept", "application/json")),
+				jsonMapper);
 	}
 
 	/**
@@ -101,7 +99,8 @@ public class ForceApi {
 		return new ResourceRepresentation(apiRequest(new HttpRequest()
 				.url(uriBase() + path)
 				.method("DELETE")
-				.header("Accept", "application/json")));
+				.header("Accept", "application/json")),
+				jsonMapper);
 	}
 
 	/**
@@ -145,7 +144,8 @@ public class ForceApi {
 					.method(method)
 					.header("Accept", "application/json")
 					.header("Content-Type", "application/json")
-					.content(jsonMapper.writeValueAsBytes(input))));
+					.content(jsonMapper.writeValueAsBytes(input))),
+					jsonMapper);
 		} catch (JsonGenerationException e) {
 			throw new ResourceException(e);
 		} catch (JsonMappingException e) {
@@ -189,7 +189,8 @@ public class ForceApi {
 		return new ResourceRepresentation(apiRequest(new HttpRequest()
 					.url(uriBase()+"/sobjects/"+type+"/"+id)
 					.method("GET")
-					.header("Accept", "application/json")));
+					.header("Accept", "application/json")),
+				jsonMapper);
 	}
 
 	public String createSObject(String type, Object sObject) {

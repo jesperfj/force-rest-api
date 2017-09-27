@@ -35,9 +35,10 @@ public class QueryTest {
 
 	@Test
 	public void testTypedQuery() {
-		List<Account> result = api.query("SELECT name FROM Account",Account.class).getRecords();
+		List<Account> result = api.query("SELECT name, createddate FROM Account",Account.class).getRecords();
 		// Note, attribute names are capitalized by the Force.com REST API
 		assertNotNull(result.get(0).getName());
+		assertNotNull(result.get(0).getCreatedDate());
 	}
 
     @Test

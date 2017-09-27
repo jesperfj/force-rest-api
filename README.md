@@ -276,6 +276,13 @@ There should be nothing to push. If something is messed up, delete the tags in G
 
 # Release History
 
+## 0.0.38
+
+* This release introduces the ability to use a custom Jackson ObjectMapper. This can be used to support JodaTime for example. It also allows developers to choose how null values shoudl be treated during serialization and deserialization. Before, null values were always ignored which is not always what you want. The custom ObjectMapper is set on `ApiConfig`. It will be used everywhere in `ForceApi` and `ResourceRepresentation`, but not in the `Auth` class.
+* This library now allows any 2.x jackson-databind version 2.5 or newer. Tests have only been run with 2.5.0 and 2.9.1.
+* Default version is now v40
+* v40 seems to have introduced a `warnings` field on responses to POST requests to the `/sObject/` endpoint. `CreateResponse` now has an equivalent warnings field. But this change doesn't seem to be documented anywhere.
+
 ## 0.0.37
 
 * Remove specific response code checks from generic REST api calls. Different resources may return different response codes on the same verb, e.g. POST to chatter resources returns 201, but POST to `/process/approvals/` return 200. The library already checks the bounds of the response code and throws an exception if it is not between 200 and 299. The strict check on response codes is considered a bug introduced in 0.0.35 and fixed with this release.

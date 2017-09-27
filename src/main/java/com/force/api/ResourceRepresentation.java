@@ -17,12 +17,19 @@ import com.force.api.http.HttpResponse;
  *
  */
 public class ResourceRepresentation {
-	
-	public static final ObjectMapper jsonMapper = new ObjectMapper();
+
+	// For some reason this was made public a long time ago. So now it needs to stay this way
+	public final ObjectMapper jsonMapper;
 
 	HttpResponse response;
 
 	public ResourceRepresentation(HttpResponse value) {
+		jsonMapper = new ObjectMapper();
+		response = value;
+	}
+
+	public ResourceRepresentation(HttpResponse value, ObjectMapper objectMapper) {
+		jsonMapper = objectMapper;
 		response = value;
 	}
 
