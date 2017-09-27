@@ -9,7 +9,7 @@ Releases are published on Maven Central. Include in your project with:
     <dependency>
         <groupId>com.frejo</groupId>
         <artifactId>force-rest-api</artifactId>
-        <version>0.0.37</version>
+        <version>0.0.38</version>
     </dependency>
 
 ## Build and link locally
@@ -278,10 +278,8 @@ There should be nothing to push. If something is messed up, delete the tags in G
 
 ## 0.0.38
 
-* This release introduces the ability to use a custom Jackson ObjectMapper. This can be used to support JodaTime for example. It also allows developers to choose how null values shoudl be treated during serialization and deserialization. Before, null values were always ignored which is not always what you want. The custom ObjectMapper is set on `ApiConfig`. It will be used everywhere in `ForceApi` and `ResourceRepresentation`, but not in the `Auth` class.
+* This release introduces the ability to use a custom Jackson ObjectMapper. This can be used to support JodaTime for example. It also allows developers to choose how null values should be treated during serialization and deserialization. Before, null values were always ignored which is not always what you want. The custom ObjectMapper is set on [ApiConfig](src/main/java/com/force/api/ApiConfig.java). It will be used everywhere in [ForceApi](src/main/java/com/force/api/ForceApi.java) and [ResourceRepresentation](src/main/java/com/force/api/ResourceRepresentation.java), but not in the [Auth](src/main/java/com/force/api/Auth.java) class.
 * This library now allows any 2.x jackson-databind version 2.5 or newer. Tests have only been run with 2.5.0 and 2.9.1.
-* Default version is now v40
-* v40 seems to have introduced a `warnings` field on responses to POST requests to the `/sObject/` endpoint. `CreateResponse` now has an equivalent warnings field. But this change doesn't seem to be documented anywhere.
 
 ## 0.0.37
 
