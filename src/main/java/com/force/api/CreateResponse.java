@@ -1,12 +1,8 @@
 package com.force.api;
 
-//import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-//@JsonIgnoreProperties(ignoreUnknown = true)
 public class CreateResponse {
 	String id;
 	ApiError[] errors;
-	Object[] warnings;
 	boolean success;
 	public String getId() {
 		return id;
@@ -26,6 +22,6 @@ public class CreateResponse {
 	public void setSuccess(boolean success) {
 		this.success = success;
 	}
-	public void setWarnings(Object[] warnings) { this.warnings = warnings; }
 
+	
 }
