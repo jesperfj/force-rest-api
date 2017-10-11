@@ -8,8 +8,6 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -48,7 +46,7 @@ public class Http {
 	//	}
 
 	static final Logger logger = LoggerFactory.getLogger(Http.class);
-	
+
 	static final byte[] readResponse(InputStream stream) throws IOException {
 		BufferedInputStream bin = new BufferedInputStream(stream);
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -59,10 +57,12 @@ public class Http {
 		}
 		return bout.toByteArray();
 	}
-	
+
 	public static final HttpResponse send(HttpRequest req) {
 		try {
 			HttpURLConnection conn = (HttpURLConnection) new URL(req.getUrl()).openConnection();
+			conn.setConnectTimeout(req.getRequestTimeout());
+			conn.setReadTimeout(req.getRequestTimeout());
 			conn.setInstanceFollowRedirects(true);
 			conn.setRequestMethod(req.getMethod());
 			for (HttpRequest.Header h : req.getHeaders()) {
