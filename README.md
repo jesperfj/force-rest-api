@@ -9,7 +9,7 @@ Releases are published on Maven Central. Include in your project with:
     <dependency>
         <groupId>com.frejo</groupId>
         <artifactId>force-rest-api</artifactId>
-        <version>0.0.38</version>
+        <version>0.0.39</version>
     </dependency>
 
 ## Build and link locally
@@ -275,6 +275,10 @@ Just as a validation, try to push local changes including tags:
 There should be nothing to push. If something is messed up, delete the tags in Github and in your local repo and start over.
 
 # Release History
+
+## 0.0.39
+
+* Change jackson-databind version range to [2.5,2.9] to address a problem where maven pulls in 3.0.0-SNAPSHOT and the compilation breaks.
 
 ## 0.0.38
 
