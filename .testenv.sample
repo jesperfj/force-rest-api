@@ -1,0 +1,8 @@
+# Test fixture
+export username=user@domain.com
+export password=secretcode
+export iprestrictedUsername=iprestricteduser@domain.com
+export iprestrictedPassword=passwordforiprestricteduser
+export clientId=long-alphanumeric-sequence
+export clientSecret=shorter-numeric-sequence
+export redirectURI=http://localhost:5000/_auth

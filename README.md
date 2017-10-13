@@ -182,11 +182,11 @@ There is a direct mapping between season/year and version numbers. You can trans
 
 ## Run Tests
 
-This project has a mix of unit tests and integration tests that hit the actual API. To make the integration tests work copy `src/test/resources/test.properties.sample` to `src/test/resources/test.properties` and replace the properties in the file with actual values.
+This project has a mix of unit tests and integration tests that hit the actual API. To make the integration tests work you must set up a proper test fixture and reference it from environment variables. `.testenv.sample` contains a sample shell script indicating what variables must be set.
 
 ### Login and password
 
-Add your Force.com developer org login and password. Needless to say, don't use credentials for a production org containing sensitive data. If you don't have a developer org, [sign up for one](http://www.developerforce.com/events/regular/registration.php?d=70130000000EjHb). It's free.
+You need credentials to a Force.com developer org to run tests against. These go in the `username` and `password` vaiables. Needless to say, don't use credentials for a production org containing sensitive data. If you don't have a developer org, [sign up for one](http://www.developerforce.com/events/regular/registration.php?d=70130000000EjHb). It's free. Remember to append the security token to your chosen password in the `password` variable.
 
 ### Client ID and Secret
 
@@ -204,8 +204,8 @@ Now create a new Remote Access Application:
 * Choose any callback URL (you'll need to set this properly when web server flow is supported)
 * Choose some contact email
 * Click "Save"
-* Copy "Consumer Key" to the property "clientId" in test.properties
-* Click on "Click to reveal" and copy "Consumer Secret" to "clientSecret" in test.properties
+* Copy "Consumer Key" and set as the `clientId` environment variable
+* Click on "Click to reveal" and copy "Consumer Secret" and set as the `clientSecret` environment variable
 
 ### Add `externalId__c` to Account SObject
 
@@ -221,8 +221,9 @@ To test IP restrictions failure handling you need additional test setup:
 * Set Login IP Ranges for the new profile to something obscure like 1.1.1.1-1.1.1.1. Hit save and confirm that it's ok even though your user is not logged in from this range.
 * Create a new user and reset password
 * Log in as the new user and generate a security token
-* Set username and password (with token appended) in test.properties.
+* Set username in the `iprestrictedUsername` env var and password (with token appended) in the `iprestrictedPassword` env var.
 * Log back in with the admin user and go to Manage Users --> Profiles
+* TODO: complete these instructions
 
 ### Run Tests
 
