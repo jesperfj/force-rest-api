@@ -86,6 +86,12 @@ public class ForceApi {
 				jsonMapper);
 	}
 
+  public HttpResponse getResponse(String path) {
+    return apiRequest(new HttpRequest()
+        .url(uriBase()+path)
+        .method("GET"));
+  }
+
 	/**
 	 * sends a custom REST API DELETE request
 	 *
