@@ -86,9 +86,9 @@ public class ForceApi {
 				jsonMapper);
 	}
 
-  public HttpResponse getResponse(String path) {
+  public HttpResponse getResponse(String completePath) {
     return apiRequest(new HttpRequest()
-        .url(uriBase()+path)
+        .url(session.getApiEndpoint() + completePath)
         .method("GET"));
   }
 
