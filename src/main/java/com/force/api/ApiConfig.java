@@ -18,6 +18,7 @@ public class ApiConfig {
 	String redirectURI;
 	SessionRefreshListener sessionRefreshListener;
 	ObjectMapper objectMapper;
+	int requestTimeout = 0; // in milliseconds, defaults to 0 which is no timeout (infinity)
 
 	public ApiConfig() {
 		objectMapper = new ObjectMapper();
@@ -33,7 +34,8 @@ public class ApiConfig {
 			.setClientId(clientId)
 			.setClientSecret(clientSecret)
 			.setRedirectURI(redirectURI)
-			.setObjectMapper(objectMapper);
+			.setObjectMapper(objectMapper)
+			.setRequestTimeout(requestTimeout);
 	}
 	
 	public ApiConfig setForceURL(String url) {
@@ -110,6 +112,11 @@ public class ApiConfig {
 		return this;
 	}
 
+	public ApiConfig setRequestTimeout(int requestTimeout) {
+		this.requestTimeout = requestTimeout;
+		return this;
+	}
+
 	public String getUsername() {
 		return username;
 	}
@@ -138,6 +145,7 @@ public class ApiConfig {
 
 	public ObjectMapper getObjectMapper() { return objectMapper; }
 
+	public int getRequestTimeout() { return requestTimeout; }
 
 	/**
 	 * @deprecated use #getApiVersionString instead
