@@ -8,16 +8,16 @@ import java.util.List;
 
 public class HttpRequest {
 
-	static public HttpRequest formPost() { 
+	static public HttpRequest formPost() {
 			return new HttpRequest()
 				.method("POST")
 				.header("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 	}
-	
+
 	public enum ResponseFormat { STREAM, BYTE, STRING };
-	
+
 	ResponseFormat responseFormat = ResponseFormat.STREAM;
-	
+
 	byte[] contentBytes;
 	InputStream contentStream;
 
@@ -29,7 +29,9 @@ public class HttpRequest {
 	StringBuilder postParams = new StringBuilder();
 
 	private String authorization;
-	
+
+	private int requestTimeout = 0; // in milliseconds, defaults to 0 which is no timeout (infinity)
+
 	public HttpRequest() {
 	}
 
@@ -60,7 +62,7 @@ public class HttpRequest {
 	public String getUrl() {
 		return url;
 	}
-	
+
 	public HttpRequest expectsCode(int value) {
 		expectedCode = value;
 		return this;
@@ -69,20 +71,26 @@ public class HttpRequest {
 	public int getExpectedCode() {
 		return expectedCode;
 	}
-	
+
 	public HttpRequest header(String key, String value) {
 		headers.add(new Header(key,value));
-		
+
 		return this;
 	}
 
 	public ResponseFormat getResponseFormat() {
 		return responseFormat;
 	}
-	
+
 	public HttpRequest responseFormat(ResponseFormat value) {
 		responseFormat = value;
 		return this;
+	}
+
+	public int getRequestTimeout() { return requestTimeout; }
+
+	public void setRequestTimeout(int value){
+		requestTimeout = value;
 	}
 
 	public HttpRequest url(String value) {
@@ -94,7 +102,7 @@ public class HttpRequest {
 		method = value;
 		return this;
 	}
-	
+
 	public HttpRequest content(byte[] value) {
 		if(postParams.length()>0) {
 			throw new IllegalStateException("Cannot add request content as byte[] after post parameters have been set with param() or preEncodedParam()");
@@ -130,15 +138,15 @@ public class HttpRequest {
 		}
 		return this;
 	}
-	
+
 //  possible future method
-//	
+//
 //	public HttpRequest content(InputStream value) {
 //		contentStream = value;
 //		conn.setDoOutput(true);
 //		return this;
 //	}
-	
+
 	public String toString() {
 		StringBuilder b = new StringBuilder();
 		b.append(method+" "+url+"\n");
@@ -159,7 +167,7 @@ public class HttpRequest {
 		}
 		return b.toString();
 	}
-	
+
 	public class Header {
 		String key;
 		String value;
@@ -186,7 +194,7 @@ public class HttpRequest {
 	public void setAuthorization(String value) {
 		authorization = value;
 	}
-	
+
 	public String getAuthorization() {
 		return authorization;
 	}
