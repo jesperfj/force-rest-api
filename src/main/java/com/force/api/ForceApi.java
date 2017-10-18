@@ -424,7 +424,6 @@ public class ForceApi {
 	private final HttpResponse apiRequest(HttpRequest req) {
 		req.setAuthorization("Bearer "+session.getAccessToken());
 		req.setRequestTimeout(this.config.getRequestTimeout());
-		
 		HttpResponse res = Http.send(req);
 		if(res.getResponseCode()==401) {
 			// Perform one attempt to auto renew session if possible

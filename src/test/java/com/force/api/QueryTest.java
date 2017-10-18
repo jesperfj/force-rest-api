@@ -26,19 +26,19 @@ public class QueryTest {
 	}
 
 	@Test
-  public void testQueryTimeout() {
-	  try {
-	    new ForceApi(new ApiConfig()
-          .setUsername(Fixture.get("username"))
-          .setPassword(Fixture.get("password"))
-          .setRequestTimeout(1) // 1ms timeout
-      ).query("SELECT name FROM Account").getRecords();
-	    fail("SocketTimeoutException was not thrown but was expected to be.");
-    } catch (Exception e) {
-	    assertEquals(RuntimeException.class, e.getClass()); // RuntimeException wraps timeout exception
-	    assertEquals("java.net.SocketTimeoutException: connect timed out", e.getMessage());
+    public void testQueryTimeout() {
+        try {
+            new ForceApi(new ApiConfig()
+                    .setUsername(Fixture.get("username"))
+                    .setPassword(Fixture.get("password"))
+                    .setRequestTimeout(1) // 1ms timeout
+            ).query("SELECT name FROM Account").getRecords();
+            fail("SocketTimeoutException was not thrown but was expected to be.");
+        } catch (Exception e) {
+            assertEquals(RuntimeException.class, e.getClass()); // RuntimeException wraps timeout exception
+            assertTrue(e.getMessage().contains("java.net.SocketTimeoutException"));
+        }
     }
-  }
 	
 	@Test
 	public void testUntypedQuery() {
