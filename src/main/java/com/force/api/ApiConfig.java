@@ -112,6 +112,12 @@ public class ApiConfig {
 		return this;
 	}
 
+	/**
+	 * sets both connect timeout and read timeout on HttpUrlConnection to the specified value. A value of 0 (zero)
+	 * means no timeout. The default is no timeout.
+	 * @param requestTimeout timeout in milliseconds. A value of 0 means no timeout.
+	 * @return this ApiConfig instance
+	 */
 	public ApiConfig setRequestTimeout(int requestTimeout) {
 		this.requestTimeout = requestTimeout;
 		return this;
