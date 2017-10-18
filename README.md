@@ -277,6 +277,10 @@ There should be nothing to push. If something is messed up, delete the tags in G
 
 # Release History
 
+## 0.0.40
+
+* You can now specify a request timeout in [ApiConfig](src/main/java/com/force/api/ApiConfig.java).
+
 ## 0.0.39
 
 * Change jackson-databind version range to [2.5,2.9] to address a problem where maven pulls in 3.0.0-SNAPSHOT and the compilation breaks.
