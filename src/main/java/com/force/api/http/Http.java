@@ -63,8 +63,10 @@ public class Http {
 	public static final HttpResponse send(HttpRequest req) {
 		try {
 			HttpURLConnection conn = (HttpURLConnection) new URL(req.getUrl()).openConnection();
-			conn.setConnectTimeout(req.getRequestTimeout());
-			conn.setReadTimeout(req.getRequestTimeout());
+			if(req.getRequestTimeout()>0){
+				conn.setConnectTimeout(req.getRequestTimeout());
+				conn.setReadTimeout(req.getRequestTimeout());
+			}
 			conn.setInstanceFollowRedirects(true);
 			conn.setRequestMethod(req.getMethod());
 			for (HttpRequest.Header h : req.getHeaders()) {
