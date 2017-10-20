@@ -12,6 +12,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,22 +43,23 @@ import java.util.Map.Entry;
  *
  */
 public class ForceApi {
+  private final static String SFORCE_LIMIT_HEADER = "Sforce-Limit-Info";
+  private final static Pattern sforceLimitPattern = Pattern.compile("api-usage=(\\d+)/(\\d+)");
 
+  private static final Logger logger = LoggerFactory.getLogger(ForceApi.class);
 	private final ObjectMapper jsonMapper;
-
-	private static final Logger logger = LoggerFactory.getLogger(ForceApi.class);
-
 	final ApiConfig config;
-	ApiSession session;
-	private boolean autoRenew = false;
+	private final boolean autoRenew;
+	private final AtomicInteger apiCallsUsed = new AtomicInteger(-1);
+	private final AtomicInteger apiLimit = new AtomicInteger(-1);
+
+  ApiSession session;
 
 	public ForceApi(ApiConfig config, ApiSession session) {
 		this.config = config;
 		jsonMapper = config.getObjectMapper();
 		this.session = session;
-		if(session.getRefreshToken()!=null) {
-			autoRenew = true;
-		}
+		this.autoRenew = session.getRefreshToken() != null;
 	}
 
 	public ForceApi(ApiSession session) {
@@ -422,6 +426,14 @@ public class ForceApi {
 			throw new ResourceException(e);
 		}
 	}
+
+	public int getApiCallsUsed() {
+	  return apiCallsUsed.get();
+  }
+
+  public int getApiLimit() {
+	  return apiLimit.get();
+  }
 	
 	private final String uriBase() {
 		return(session.getApiEndpoint()+"/services/data/"+config.getApiVersionString());
@@ -430,7 +442,7 @@ public class ForceApi {
 	private final HttpResponse apiRequest(HttpRequest req) {
 		req.setAuthorization("Bearer "+session.getAccessToken());
 		HttpResponse res = Http.send(req);
-		if(res.getResponseCode()==401) {
+		if (res.getResponseCode()==401) {
 			// Perform one attempt to auto renew session if possible
 			if (autoRenew) {
 				logger.debug("Session expired. Refreshing session...");
@@ -446,19 +458,34 @@ public class ForceApi {
 				res = Http.send(req);
 			}
 		}
-		if(res.getResponseCode()>299) {
-			if(res.getResponseCode()==401) {
+		if (res.getResponseCode()>299) {
+			if (res.getResponseCode()==401) {
 				throw new ApiTokenException(res.getString());
 			} else {
 				throw new ApiException(res.getResponseCode(), res.getString());
 			}
-		} else if(req.getExpectedCode()!=-1 && res.getResponseCode()!=req.getExpectedCode()) {
+		} else if (req.getExpectedCode()!=-1 && res.getResponseCode()!=req.getExpectedCode()) {
 			throw new RuntimeException("Unexpected response from Force API. Got response code "+res.getResponseCode()+
 					". Was expecting "+req.getExpectedCode());
 		} else {
+		  setApiLimitInfo(res.getHeaders());
 			return res;
 		}
 	}
+
+	private void setApiLimitInfo(Map<String, List<String>> headers) {
+	  if (!headers.containsKey(SFORCE_LIMIT_HEADER)) {
+	    return;
+    }
+    String header = headers.get(SFORCE_LIMIT_HEADER).get(0);
+	  Matcher matcher = sforceLimitPattern.matcher(header);
+	  if (matcher.find()) {
+	    apiCallsUsed.set(Integer.parseInt(matcher.group(1)));
+	    apiLimit.set(Integer.parseInt(matcher.group(2)));
+    } else {
+	    logger.warn("Unable to find API limit info in header {}", header);
+    }
+  }
 	
 	/**
 	 * Normalizes the JSON response in case it contains responses from
