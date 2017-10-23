@@ -1,6 +1,8 @@
 package com.force.api.http;
 
 import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
 public class HttpResponse {
 	
@@ -8,6 +10,7 @@ public class HttpResponse {
 	private byte[] byteResponse;
 	private InputStream streamResponse;
 	private int responseCode;
+	private Map<String, List<String>> headers;
 
 	public int getResponseCode() {
 		return responseCode;
@@ -21,6 +24,7 @@ public class HttpResponse {
 	public InputStream getStream() {
 		return streamResponse;
 	}
+	public Map<String, List<String>> getHeaders() { return headers; }
 	public HttpResponse setString(String stringResponse) {
 		this.stringResponse = stringResponse;
 		return this;
@@ -38,8 +42,9 @@ public class HttpResponse {
 		responseCode = value;
 		return this;
 	}
-	
-	
-	
 
+	public HttpResponse setHeaders(Map<String, List<String>> headers) {
+		this.headers = headers;
+		return this;
+	}
 }

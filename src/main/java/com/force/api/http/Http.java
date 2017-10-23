@@ -95,13 +95,14 @@ public class Http {
 				switch (req.getResponseFormat()) {
 				case BYTE:
 					return new HttpResponse().setByte(readResponse(conn.getInputStream()))
-							.setResponseCode(code);
+							.setResponseCode(code).setHeaders(conn.getHeaderFields());
 				case STRING:
 					return new HttpResponse().setString(
 							new String(readResponse(conn.getInputStream()), "UTF-8")).setResponseCode(
-							code);
+							code).setHeaders(conn.getHeaderFields());
 				default:
-					return new HttpResponse().setStream(conn.getInputStream()).setResponseCode(code);
+					return new HttpResponse().setStream(conn.getInputStream()).setResponseCode(code)
+              .setHeaders(conn.getHeaderFields());
 				}
 			} else {
 				logger.info("Bad response code: {} on request: {}", code, req);
