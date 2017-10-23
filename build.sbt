@@ -1,6 +1,6 @@
 name := "force-rest-api"
 organization := "com.frejo"
-version := "1.0.0"
+version := "1.0.1"
 scalaVersion := "2.11.8"
 
 libraryDependencies ++= Seq(

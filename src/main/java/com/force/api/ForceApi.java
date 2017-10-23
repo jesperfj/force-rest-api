@@ -427,10 +427,22 @@ public class ForceApi {
 		}
 	}
 
+  /**
+   * This value is initialized to -1 and then is set to a non-negative value
+   * after the first Limit Info Header is received from a Salesforce HTTP
+   * response.
+   * @return
+   */
 	public int getApiCallsUsed() {
 	  return apiCallsUsed.get();
   }
 
+  /**
+   * This value is initialized to -1 and then is set to a non-negative value
+   * after the first Limit Info Header is received from a Salesforce HTTP
+   * response.
+   * @return
+   */
   public int getApiLimit() {
 	  return apiLimit.get();
   }
