@@ -421,7 +421,7 @@ public class ForceApi {
 		return(session.getApiEndpoint()+"/services/data/"+config.getApiVersionString());
 	}
 	
-	private final HttpResponse apiRequest(HttpRequest req) {
+	public HttpResponse apiRequest(HttpRequest req) {
 		req.setAuthorization("Bearer "+session.getAccessToken());
 		req.setRequestTimeout(this.config.getRequestTimeout());
 		HttpResponse res = Http.send(req);
