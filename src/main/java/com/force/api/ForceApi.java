@@ -21,6 +21,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -193,20 +194,31 @@ public class ForceApi {
 				jsonMapper);
 	}
 
-	public String createSObject(String type, Object sObject) {
+    public String createSObject(String type, Object sObject) {
+        Map<String, String> noHeaders = Collections.emptyMap();
+        return createSObject(type, sObject, noHeaders);
+    }
+
+	public String createSObject(String type, Object sObject, Map<String, String> headers) {
 		try {
 			// We're trying to keep Http classes clean with no reference to JSON/Jackson
 			// Therefore, we serialize to bytes before we pass object to HttpRequest().
 			// But it would be nice to have a streaming implementation. We can do that
 			// by using ObjectMapper.writeValue() passing in output stream, but then we have
 			// polluted the Http layer.
-			CreateResponse result = jsonMapper.readValue(apiRequest(new HttpRequest()
-					.url(uriBase()+"/sobjects/"+type)
-					.method("POST")
-					.header("Accept", "application/json")
-					.header("Content-Type", "application/json")
-					.expectsCode(201)
-					.content(jsonMapper.writeValueAsBytes(sObject))).getStream(),CreateResponse.class);
+            HttpRequest httpRequest = new HttpRequest()
+                .url(uriBase()+"/sobjects/"+type)
+                .method("POST")
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .expectsCode(201)
+                .content(jsonMapper.writeValueAsBytes(sObject));
+
+            for (Map.Entry<String, String> headerEntry : headers.entrySet()) {
+                httpRequest.header(headerEntry.getKey(), headerEntry.getValue());
+            }
+            
+			CreateResponse result = jsonMapper.readValue(apiRequest(httpRequest).getStream(),CreateResponse.class);
 
 			if (result.isSuccess()) {
 				return (result.getId());
@@ -421,7 +433,7 @@ public class ForceApi {
 		return(session.getApiEndpoint()+"/services/data/"+config.getApiVersionString());
 	}
 	
-	private final HttpResponse apiRequest(HttpRequest req) {
+	private HttpResponse apiRequest(HttpRequest req) {
 		req.setAuthorization("Bearer "+session.getAccessToken());
 		req.setRequestTimeout(this.config.getRequestTimeout());
 		HttpResponse res = Http.send(req);
