@@ -48,7 +48,7 @@ public class Http {
 	//	}
 
 	static final Logger logger = LoggerFactory.getLogger(Http.class);
-	
+
 	static final byte[] readResponse(InputStream stream) throws IOException {
 		BufferedInputStream bin = new BufferedInputStream(stream);
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -59,7 +59,7 @@ public class Http {
 		}
 		return bout.toByteArray();
 	}
-	
+
 	public static final HttpResponse send(HttpRequest req) {
 		try {
 			HttpURLConnection conn = (HttpURLConnection) new URL(req.getUrl()).openConnection();
@@ -91,6 +91,8 @@ public class Http {
 				out.flush();
 			}
 			int code = conn.getResponseCode();
+			// 304 is a special case when the "If-Modified-Since" header is used, it is not an error,
+			// it indicates that SF objects were not changed since the time specified in the "If-Modified-Since" header
 			if (code < 300 && code >= 200) {
 				switch (req.getResponseFormat()) {
 				case BYTE:
@@ -105,8 +107,11 @@ public class Http {
 				}
 			} else {
 				logger.info("Bad response code: {} on request: {}", code, req);
-				HttpResponse r = new HttpResponse().setString(
-						new String(readResponse(conn.getErrorStream()), "UTF-8")).setResponseCode(code);
+				HttpResponse r = new HttpResponse().setResponseCode(code);
+				InputStream errorStream = conn.getErrorStream();
+				if (errorStream != null) {
+					r.setString(new String(readResponse(conn.getErrorStream()), "UTF-8"));
+				}
 				return r;
 			}
 		} catch (MalformedURLException e) {

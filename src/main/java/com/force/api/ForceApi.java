@@ -23,6 +23,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * main class for making API calls.
@@ -44,6 +46,8 @@ public class ForceApi {
 	private final ObjectMapper jsonMapper;
 
 	private static final Logger logger = LoggerFactory.getLogger(ForceApi.class);
+
+	private static final String SF_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
 
 	final ApiConfig config;
 	ApiSession session;
@@ -401,11 +405,31 @@ public class ForceApi {
     }
 
 	public DescribeSObject describeSObject(String sobject) {
+		return describeSObject(sobject, null);
+	}
+
+	/**
+	 * Retrieves all the metadata for an object, including information about each field, URLs, and child relationships.
+	 * Response metadata will only be returned if the object metadata has changed since the provided date.
+	 * @param sobject object name
+	 * @param since date that is used to identify if metadata has been changed since
+     * @return the metadata for an object, null if no changes since provided date
+     */
+	public DescribeSObject describeSObject(String sobject, Date since) {
 		try {
-			return jsonMapper.readValue(apiRequest(new HttpRequest()
+			HttpRequest httpRequest = new HttpRequest()
 					.url(uriBase()+"/sobjects/"+sobject+"/describe")
 					.method("GET")
-					.header("Accept", "application/json")).getStream(),DescribeSObject.class);
+					.header("Accept", "application/json");
+
+			if (since != null) {
+				// if the "If-Modified-Since" http header is used, then Salesforce responds with 304 code if
+				// there were not any changes since the date specified in the "If-Modified-Since" header
+				httpRequest.header("If-Modified-Since", new SimpleDateFormat(SF_DATE_FORMAT).format(since));
+			}
+			HttpResponse response = apiRequest(httpRequest);
+			return response.getResponseCode() == 304 ? null :
+					jsonMapper.readValue(response.getStream(), DescribeSObject.class);
 		} catch (JsonParseException e) {
 			throw new ResourceException(e);
 		} catch (JsonMappingException e) {
@@ -416,11 +440,11 @@ public class ForceApi {
 			throw new ResourceException(e);
 		}
 	}
-	
+
 	private final String uriBase() {
 		return(session.getApiEndpoint()+"/services/data/"+config.getApiVersionString());
 	}
-	
+
 	private final HttpResponse apiRequest(HttpRequest req) {
 		req.setAuthorization("Bearer "+session.getAccessToken());
 		req.setRequestTimeout(this.config.getRequestTimeout());
@@ -441,7 +465,9 @@ public class ForceApi {
 				res = Http.send(req);
 			}
 		}
-		if(res.getResponseCode()>299) {
+		// 304 is a special case when the "If-Modified-Since" header is used, it is not an error,
+		// it indicates that SF objects were not changed since the time specified in the "If-Modified-Since" header
+		if (res.getResponseCode() > 299 && res.getResponseCode() != 304) {
 			if(res.getResponseCode()==401) {
 				throw new ApiTokenException(res.getString());
 			} else {
@@ -454,7 +480,7 @@ public class ForceApi {
 			return res;
 		}
 	}
-	
+
 	/**
 	 * Normalizes the JSON response in case it contains responses from
 	 * relationship queries. For e.g.
@@ -462,9 +488,9 @@ public class ForceApi {
 	 * <code>
 	 * Query:
 	 *   select Id,Name,(select Id,Email,FirstName from Contacts) from Account
-	 *   
+	 *
 	 * Json Response Returned:
-	 * 
+	 *
 	 * {
 	 *	  "totalSize" : 1,
 	 *	  "done" : true,
@@ -491,9 +517,9 @@ public class ForceApi {
 	 *	  } ]
 	 *	}
 	 * </code>
-	 * 
+	 *
 	 * Will get normalized to:
-	 * 
+	 *
 	 * <code>
 	 * {
 	 *	  "totalSize" : 1,
@@ -515,12 +541,12 @@ public class ForceApi {
 	 *	        "FirstName" : "John"
 	 *	    } ]
 	 *	  } ]
-	 *	} 
+	 *	}
 	 * </code
-	 * 
+	 *
 	 * This allows Jackson to deserialize the response into it's corresponding Object representation
-	 * 
-	 * @param node 
+	 *
+	 * @param node
 	 * @return
 	 */
 	private final JsonNode normalizeCompositeResponse(JsonNode node){
@@ -531,7 +557,7 @@ public class ForceApi {
 			currNode = elements.next();
 
 			newNode.set(currNode.getKey(),
-						(		currNode.getValue().isObject() && 
+						(		currNode.getValue().isObject() &&
 								currNode.getValue().get("records")!=null
 						)?
 								currNode.getValue().get("records"):
@@ -539,6 +565,6 @@ public class ForceApi {
 					);
 		}
 		return newNode;
-		
+
 	}
 }
