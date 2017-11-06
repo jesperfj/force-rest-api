@@ -4,7 +4,6 @@ import com.force.api.http.Http;
 import com.force.api.http.HttpRequest;
 import com.force.api.http.HttpResponse;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -416,11 +415,39 @@ public class ForceApi {
 			throw new ResourceException(e);
 		}
 	}
-	
+
+	/**
+	 * Create nested objects
+	 * ex: https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_composite_sobject_tree_create.htm
+	 *
+	 * @param nestedRecordRequest	Nested recursive object to be included
+	 * @return NestedResponse
+	 */
+	public NestedResponse insertNestedObjects(NestedRecordRequest nestedRecordRequest){
+
+		try {
+			return jsonMapper.readValue(
+				apiRequest(
+					new HttpRequest()
+                		.url(uriBase() + "/composite/tree/" + nestedRecordRequest.getObjectApiName() )
+                		.method("POST")
+                		.header("Accept", "application/json")
+						.header("Content-Type", "application/json")
+						.content(jsonMapper.writeValueAsBytes(nestedRecordRequest))
+				)
+				.getStream(),
+                NestedResponse.class);
+
+		} catch (IOException e) {
+			throw new ResourceException(e);
+		}
+
+	}
+
 	private final String uriBase() {
 		return(session.getApiEndpoint()+"/services/data/"+config.getApiVersionString());
 	}
-	
+
 	private final HttpResponse apiRequest(HttpRequest req) {
 		req.setAuthorization("Bearer "+session.getAccessToken());
 		req.setRequestTimeout(this.config.getRequestTimeout());
