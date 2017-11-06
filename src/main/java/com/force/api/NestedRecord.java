@@ -11,7 +11,6 @@ public class NestedRecord {
     @JsonProperty(value = "attributes")
     protected Attribute attribute;
 
-//    @JsonSerialize(keyUsing = KeyInnerNestedSerializer.class, contentUsing = InnerNestedSerializer.class)
     private Map<String, NestedRecordRequest> innerNestedRecordsByType;
 
     @JsonAnyGetter

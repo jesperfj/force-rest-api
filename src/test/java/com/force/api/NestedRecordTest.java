@@ -23,7 +23,6 @@ public class NestedRecordTest {
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-//        mapper.registerModule(module);
 
         NestedAccount acc = new NestedAccount("acc2");
         acc.setName("Acc 3");
@@ -48,7 +47,6 @@ public class NestedRecordTest {
 
         NestedRecordRequest<NestedRecord> nestedRequest = new NestedRecordRequest<NestedRecord>("Account");
         nestedRequest.getRecords().add(acc);
-//        nestedRequest.getRecords().add(con3);
 
         try {
             System.out.println( mapper.writeValueAsString(nestedRequest) );
@@ -58,8 +56,6 @@ public class NestedRecordTest {
 
         NestedResponse response = api.insertNestedObjects(nestedRequest);
         assertTrue(response != null);
-//        ResourceRepresentation result = api.post("/composite/tree/Account/", nestedRequest);
-//        System.out.println(result.response.getString());
     }
 
 }
