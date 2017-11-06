@@ -279,6 +279,40 @@ public class ForceApi {
 		}
 	}
 
+	public UpsertResult upsertSObject(String type, String externalIdField, String externalIdValue, Object sObject) {
+		try {
+			String method = externalIdValue != null ? "PATCH" : "POST";
+			String idValue = externalIdValue != null ? "/" + URLEncoder.encode(externalIdValue, "UTF-8") : null;
+			HttpResponse res =
+					apiRequest(new HttpRequest()
+							.url(uriBase() + "/sobjects/" + type + "/" + externalIdField + idValue)
+							.method(method)
+							.header("Accept", "application/json")
+							.header("Content-Type", "application/json")
+							.content(jsonMapper.writeValueAsBytes(sObject))
+					);
+			UpsertResult upsertResult = jsonMapper.readValue(res.getStream(), UpsertResult.class);
+			if (res.getResponseCode() == 201) {
+				upsertResult.setStatus(UpsertStatus.INSERTED);
+				return upsertResult;
+			} else if (res.getResponseCode() == 204) {
+				upsertResult.setStatus(UpsertStatus.UPDATED);
+				return upsertResult;
+			} else {
+				logger.debug("Code: {}", res.getResponseCode());
+				logger.debug("Message: {}", res.getString());
+				throw new RuntimeException();
+			}
+
+		} catch (JsonGenerationException e) {
+			throw new ResourceException(e);
+		} catch (JsonMappingException e) {
+			throw new ResourceException(e);
+		} catch (IOException e) {
+			throw new ResourceException(e);
+		}
+	}
+
 	public <T> QueryResult<T> query(String query, Class<T> clazz) {
         try {
             return queryAny(uriBase() + "/query/?q=" + URLEncoder.encode(query, "UTF-8"), clazz);
@@ -416,11 +450,11 @@ public class ForceApi {
 			throw new ResourceException(e);
 		}
 	}
-	
+
 	private final String uriBase() {
 		return(session.getApiEndpoint()+"/services/data/"+config.getApiVersionString());
 	}
-	
+
 	private final HttpResponse apiRequest(HttpRequest req) {
 		req.setAuthorization("Bearer "+session.getAccessToken());
 		req.setRequestTimeout(this.config.getRequestTimeout());
@@ -454,7 +488,7 @@ public class ForceApi {
 			return res;
 		}
 	}
-	
+
 	/**
 	 * Normalizes the JSON response in case it contains responses from
 	 * relationship queries. For e.g.
@@ -462,9 +496,9 @@ public class ForceApi {
 	 * <code>
 	 * Query:
 	 *   select Id,Name,(select Id,Email,FirstName from Contacts) from Account
-	 *   
+	 *
 	 * Json Response Returned:
-	 * 
+	 *
 	 * {
 	 *	  "totalSize" : 1,
 	 *	  "done" : true,
@@ -491,9 +525,9 @@ public class ForceApi {
 	 *	  } ]
 	 *	}
 	 * </code>
-	 * 
+	 *
 	 * Will get normalized to:
-	 * 
+	 *
 	 * <code>
 	 * {
 	 *	  "totalSize" : 1,
@@ -515,12 +549,12 @@ public class ForceApi {
 	 *	        "FirstName" : "John"
 	 *	    } ]
 	 *	  } ]
-	 *	} 
+	 *	}
 	 * </code
-	 * 
+	 *
 	 * This allows Jackson to deserialize the response into it's corresponding Object representation
-	 * 
-	 * @param node 
+	 *
+	 * @param node
 	 * @return
 	 */
 	private final JsonNode normalizeCompositeResponse(JsonNode node){
@@ -531,7 +565,7 @@ public class ForceApi {
 			currNode = elements.next();
 
 			newNode.set(currNode.getKey(),
-						(		currNode.getValue().isObject() && 
+						(		currNode.getValue().isObject() &&
 								currNode.getValue().get("records")!=null
 						)?
 								currNode.getValue().get("records"):
@@ -539,6 +573,6 @@ public class ForceApi {
 					);
 		}
 		return newNode;
-		
+
 	}
 }
