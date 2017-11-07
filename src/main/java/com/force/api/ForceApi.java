@@ -281,12 +281,12 @@ public class ForceApi {
 
 	public UpsertResult upsertSObject(String type, String externalIdField, String externalIdValue, Object sObject) {
 		try {
-			String method = externalIdValue != null ? "PATCH" : "POST";
 			String idValue = externalIdValue != null ? "/" + URLEncoder.encode(externalIdValue, "UTF-8") : "";
 			HttpResponse res =
 					apiRequest(new HttpRequest()
-							.url(uriBase() + "/sobjects/" + type + "/" + externalIdField + idValue)
-							.method(method)
+							.url(uriBase() + "/sobjects/" + type + "/" + externalIdField + idValue
+									+ "?_HttpMethod=PATCH")
+							.method("POST")
 							.header("Accept", "application/json")
 							.header("Content-Type", "application/json")
 							.content(jsonMapper.writeValueAsBytes(sObject))
