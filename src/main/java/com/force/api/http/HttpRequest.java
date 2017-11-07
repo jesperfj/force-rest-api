@@ -17,7 +17,7 @@ public class HttpRequest {
 	public enum ResponseFormat { STREAM, BYTE, STRING };
 	
 	ResponseFormat responseFormat = ResponseFormat.STREAM;
-	
+
 	byte[] contentBytes;
 	InputStream contentStream;
 
