@@ -291,11 +291,15 @@ public class ForceApi {
 							.header("Content-Type", "application/json")
 							.content(jsonMapper.writeValueAsBytes(sObject))
 					);
-			UpsertResult upsertResult = jsonMapper.readValue(res.getStream(), UpsertResult.class);
 			if (res.getResponseCode() == 201) {
+				UpsertResult upsertResult = jsonMapper.readValue(res.getStream(), UpsertResult.class);
 				upsertResult.setStatus(UpsertStatus.INSERTED);
 				return upsertResult;
 			} else if (res.getResponseCode() == 204) {
+				UpsertResult upsertResult = new UpsertResult();
+				if ("Id".equals(externalIdField)) {
+					upsertResult.setId(externalIdValue);
+				}
 				upsertResult.setStatus(UpsertStatus.UPDATED);
 				return upsertResult;
 			} else {
