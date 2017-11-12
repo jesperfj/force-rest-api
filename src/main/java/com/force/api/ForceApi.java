@@ -405,7 +405,20 @@ public class ForceApi {
     }
 
 	public DescribeSObject describeSObject(String sobject) {
-		return describeSObject(sobject, null);
+        try {
+            return jsonMapper.readValue(apiRequest(new HttpRequest()
+                    .url(uriBase()+"/sobjects/"+sobject+"/describe")
+                    .method("GET")
+                    .header("Accept", "application/json")).getStream(),DescribeSObject.class);
+        } catch (JsonParseException e) {
+            throw new ResourceException(e);
+        } catch (JsonMappingException e) {
+            throw new ResourceException(e);
+        } catch (UnsupportedEncodingException e) {
+            throw new ResourceException(e);
+        } catch (IOException e) {
+            throw new ResourceException(e);
+        }
 	}
 
 	/**
@@ -415,7 +428,7 @@ public class ForceApi {
 	 * @param since date that is used to identify if metadata has been changed since
      * @return the metadata for an object, null if no changes since provided date
      */
-	public DescribeSObject describeSObject(String sobject, Date since) {
+	public DescribeSObject describeSObjectIfModified(String sobject, Date since) {
 		try {
 			HttpRequest httpRequest = new HttpRequest()
 					.url(uriBase()+"/sobjects/"+sobject+"/describe")
@@ -467,7 +480,7 @@ public class ForceApi {
 		}
 		// 304 is a special case when the "If-Modified-Since" header is used, it is not an error,
 		// it indicates that SF objects were not changed since the time specified in the "If-Modified-Since" header
-		if (res.getResponseCode() > 299 && res.getResponseCode() != 304) {
+		if(res.getResponseCode()>299 && res.getResponseCode()!=304) {
 			if(res.getResponseCode()==401) {
 				throw new ApiTokenException(res.getString());
 			} else {
