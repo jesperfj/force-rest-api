@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Date;
 
 import static org.junit.Assert.*;
 
@@ -31,6 +32,15 @@ public class DescribeTest {
 		assertEquals("Contact", ds.getName());
 		assertNotNull(ds.getAllFields());
 		assertNotNull(ds.getAllFields().iterator().next().getSoapType());
+	}
+
+	@Test
+	public void testDescribeSObjectIfModified() {
+		DescribeSObject ds = api.describeSObjectIfModified("Account", new Date());
+		assertNull(ds);
+		Date d = new Date(System.currentTimeMillis()-1000*60*60*24*20); // 20 years ago
+		ds = api.describeSObjectIfModified("Account", d);
+		assertNotNull(ds);
 	}
 
     @Test

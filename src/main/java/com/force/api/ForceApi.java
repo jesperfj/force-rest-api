@@ -429,20 +429,20 @@ public class ForceApi {
      * @return the metadata for an object, null if no changes since provided date
      */
 	public DescribeSObject describeSObjectIfModified(String sobject, Date since) {
+	    if(since == null) {
+	        return describeSObject(sobject);
+        }
 		try {
-			HttpRequest httpRequest = new HttpRequest()
-					.url(uriBase()+"/sobjects/"+sobject+"/describe")
-					.method("GET")
-					.header("Accept", "application/json");
-
-			if (since != null) {
-				// if the "If-Modified-Since" http header is used, then Salesforce responds with 304 code if
-				// there were not any changes since the date specified in the "If-Modified-Since" header
-				httpRequest.header("If-Modified-Since", new SimpleDateFormat(SF_DATE_FORMAT).format(since));
-			}
-			HttpResponse response = apiRequest(httpRequest);
-			return response.getResponseCode() == 304 ? null :
-					jsonMapper.readValue(response.getStream(), DescribeSObject.class);
+			HttpResponse response = apiRequest(new HttpRequest()
+                    .url(uriBase()+"/sobjects/"+sobject+"/describe")
+                    .method("GET")
+                    .header("Accept", "application/json")
+                    .header("If-Modified-Since", new SimpleDateFormat(SF_DATE_FORMAT).format(since)));
+			if(response.getResponseCode() == 304) {
+			    return null;
+            } else {
+                return jsonMapper.readValue(response.getStream(), DescribeSObject.class);
+            }
 		} catch (JsonParseException e) {
 			throw new ResourceException(e);
 		} catch (JsonMappingException e) {

@@ -91,28 +91,26 @@ public class Http {
 				out.flush();
 			}
 			int code = conn.getResponseCode();
-			// 304 is a special case when the "If-Modified-Since" header is used, it is not an error,
-			// it indicates that SF objects were not changed since the time specified in the "If-Modified-Since" header
-			if (code < 300 && code >= 200) {
+			if (200 <= code && code < 300) {
 				switch (req.getResponseFormat()) {
-				case BYTE:
-					return new HttpResponse().setByte(readResponse(conn.getInputStream()))
-							.setResponseCode(code);
-				case STRING:
-					return new HttpResponse().setString(
-							new String(readResponse(conn.getInputStream()), "UTF-8")).setResponseCode(
-							code);
-				default:
-					return new HttpResponse().setStream(conn.getInputStream()).setResponseCode(code);
+					case BYTE:
+						return new HttpResponse().setByte(readResponse(conn.getInputStream()))
+								.setResponseCode(code);
+					case STRING:
+						return new HttpResponse().setString(
+								new String(readResponse(conn.getInputStream()), "UTF-8")).setResponseCode(
+								code);
+					default:
+						return new HttpResponse().setStream(conn.getInputStream()).setResponseCode(code);
 				}
+			} else if(code == 304) {
+				// 304 is a special case when the "If-Modified-Since" header is used, it is not an error,
+				// it indicates that SF objects were not changed since the time specified in the "If-Modified-Since" header
+				return new HttpResponse().setResponseCode(code);
 			} else {
 				logger.info("Bad response code: {} on request: {}", code, req);
-				HttpResponse r = new HttpResponse().setResponseCode(code);
-				InputStream errorStream = conn.getErrorStream();
-				if (errorStream != null) {
-					r.setString(new String(readResponse(conn.getErrorStream()), "UTF-8"));
-				}
-				return r;
+				return new HttpResponse().setString(
+						new String(readResponse(conn.getErrorStream()), "UTF-8")).setResponseCode(code);
 			}
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
