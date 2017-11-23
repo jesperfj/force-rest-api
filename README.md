@@ -279,7 +279,7 @@ There should be nothing to push. If something is messed up, delete the tags in G
 
 ## 0.0.41
 
-* Introduces [ForceApi.describeSObjectIfChanged](https://github.com/jesperfj/force-rest-api/blob/75f718a2385d8daa42cee93c2b13d88b8dd4c5d9/src/main/java/com/force/api/ForceApi.java#L431) to make it more efficient to poll Salesforce for metadata changes to an SObject.
+* Introduces [ForceApi.describeSObjectIfModified](https://github.com/jesperfj/force-rest-api/blob/75f718a2385d8daa42cee93c2b13d88b8dd4c5d9/src/main/java/com/force/api/ForceApi.java#L431) to make it more efficient to poll Salesforce for metadata changes to an SObject.
 
 ## 0.0.40
 
