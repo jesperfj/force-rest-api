@@ -9,7 +9,7 @@ Releases are published on Maven Central. Include in your project with:
     <dependency>
         <groupId>com.frejo</groupId>
         <artifactId>force-rest-api</artifactId>
-        <version>0.0.39</version>
+        <version>0.0.41</version>
     </dependency>
 
 ## Build and link locally
@@ -30,7 +30,7 @@ To check out the source code for a particular version found in Maven Central, us
 
      $ git clone https://github.com/jesperfj/force-rest-api.git
      $ cd force-rest-api
-     $ git checkout force-rest-api-0.0.28
+     $ git checkout force-rest-api-0.0.41
 
 ## Authentication and Instantiation
 
@@ -84,7 +84,7 @@ As [documented here](https://help.salesforce.com/help/doc/en/remoteaccess_oauth_
 			.setClientSecret("notsolongnumeric")
 			.setRedirectURI("https://myapp.mydomain.com/oauth"))
 		.code("alphanumericstringpassedbackinbrowserrequest"));
-    
+
     ForceApi api = new ForceApi(s.getApiConfig(),s);
 
 
@@ -96,12 +96,12 @@ If you already have an access token and endpoint (e.g. from a cookie), you can p
         .setRefreshToken("refreshtoken")
         .setClientId("longclientidalphanumstring")
         .setClientSecret("notsolongnumeric"),
-    
+
     ApiSession s = new ApiSession()
 	    .setApiConfig(c)
 	    .setAccessToken("accessToken")
 	    .setApiEndpoint("apiEndpoint");
-    
+
     ForceApi api = new ForceApi(c,s);
 
 ## CRUD and Query Operations
@@ -125,8 +125,8 @@ This assumes you have an Account class defined with proper Jackson deserializati
     	@JsonProperty(value="AnnualRevenue")
     	private Double annualRevenue;
     	@JsonProperty(value="externalId__c")
-    	String externalId;	
-	
+    	String externalId;
+
     	public String getId() { return id; }
     	public void setId(String id) { this.id = id; }
     	public String getName() { return name; }
@@ -276,6 +276,10 @@ Just as a validation, try to push local changes including tags:
 There should be nothing to push. If something is messed up, delete the tags in Github and in your local repo and start over.
 
 # Release History
+
+## 0.0.41
+
+* Introduces [ForceApi.describeSObjectIfChanged](https://github.com/jesperfj/force-rest-api/blob/75f718a2385d8daa42cee93c2b13d88b8dd4c5d9/src/main/java/com/force/api/ForceApi.java#L431) to make it more efficient to poll Salesforce for metadata changes to an SObject.
 
 ## 0.0.40
 
