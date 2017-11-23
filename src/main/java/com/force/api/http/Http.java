@@ -48,7 +48,7 @@ public class Http {
 	//	}
 
 	static final Logger logger = LoggerFactory.getLogger(Http.class);
-	
+
 	static final byte[] readResponse(InputStream stream) throws IOException {
 		BufferedInputStream bin = new BufferedInputStream(stream);
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -59,7 +59,7 @@ public class Http {
 		}
 		return bout.toByteArray();
 	}
-	
+
 	public static final HttpResponse send(HttpRequest req) {
 		try {
 			HttpURLConnection conn = (HttpURLConnection) new URL(req.getUrl()).openConnection();
@@ -91,23 +91,26 @@ public class Http {
 				out.flush();
 			}
 			int code = conn.getResponseCode();
-			if (code < 300 && code >= 200) {
+			if (200 <= code && code < 300) {
 				switch (req.getResponseFormat()) {
-				case BYTE:
-					return new HttpResponse().setByte(readResponse(conn.getInputStream()))
-							.setResponseCode(code);
-				case STRING:
-					return new HttpResponse().setString(
-							new String(readResponse(conn.getInputStream()), "UTF-8")).setResponseCode(
-							code);
-				default:
-					return new HttpResponse().setStream(conn.getInputStream()).setResponseCode(code);
+					case BYTE:
+						return new HttpResponse().setByte(readResponse(conn.getInputStream()))
+								.setResponseCode(code);
+					case STRING:
+						return new HttpResponse().setString(
+								new String(readResponse(conn.getInputStream()), "UTF-8")).setResponseCode(
+								code);
+					default:
+						return new HttpResponse().setStream(conn.getInputStream()).setResponseCode(code);
 				}
+			} else if(code == 304) {
+				// 304 is a special case when the "If-Modified-Since" header is used, it is not an error,
+				// it indicates that SF objects were not changed since the time specified in the "If-Modified-Since" header
+				return new HttpResponse().setResponseCode(code);
 			} else {
 				logger.info("Bad response code: {} on request: {}", code, req);
-				HttpResponse r = new HttpResponse().setString(
+				return new HttpResponse().setString(
 						new String(readResponse(conn.getErrorStream()), "UTF-8")).setResponseCode(code);
-				return r;
 			}
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
