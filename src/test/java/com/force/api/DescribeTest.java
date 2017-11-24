@@ -16,7 +16,7 @@ public class DescribeTest {
 		.setClientId(Fixture.get("clientId"))
 		.setClientSecret(Fixture.get("clientSecret")));
 
-	
+
 	@Test
 	public void testDescribeGlobal() {
 		DescribeGlobal dg = api.describeGlobal();
@@ -38,7 +38,7 @@ public class DescribeTest {
 	public void testDescribeSObjectIfModified() {
 		DescribeSObject ds = api.describeSObjectIfModified("Account", new Date());
 		assertNull(ds);
-		Date d = new Date(System.currentTimeMillis()-1000*60*60*24*20); // 20 years ago
+		Date d = new Date(System.currentTimeMillis()-(1000*60*60*24*365*20)); // 20 years ago
 		ds = api.describeSObjectIfModified("Account", d);
 		assertNotNull(ds);
 	}

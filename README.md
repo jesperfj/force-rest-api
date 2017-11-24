@@ -190,16 +190,10 @@ You need credentials to a Force.com developer org to run tests against. These go
 
 ### Client ID and Secret
 
-Once you have signed up for an org, navigate to the Remote Access Setup:
+Once you have signed up for an org, create a Connected App:
 
-* Click on "Admin User" drop-down in upper-right
-* Select Setup
-* In the left-side navigation pane, under "App Setup", click on "Develop"
-* Select "Remote Access"
-
-Now create a new Remote Access Application:
-
-* Click on "New"
+* In Setup, type "App" into Quick Find and select "App Manager"
+* Click "New Connected App" in the upper right corner.
 * Choose any name for your application
 * Choose any callback URL (you'll need to set this properly when web server flow is supported)
 * Choose some contact email
