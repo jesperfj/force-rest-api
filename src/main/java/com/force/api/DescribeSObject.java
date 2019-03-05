@@ -125,6 +125,8 @@ public class DescribeSObject extends DescribeSObjectBasic {
         private String soapType;
         private String defaultValue;
         private String label;
+        private Integer scale;
+
         private Boolean updateable;
         private Boolean calculated;
         private Boolean unique;
@@ -279,6 +281,10 @@ public class DescribeSObject extends DescribeSObjectBasic {
 
         public Boolean isSortable() {
             return sortable;
+        }
+
+        public Integer getScale() {
+            return scale;
         }
     }
 
