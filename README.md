@@ -224,7 +224,9 @@ Now run tests with
 
     $ mvn test
 
-You will see some log messages that look like errors or warnings. That's expected and does not indicate test failures.
+You will see some log messages that look like errors or warnings. That's expected and does not indicate test failures. You can add debug logging with:
+
+    $ mvn test -Dorg.slf4j.simpleLogger.defaultLogLevel=debug
 
 ### Interactive end-to-end OAuth handshake Test
 
