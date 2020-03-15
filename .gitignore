@@ -7,3 +7,4 @@ target
 *.iml
 test.properties
 release-repo
+.vscode/
