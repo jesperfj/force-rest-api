@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import static org.junit.Assert.*;
 
@@ -87,18 +88,20 @@ public class QueryTest {
 
     @Test
 	public void testRelationshipQuery() throws JsonGenerationException, JsonMappingException, IOException {
-		Account a = new Account();
+        Random random = new Random();
+        int n = (int) (random.nextDouble()*100000000);
+        Account a = new Account();
 		a.setName("force-rest-api-test-account");
 		String id = api.createSObject("account", a);
 		a.setId(id);
-		Contact ct = new Contact("force@test.com","FirstName","LastName");
+		Contact ct = new Contact("c"+n+"@test.com","FirstName","LastName");
 		ct.setAccountId(a.id);
         ct.setId(api.createSObject("Contact", ct));
 		List<Account> childResult = api.query(String.format("SELECT Name, (SELECT AccountId, Email, FirstName, LastName FROM Contacts) FROM Account WHERE Id='%s'",a.id),
 										 Account.class).getRecords();
 		// Note, attribute names are capitalized by the Force.com REST API
         assertEquals(1, childResult.get(0).contacts.size());
-        assertEquals("force@test.com", childResult.get(0).contacts.get(0).getEmail());
+        assertEquals("c"+n+"@test.com", childResult.get(0).contacts.get(0).getEmail());
         assertEquals("FirstName", childResult.get(0).contacts.get(0).getFirstName());
         assertEquals("LastName", childResult.get(0).contacts.get(0).getLastName());
         assertEquals(a.id, childResult.get(0).contacts.get(0).getAccountId());
