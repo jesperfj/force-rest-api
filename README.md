@@ -98,7 +98,6 @@ If you already have an access token and endpoint (e.g. from a cookie), you can p
         .setClientSecret("notsolongnumeric"),
 
     ApiSession s = new ApiSession()
-	    .setApiConfig(c)
 	    .setAccessToken("accessToken")
 	    .setApiEndpoint("apiEndpoint");
 
