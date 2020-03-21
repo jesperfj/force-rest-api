@@ -244,6 +244,10 @@ First ensure all your code is checked in (with `git status` or the like). Then r
 
     $ mvn test javadoc:javadoc
 
+Note. You must have `JAVA_HOME` set for this to succeed. On Mac, set it with
+
+    $ export JAVA_HOME=$(/usr/libexec/java_home)
+
 Now find the latest version number with `git tag` (or in Maven central depending on what you trust most). Bump the version number to that plus one:
 
     $ mvn versions:set -DnewVersion=<new-version>
@@ -271,6 +275,10 @@ Just as a validation, try to push local changes including tags:
 There should be nothing to push. If something is messed up, delete the tags in Github and in your local repo and start over.
 
 # Release History
+
+## 0.0.42
+
+* Add JsonAlias to support Platform Events. Contributed by [rgoers](https://github.com/rgoers).
 
 ## 0.0.41
 
