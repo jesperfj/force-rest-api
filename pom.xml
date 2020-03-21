@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.frejo</groupId>
+    <groupId>com.ralphgoers</groupId>
     <artifactId>force-rest-api</artifactId>
-    <version>0-SNAPSHOT</version>
+    <version>0.0.42.Goers</version>
     <name>force-rest-api</name>
     <url>https://github.com/jesperfj/force-rest-api</url>
     <description>
