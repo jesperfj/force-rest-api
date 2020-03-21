@@ -279,6 +279,7 @@ There should be nothing to push. If something is messed up, delete the tags in G
 ## 0.0.42
 
 * Add JsonAlias to support Platform Events. Contributed by [rgoers](https://github.com/rgoers).
+* Note that default API version for this release is old: v45. Tests are failing on v46 and up due to some undocumented changes in response codes.
 
 ## 0.0.41
 
