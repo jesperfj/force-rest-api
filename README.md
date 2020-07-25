@@ -181,7 +181,9 @@ There is a direct mapping between season/year and version numbers. You can trans
 
 ## Run Tests
 
-This project has a mix of unit tests and integration tests that hit the actual API. To make the integration tests work you must set up a proper test fixture and reference it from environment variables. `.testenv.sample` contains a sample shell script indicating what variables must be set.
+This project has a mix of unit tests and integration tests that hit the actual API. To make the integration tests work you must set up a proper test fixture and reference it from environment variables. `.testenv.sample` contains a sample shell script indicating what variables must be set. Copy it to `.testenv` and once you have all the correct values, set it in the environment by running the shell command:
+
+    . .testenv
 
 ### Login and password
 
@@ -275,6 +277,11 @@ Just as a validation, try to push local changes including tags:
 There should be nothing to push. If something is messed up, delete the tags in Github and in your local repo and start over.
 
 # Release History
+
+## 0.0.43
+
+* The full request is no longer logged on a bad request to prevent sensitive data from ending up in logs. Contributed by [faf0-addepar](https://github/faf0-addepar)
+* Default API version bumped to v49 (Summer 2020). Code added to handle v46+ new behavior on upsert.
 
 ## 0.0.42
 

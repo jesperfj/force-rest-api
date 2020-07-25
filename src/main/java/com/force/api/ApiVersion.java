@@ -1,6 +1,7 @@
 package com.force.api;
 
 public enum ApiVersion {
+	V49 ("v49.0"),
 	V48 ("v48.0"),
 	V47 ("v47.0"),
 	V46 ("v46.0"),
