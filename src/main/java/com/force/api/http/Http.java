@@ -108,7 +108,7 @@ public class Http {
 				// it indicates that SF objects were not changed since the time specified in the "If-Modified-Since" header
 				return new HttpResponse().setResponseCode(code);
 			} else {
-				logger.info("Bad response code: {} on request: {}", code, req);
+				logger.info("Bad response code: {} on request: {} {}", code, req.getMethod(), req.getUrl());
 				return new HttpResponse().setString(
 						new String(readResponse(conn.getErrorStream()), "UTF-8")).setResponseCode(code);
 			}
