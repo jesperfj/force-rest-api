@@ -265,12 +265,10 @@ public class ForceApi {
 					.content(jsonMapper.writeValueAsBytes(sObject))
 				);
 			if((new ExtendedApiVersion(config.getApiVersionString())).getVersion() >= 46) {
-				// As of v46, Salesforce changed behavior and it was pretty poorly documented here:
+				// As of v46, Salesforce changed behavior:
 				// https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_upsert.htm
-				// The following remark points to the change:
-				// "The created parameter is present in the response in API version 46.0 and later. It doesn't appear in earlier versions."
-				// It is left to the reader to find out that 201 and 204 response codes are no longer returned. From v46, only 200 response code
-				// is returned and you must inspect the result json to find out if it was an update or insert.
+				// v46+ always returns 200 along with a json response that indicated whether a record was
+				// created or updated
 				Map<String,Object> respData = jsonMapper.readValue(res.getStream(),Map.class);
 				if(respData.get("created").toString().equals("true")) {
 					return CreateOrUpdateResult.CREATED;
