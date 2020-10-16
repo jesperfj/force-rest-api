@@ -52,7 +52,7 @@ public class ForceApi {
 	final ApiConfig config;
 	ApiSession session;
 	private boolean autoRenew = false;
-	private customBasePath = null;
+	private String customBasePath = null;
 
 	public ForceApi(ApiConfig config, ApiSession session) {
 		this.config = config;
@@ -490,7 +490,7 @@ public class ForceApi {
 	}
 
 	private final String uriBaseWithCustomPath() {
-		if(customBasePath) {
+		if(customBasePath!=null) {
 			return(session.getApiEndpoint()+customBasePath);
 		} else {
 			return(session.getApiEndpoint()+"/services/data/"+config.getApiVersionString());
