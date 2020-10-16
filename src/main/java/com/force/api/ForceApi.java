@@ -52,6 +52,7 @@ public class ForceApi {
 	final ApiConfig config;
 	ApiSession session;
 	private boolean autoRenew = false;
+	private customBasePath = null;
 
 	public ForceApi(ApiConfig config, ApiSession session) {
 		this.config = config;
@@ -78,13 +79,29 @@ public class ForceApi {
 		return session;
 	}
 
+	public void setCustomBasePath(String value) {
+		customBasePath = value;
+	}
+
+	public ForceApi withBasePath(String value) {
+		ForceApi clone = new ForceApi(this.config, this.session);
+		clone.setCustomBasePath(value);
+		return clone;
+	}
+
 	public String curlHelper() {
 		return "curl -s -H 'Authorization: Bearer "+session.getAccessToken()+"' "+uriBase()+" | jq .";
 	}
 
+	/**
+	 * sends a custom REST API GET request
+	 *
+	 * @param path     service path to be called - i.e. /process/approvals/
+	 * @return response from API wrapped in a ResourceRepresentation for multiple deserialization options.
+	 */
 	public ResourceRepresentation get(String path) {
 		return new ResourceRepresentation(apiRequest(new HttpRequest()
-				.url(uriBase()+path)
+				.url(uriBaseWithCustomPath()+path)
 				.method("GET")
 				.header("Accept", "application/json")),
 				jsonMapper);
@@ -101,7 +118,7 @@ public class ForceApi {
 	 */
 	public ResourceRepresentation delete(String path) {
 		return new ResourceRepresentation(apiRequest(new HttpRequest()
-				.url(uriBase() + path)
+				.url(uriBaseWithCustomPath() + path)
 				.method("DELETE")
 				.header("Accept", "application/json")),
 				jsonMapper);
@@ -144,7 +161,7 @@ public class ForceApi {
 	public ResourceRepresentation request(String method, String path, Object input) {
 		try {
 			return new ResourceRepresentation(apiRequest(new HttpRequest()
-					.url(uriBase() + path)
+					.url(uriBaseWithCustomPath() + path)
 					.method(method)
 					.header("Accept", "application/json")
 					.header("Content-Type", "application/json")
@@ -470,6 +487,14 @@ public class ForceApi {
 
 	private final String uriBase() {
 		return(session.getApiEndpoint()+"/services/data/"+config.getApiVersionString());
+	}
+
+	private final String uriBaseWithCustomPath() {
+		if(customBasePath) {
+			return(session.getApiEndpoint()+customBasePath);
+		} else {
+			return(session.getApiEndpoint()+"/services/data/"+config.getApiVersionString());
+		}
 	}
 
 	private final HttpResponse apiRequest(HttpRequest req) {

@@ -162,6 +162,15 @@ This assumes you have an Account class defined with proper Jackson deserializati
 
     QueryResult<Account> res = api.query("SELECT id FROM Account WHERE name LIKE 'Test account%'", Account.class);
 
+### CRUD operations on any path
+
+Sometimes you want to do CRUD operations without the standard `/services/data/<version>` path prefix. To do this you can set a custom base path:
+
+    ForceApi api = new ForceApi(myConfig,mySession);
+    api.withBasePath("/").get("/service/apexrest/myApexClass");
+
+the `withBasePath()` method is shorthand for cloning the ForceApi instance and setting a custom base path with `setCustomBasePath(value)` on the new instance so the original one is kept immutable.
+
 ## Working with API versions
 
 You can inspect supported API versions and get more detailed info for each version using `SupportedVersions`:
