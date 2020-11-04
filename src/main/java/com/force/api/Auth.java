@@ -18,6 +18,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.force.api.http.Http;
 import com.force.api.http.HttpRequest;
 import com.force.api.http.HttpResponse;
+
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,8 +78,8 @@ public class Auth {
 					"              xmlns:env=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"+
 					"    <env:Body>\n"+
 			        "        <n1:login xmlns:n1=\"urn:partner.soap.sforce.com\">\n"+
-			        "            <n1:username>"+c.getUsername()+"</n1:username>\n"+
-			        "            <n1:password>"+c.getPassword()+"</n1:password>\n"+
+			        "            <n1:username>"+StringEscapeUtils.escapeXml10(c.getUsername())+"</n1:username>\n"+
+			        "            <n1:password>"+StringEscapeUtils.escapeXml10(c.getPassword())+"</n1:password>\n"+
 			        "        </n1:login>\n"+
 			        "    </env:Body>\n"+
 			        "</env:Envelope>\n").getBytes("UTF-8");
