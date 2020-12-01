@@ -297,6 +297,44 @@ public class ForceApi {
 		}
 	}
 
+	public UpsertResult upsertSObject(String type, String externalIdField, String externalIdValue, Object sObject) {
+		try {
+			String method = externalIdValue != null ? "?_HttpMethod=PATCH" : "";
+			String idValue = externalIdValue != null ? "/" + URLEncoder.encode(externalIdValue, "UTF-8") : "";
+			HttpResponse res =
+					apiRequest(new HttpRequest()
+							.url(uriBase() + "/sobjects/" + type + "/" + externalIdField + idValue + method)
+							.method("POST")
+							.header("Accept", "application/json")
+							.header("Content-Type", "application/json")
+							.content(jsonMapper.writeValueAsBytes(sObject))
+					);
+			if (res.getResponseCode() == 201) {
+				UpsertResult upsertResult = jsonMapper.readValue(res.getStream(), UpsertResult.class);
+				upsertResult.setStatus(UpsertStatus.INSERTED);
+				return upsertResult;
+			} else if (res.getResponseCode() == 204) {
+				UpsertResult upsertResult = new UpsertResult();
+				if ("Id".equals(externalIdField)) {
+					upsertResult.setId(externalIdValue);
+				}
+				upsertResult.setStatus(UpsertStatus.UPDATED);
+				return upsertResult;
+			} else {
+				logger.debug("Code: {}", res.getResponseCode());
+				logger.debug("Message: {}", res.getString());
+				throw new RuntimeException();
+			}
+
+		} catch (JsonGenerationException e) {
+			throw new ResourceException(e);
+		} catch (JsonMappingException e) {
+			throw new ResourceException(e);
+		} catch (IOException e) {
+			throw new ResourceException(e);
+		}
+	}
+
 	public <T> QueryResult<T> query(String query, Class<T> clazz) {
         try {
             return queryAny(uriBase() + "/query/?q=" + URLEncoder.encode(query, "UTF-8"), clazz);
