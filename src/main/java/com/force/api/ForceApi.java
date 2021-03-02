@@ -371,6 +371,42 @@ public class ForceApi {
         }
     }
 
+    public SearchResult<Map> searchBySOSL(String searchQuery) {
+		return searchBySOSL(searchQuery, Map.class);
+	}
+
+    public <T> SearchResult<T> searchBySOSL(String searchQuery, Class<T> clazz) {
+		try {
+			return searchAny(uriBase() + "/search/?q=" + URLEncoder.encode(searchQuery, "UTF-8"), clazz);
+		} catch (UnsupportedEncodingException e) {
+			throw new ResourceException(e);
+		}
+	}
+
+    private <T> SearchResult<T> searchAny(String searchUrl, Class<T> clazz) {
+        try {
+            HttpResponse res = apiRequest(new HttpRequest()
+                    .url(searchUrl)
+                    .method("GET")
+                    .header("Accept", "application/json")
+                    .expectsCode(200));
+
+            // We build the result manually, because we can't pass the type information easily into
+            // the JSON parser mechanism.
+
+            SearchResult<T> result = new SearchResult<>();
+            JsonNode root = jsonMapper.readTree(res.getStream());
+            List<T> searchRecords = new ArrayList<>();
+            for (JsonNode elem : root.get("searchRecords")) {
+				searchRecords.add(jsonMapper.readValue(normalizeCompositeResponse(elem).traverse(), clazz));
+            }
+            result.setSearchRecords(searchRecords);
+            return result;
+        } catch (IOException e) {
+            throw new ResourceException(e);
+        }
+	}
+
     public DescribeGlobal describeGlobal() {
 		try {
 			return jsonMapper.readValue(apiRequest(new HttpRequest()
