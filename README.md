@@ -290,8 +290,8 @@ There should be nothing to push. If something is messed up, delete the tags in G
 ## 0.0.44
 
 * Default API version bumped to v51. Added v50 and v51 to supported versions.
-* Add ability to access root path with API calls `get put patch post delete request` using `ForceApi.rootPath()` (briefly explained in README)
-* login and password strings are now XML escaped when doing `soaploginPasswordFlow`. The characters `< > & ' "` are replaced with their &...; XML escape codes.
+* Add ability to access root path with API calls `get put patch post delete request` using `ForceApi.rootPath()` (briefly explained in README). Thanks @ModeratelyComfortableChair for suggestion.
+* login and password strings are now XML escaped when doing `soaploginPasswordFlow`. The characters `< > & ' "` are replaced with their &...; XML escape codes. Thanks @fredboutin for suggestion.
 * JUnit test dependency bumped from 4.10 to 4.13.1
 * Added test dependencies for jetty-util and jetty-http because apparently they are now needed.
 
