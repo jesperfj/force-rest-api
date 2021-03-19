@@ -24,11 +24,11 @@ public class ApexRESTTest {
 			.setPassword(Fixture.get("password"))
 			.setClientId(Fixture.get("clientId"))
 			.setClientSecret(Fixture.get("clientSecret")));
-        
-        // TEST GET
-        
-        Account a = api.rootPath().get("/services/apexrest/ApexTest").as(Account.class);
-        System.out.println(a.getName());
-        assertNotNull(a.getName());
+		
+		// TEST GET
+		
+		Account a = api.rootPath().get("/services/apexrest/ApexTest").as(Account.class);
+		System.out.println(a.getName());
+		assertNotNull(a.getName());
 	}
 }

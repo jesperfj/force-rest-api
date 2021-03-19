@@ -22,7 +22,7 @@ public class AuthTest {
 
 	}
 
-    @Test
+	@Test
 	public void testSoapLoginWithBadChars() {
 		ForceApi api = new ForceApi(new ApiConfig()
 			.setUsername(Fixture.get("usernameEscapeTest"))

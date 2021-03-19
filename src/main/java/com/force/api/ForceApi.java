@@ -52,7 +52,7 @@ public class ForceApi {
 	final ApiConfig config;
 	ApiSession session;
 	private boolean autoRenew = false;
-    boolean useRootPath = false;
+	boolean useRootPath = false;
 
 	public ForceApi(ApiConfig config, ApiSession session) {
 		this.config = config;
