@@ -162,6 +162,15 @@ This assumes you have an Account class defined with proper Jackson deserializati
 
     QueryResult<Account> res = api.query("SELECT id FROM Account WHERE name LIKE 'Test account%'", Account.class);
 
+### CRUD operations on root path
+
+Sometimes you want to do CRUD operations without the standard `/services/data/<version>` path prefix. To do this you can get a ForceApi instance that uses root path:
+
+    ForceApi api = new ForceApi(myConfig,mySession);
+    api.rootPath().get("/services/apexrest/myApexClass");
+
+`rootPath()` returns a new ForceApi instance that uses root path for the `get()`, `delete()`, `put()`, `post()`, `patch()` and `request()` methods.
+
 ## Working with API versions
 
 You can inspect supported API versions and get more detailed info for each version using `SupportedVersions`:
@@ -278,10 +287,18 @@ There should be nothing to push. If something is messed up, delete the tags in G
 
 # Release History
 
+## 0.0.44
+
+* Default API version bumped to v51. Added v50 and v51 to supported versions.
+* Add ability to access root path with API calls `get put patch post delete request` using `ForceApi.rootPath()` (briefly explained in README)
+* login and password strings are now XML escaped when doing `soaploginPasswordFlow`. The characters `< > & ' "` are replaced with their &...; XML escape codes.
+* JUnit test dependency bumped from 4.10 to 4.13.1
+* Added test dependencies for jetty-util and jetty-http because apparently they are now needed.
+
 ## 0.0.43
 
 * The full request is no longer logged on a bad request to prevent sensitive data from ending up in logs. Contributed by [faf0-addepar](https://github/faf0-addepar)
-* Default API version bumped to v49 (Summer 2020). Code added to handle v46+ new behavior on upsert.
+* Default API version bumped to v49 (Summer 2020). Code added to handle v46+ new behavior on upsert. 2021-03-19 NOTE: There was a bug here. Default version in 0.0.43 was actually v45.
 
 ## 0.0.42
 
