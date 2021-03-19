@@ -52,7 +52,7 @@ public class ForceApi {
 	final ApiConfig config;
 	ApiSession session;
 	private boolean autoRenew = false;
-	private String customBasePath = null;
+    boolean useRootPath = false;
 
 	public ForceApi(ApiConfig config, ApiSession session) {
 		this.config = config;
@@ -79,13 +79,9 @@ public class ForceApi {
 		return session;
 	}
 
-	public void setCustomBasePath(String value) {
-		customBasePath = value;
-	}
-
-	public ForceApi withBasePath(String value) {
+	public ForceApi rootPath() {
 		ForceApi clone = new ForceApi(this.config, this.session);
-		clone.setCustomBasePath(value);
+        clone.useRootPath=true;
 		return clone;
 	}
 
@@ -101,7 +97,7 @@ public class ForceApi {
 	 */
 	public ResourceRepresentation get(String path) {
 		return new ResourceRepresentation(apiRequest(new HttpRequest()
-				.url(uriBaseWithCustomPath()+path)
+				.url(uriBaseOrRoot()+path)
 				.method("GET")
 				.header("Accept", "application/json")),
 				jsonMapper);
@@ -118,7 +114,7 @@ public class ForceApi {
 	 */
 	public ResourceRepresentation delete(String path) {
 		return new ResourceRepresentation(apiRequest(new HttpRequest()
-				.url(uriBaseWithCustomPath() + path)
+				.url(uriBaseOrRoot() + path)
 				.method("DELETE")
 				.header("Accept", "application/json")),
 				jsonMapper);
@@ -161,7 +157,7 @@ public class ForceApi {
 	public ResourceRepresentation request(String method, String path, Object input) {
 		try {
 			return new ResourceRepresentation(apiRequest(new HttpRequest()
-					.url(uriBaseWithCustomPath() + path)
+					.url(uriBaseOrRoot() + path)
 					.method(method)
 					.header("Accept", "application/json")
 					.header("Content-Type", "application/json")
@@ -489,9 +485,9 @@ public class ForceApi {
 		return(session.getApiEndpoint()+"/services/data/"+config.getApiVersionString());
 	}
 
-	private final String uriBaseWithCustomPath() {
-		if(customBasePath!=null) {
-			return(session.getApiEndpoint()+customBasePath);
+	private final String uriBaseOrRoot() {
+		if(useRootPath) {
+			return(session.getApiEndpoint());
 		} else {
 			return(session.getApiEndpoint()+"/services/data/"+config.getApiVersionString());
 		}
