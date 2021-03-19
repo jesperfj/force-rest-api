@@ -22,6 +22,17 @@ public class AuthTest {
 
 	}
 
+    @Test
+	public void testSoapLoginWithBadChars() {
+		ForceApi api = new ForceApi(new ApiConfig()
+			.setUsername(Fixture.get("usernameEscapeTest"))
+			.setPassword(Fixture.get("passwordEscapeTest")));
+
+		assertNotNull(api.session);
+		assertNotNull(api.session.accessToken);
+		assertNotNull(api.session.apiEndpoint);
+	}
+
 	@Test
 	public void testIPRestrictionsOnSoap() {
 		try {

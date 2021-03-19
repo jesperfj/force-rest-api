@@ -58,6 +58,21 @@ public class Auth {
 		}
 	}
 
+    static private final String escapeXml(String s) {
+        StringBuffer sb = new StringBuffer();
+        for(int i=0;i<s.length();i++) {
+            char c = s.charAt(i);
+            switch(c) {
+                case '&':   sb.append("&amp;"); break;
+                case '>':   sb.append("&gt;"); break;
+                case '<':   sb.append("&lt;"); break;
+                case '\'':  sb.append("&apos;"); break;
+                case '\"':  sb.append("&quot;"); break;
+                default:    sb.append((char) c);
+            }
+        }
+        return sb.toString();
+    }
 	
 	static public final ApiSession soaploginPasswordFlow(ApiConfig c) {
 		if(c.getUsername()==null) throw new IllegalStateException("username cannot be null");
@@ -76,12 +91,12 @@ public class Auth {
 					"              xmlns:env=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"+
 					"    <env:Body>\n"+
 			        "        <n1:login xmlns:n1=\"urn:partner.soap.sforce.com\">\n"+
-			        "            <n1:username>"+c.getUsername()+"</n1:username>\n"+
-			        "            <n1:password>"+c.getPassword()+"</n1:password>\n"+
+			        "            <n1:username>"+escapeXml(c.getUsername())+"</n1:username>\n"+
+			        "            <n1:password>"+escapeXml(c.getPassword())+"</n1:password>\n"+
 			        "        </n1:login>\n"+
 			        "    </env:Body>\n"+
 			        "</env:Envelope>\n").getBytes("UTF-8");
-			out.write(msg);
+            out.write(msg);
 			out.flush();
 			if(conn.getResponseCode()!=200) {
 				throw new AuthException(conn.getResponseCode(), "soapLoginPasswordFlow failed");
@@ -106,13 +121,13 @@ public class Auth {
 							
 			return new ApiSession(accessToken, apiEndpoint);
 			
-			} catch (MalformedURLException e) {
-				throw new RuntimeException(e);
-			} catch (UnsupportedEncodingException e) {
-				throw new RuntimeException(e);
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 	}
 
 	static public final String startOAuthWebServerFlow(AuthorizationRequest req) {
