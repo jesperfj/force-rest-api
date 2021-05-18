@@ -275,6 +275,10 @@ This tags the local and remote repository with the full module name, e.g. force-
 
     $ mvn clean deploy -DperformRelease
 
+That command will fail if you don't have gpg installed. Install on MacOS with
+
+    $ brew install gpg
+
 When you're done, reset the local version change to pom.xml with:
 
     $ mvn versions:revert
