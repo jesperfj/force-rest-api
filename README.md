@@ -56,7 +56,7 @@ Authenticate using just login and password:
 
 ### OAuth Username/Password Authentication Flow
 
-As [documented here](https://help.salesforce.com/help/doc/en/remoteaccess_oauth_username_password_flow.htm)
+As [documented here](https://help.salesforce.com/articleView?id=remoteaccess_oauth_username_password_flow.htm&type=5)
 
     ForceApi api = new ForceApi(new ApiConfig()
         .setUsername("user@domain.com")
@@ -66,7 +66,7 @@ As [documented here](https://help.salesforce.com/help/doc/en/remoteaccess_oauth_
 
 ### OAuth Web Server Flow
 
-As [documented here](https://help.salesforce.com/help/doc/en/remoteaccess_oauth_web_server_flow.htm)
+As [documented here](https://help.salesforce.com/articleView?id=remoteaccess_oauth_web_server_flow.htm&type=5)
 
     String url = Auth.startOAuthWebServerFlow(new AuthorizationRequest()
     	.apiConfig(new ApiConfig()
