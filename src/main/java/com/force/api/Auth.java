@@ -168,6 +168,8 @@ public class Auth {
 			} else {
 				Map<?, ?> resp = jsonMapper.readValue(r.getStream(), Map.class);
 				return new ApiSession()
+						.setId((String) resp.get("id"))
+						.setInstanceUrl((String) resp.get("instance_url"))
 						.setRefreshToken((String) resp.get("refresh_token"))
 						.setAccessToken((String) resp.get("access_token"))
 						.setApiEndpoint((String) resp.get("instance_url"));
@@ -199,6 +201,8 @@ public class Auth {
 				Map<?, ?> resp = jsonMapper.readValue(r.getStream(), Map.class);
 
 				return new ApiSession()
+						.setId((String) resp.get("id"))
+						.setInstanceUrl((String) resp.get("instance_url"))
 						.setAccessToken((String) resp.get("access_token"))
 						.setApiEndpoint((String) resp.get("instance_url"))
 						.setRefreshToken(refreshToken);
