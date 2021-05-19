@@ -154,7 +154,7 @@ public class HttpRequest {
 			b.append(h.key+": "+h.value+"\n");
 		}
 		if(authorization!=null) {
-			b.append("Authorization: "+authorization);
+			b.append("Authorization: <hidden for security purpose>");
 		}
 		if(getContentBytes()!=null) {
 			try {
