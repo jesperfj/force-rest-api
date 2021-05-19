@@ -135,6 +135,11 @@ public class DescribeSObject extends DescribeSObjectBasic {
         private Boolean externalId;
         private Boolean idLookup;
         private Boolean filterable;
+
+        private Integer precision;
+        private Integer scale;
+
+
         // soapType;
         private Boolean createable;
         private Boolean deprecatedAndHidden;
@@ -215,6 +220,14 @@ public class DescribeSObject extends DescribeSObjectBasic {
 
         public Boolean isFilterable() {
             return filterable;
+        }
+
+        public Integer getPrecision() {
+            return precision;
+        }
+
+        public Integer getScale() {
+            return scale;
         }
 
         public Boolean isCreateable() {
