@@ -194,10 +194,6 @@ This project has a mix of unit tests and integration tests that hit the actual A
 
     source .testenv
 
-Before running the whole test suite, it is a good idea to run a single login test to check if the configuration is correct. If the username/password is not configured correctly, the test suite will trigger an account lock-out due to the many failed attempts. Run a single test such as `testSoapLogin` with:
-
-    mvn -Dtest=com.force.api.AuthTest#testSoapLogin test
-
 ### Login and password
 
 You need credentials to a Force.com developer org to run tests against. These go in the `username` and `password` vaiables. Needless to say, don't use credentials for a production org containing sensitive data. If you don't have a developer org, [sign up for one](http://www.developerforce.com/events/regular/registration.php?d=70130000000EjHb). It's free. Remember to append the security token to your chosen password in the `password` variable.
@@ -234,6 +230,11 @@ To test IP restrictions failure handling you need additional test setup:
 * TODO: complete these instructions
 
 ### Run Tests
+
+Before running the whole test suite, it is a good idea to run a single login test to check if the configuration is correct. If the username/password is not configured correctly, the test suite will trigger an account lock-out due to the many failed attempts. Run a single test such as `testSoapLogin` with:
+
+    mvn -Dtest=com.force.api.AuthTest#testSoapLogin test
+
 
 Now run tests with
 
@@ -294,6 +295,12 @@ Just as a validation, try to push local changes including tags:
 There should be nothing to push. If something is messed up, delete the tags in Github and in your local repo and start over.
 
 # Release History
+
+## 0.0.45
+
+* No major changes
+* Default API version bumped to v55.
+* Update Jetty version used for OAuth test (only a test change)
 
 ## 0.0.44
 
