@@ -192,7 +192,11 @@ There is a direct mapping between season/year and version numbers. You can trans
 
 This project has a mix of unit tests and integration tests that hit the actual API. To make the integration tests work you must set up a proper test fixture and reference it from environment variables. `.testenv.sample` contains a sample shell script indicating what variables must be set. Copy it to `.testenv` and once you have all the correct values, set it in the environment by running the shell command:
 
-    . .testenv
+    source .testenv
+
+Before running the whole test suite, it is a good idea to run a single login test to check if the configuration is correct. If the username/password is not configured correctly, the test suite will trigger an account lock-out due to the many failed attempts. Run a single test such as `testSoapLogin` with:
+
+    mvn -Dtest=com.force.api.AuthTest#testSoapLogin test
 
 ### Login and password
 
