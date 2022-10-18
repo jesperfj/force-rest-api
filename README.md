@@ -1,6 +1,6 @@
-# Force.com REST API Connector
+# Salesforce REST API Connector
 
-Lightweight library for building Force.com apps with OAuth authentication and data access through the Force.com REST API.
+Lightweight library for building Salesforce apps with OAuth authentication and data access through the Salesforce REST API.
 
 # Usage
 
@@ -36,7 +36,7 @@ To check out the source code for a particular version found in Maven Central, us
 
 ### API versions
 
-Force.com API updates its API version with every Salesforce release (3 times per year). The new version is supposed to always be backwards compatible, so in theory it is safe to always use the latest API version. However `force-rest-api` is designed to be conservative. The API version used may change with new versions of the library, but for a given version of the library, the version will always be `ApiVersion.DEFAULT_VERSION` unless you explicitly set it to something different. You set the API version when you instantiate an `ApiConfig`:
+Salesforce updates its API version with every Salesforce release (3 times per year). The new version is supposed to always be backwards compatible, so in theory it is safe to always use the latest API version. However `force-rest-api` is designed to be conservative. The API version used may change with new versions of the library, but for a given version of the library, the version will always be `ApiVersion.DEFAULT_VERSION` unless you explicitly set it to something different. You set the API version when you instantiate an `ApiConfig`:
 
     ApiConfig mycfg = new ApiConfig().setApiVersionString("v99.0");
 
