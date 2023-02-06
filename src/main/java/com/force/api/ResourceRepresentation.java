@@ -4,10 +4,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.force.api.http.HttpResponse;
 
 /**
@@ -18,12 +17,19 @@ import com.force.api.http.HttpResponse;
  *
  */
 public class ResourceRepresentation {
-	
-	public static final ObjectMapper jsonMapper = new ObjectMapper();
+
+	// For some reason this was made public a long time ago. So now it needs to stay this way
+	public final ObjectMapper jsonMapper;
 
 	HttpResponse response;
 
 	public ResourceRepresentation(HttpResponse value) {
+		jsonMapper = new ObjectMapper();
+		response = value;
+	}
+
+	public ResourceRepresentation(HttpResponse value, ObjectMapper objectMapper) {
+		jsonMapper = objectMapper;
 		response = value;
 	}
 
@@ -63,4 +69,12 @@ public class ResourceRepresentation {
 		}
 	}
 
+	/**
+	 *
+	 * @return the HTTP response code of the underlying request if it was between 200 and 299. Any code outside of that
+	 * range will result in an ApiException being thrown before a ResourceRepresentation is instantiated.
+	 */
+	public int getResponseCode() {
+		return response.getResponseCode();
+	}
 }

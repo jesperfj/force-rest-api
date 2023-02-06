@@ -1,10 +1,13 @@
 package com.force.api;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+
 public class ApiError {
 	String[] fields;
 	String message;
 	
 	// TODO: This should be an enum, but just doing string for now.
+	@JsonAlias("statusCode")
 	String apiErrorCode;
 
 	public String[] getFields() {
