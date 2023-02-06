@@ -1,32 +1,45 @@
 package com.force.api;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class QueryTest {
 
-	ForceApi api;
+    static final String TEST_NAME = "force-rest-api query test";
+
+    ForceApi api;
 	
 	@Before
 	public void init() {
 		api = new ForceApi(new ApiConfig()
 		.setUsername(Fixture.get("username"))
-		.setPassword(Fixture.get("password"))
-		.setLoginEndpoint(Fixture.get("loginEndpoint")));
+		.setPassword(Fixture.get("password")));
 	}
+
+	@Test
+    public void testQueryTimeout() {
+        try {
+            new ForceApi(new ApiConfig()
+                    .setUsername(Fixture.get("username"))
+                    .setPassword(Fixture.get("password"))
+                    .setRequestTimeout(1) // 1ms timeout
+            ).query("SELECT name FROM Account").getRecords();
+            fail("SocketTimeoutException was not thrown but was expected to be.");
+        } catch (Exception e) {
+            assertEquals(RuntimeException.class, e.getClass()); // RuntimeException wraps timeout exception
+            assertTrue(e.getMessage().contains("java.net.SocketTimeoutException"));
+        }
+    }
 	
 	@Test
 	public void testUntypedQuery() {
@@ -38,9 +51,10 @@ public class QueryTest {
 
 	@Test
 	public void testTypedQuery() {
-		List<Account> result = api.query("SELECT name FROM Account",Account.class).getRecords();
+		List<Account> result = api.query("SELECT name, createddate FROM Account",Account.class).getRecords();
 		// Note, attribute names are capitalized by the Force.com REST API
 		assertNotNull(result.get(0).getName());
+		assertNotNull(result.get(0).getCreatedDate());
 	}
 
     @Test
@@ -53,6 +67,7 @@ public class QueryTest {
         final int numAccts = api.query("SELECT count() FROM Account", Account.class).getTotalSize();
         if (numAccts < exceedQueryBatchSize) {
             int accountsNeeded = exceedQueryBatchSize - numAccts;
+            System.out.println("Adding "+accountsNeeded+" test accounts to org. This will take a bit of time but is a one time operation");
             for (int i = 0; i < accountsNeeded; i++) {
                 api.createSObject("Account", Collections.singletonMap("Name", "TEST-ACCOUNT-" + i));
             }
@@ -73,31 +88,23 @@ public class QueryTest {
 
     @Test
 	public void testRelationshipQuery() throws JsonGenerationException, JsonMappingException, IOException {
-		Account a = new Account();
+        Random random = new Random();
+        int n = (int) (random.nextDouble()*100000000);
+        Account a = new Account();
 		a.setName("force-rest-api-test-account");
 		String id = api.createSObject("account", a);
 		a.setId(id);
-		List<Contact> existingContacts = api.query(String.format("SELECT Name FROM Contact WHERE AccountId='%s'",a.id),Contact.class).getRecords();
-        Contact ct = new Contact("force@test.com","FirstName","LastName");
+		Contact ct = new Contact("c"+n+"@test.com","FirstName","LastName");
 		ct.setAccountId(a.id);
         ct.setId(api.createSObject("Contact", ct));
-        assertNotNull(ct.getId());
-		List<Account> childResult = api.query(String.format("SELECT Name, (SELECT Id, AccountId, Email, FirstName, LastName FROM Contacts) FROM Account WHERE Id='%s'",a.id),
+		List<Account> childResult = api.query(String.format("SELECT Name, (SELECT AccountId, Email, FirstName, LastName FROM Contacts) FROM Account WHERE Id='%s'",a.id),
 										 Account.class).getRecords();
 		// Note, attribute names are capitalized by the Force.com REST API
-        assertEquals(existingContacts.size()+1, childResult.get(0).contacts.size());
-
-        Contact result = null;
-        for(Contact c : childResult.get(0).contacts){
-        	if(c.getId().equals(ct.getId())){
-        		result = c;
-        	}
-        }
-        assertNotNull(result);
-        assertEquals("force@test.com", result.getEmail());
-        assertEquals("FirstName", result.getFirstName());
-        assertEquals("LastName", result.getLastName());
-        assertEquals(a.id, result.getAccountId());
+        assertEquals(1, childResult.get(0).contacts.size());
+        assertEquals("c"+n+"@test.com", childResult.get(0).contacts.get(0).getEmail());
+        assertEquals("FirstName", childResult.get(0).contacts.get(0).getFirstName());
+        assertEquals("LastName", childResult.get(0).contacts.get(0).getLastName());
+        assertEquals(a.id, childResult.get(0).contacts.get(0).getAccountId());
 
         List<Contact> parentResult = api.query(String.format("SELECT AccountId, Account.Id, Account.Name FROM Contact WHERE Id='%s'",ct.getId()), Contact.class).getRecords();
         assertEquals(1, parentResult.size());
@@ -105,4 +112,19 @@ public class QueryTest {
         assertEquals(a.getId(), parentResult.get(0).getAccount().getId());
         assertEquals(a.getName(), parentResult.get(0).getAccount().getName());
 	}
+
+    @Test
+    public void testQueryAll() {
+        Account a = new Account();
+        a.setName(TEST_NAME);
+        a.setExternalId("1234");
+        String id = api.createSObject("account", a);
+        assertNotNull(id);
+
+        api.deleteSObject("Account",id);
+
+        List<Account> result = api.queryAll("SELECT name FROM Account WHERE id = '"+id+"'",Account.class).getRecords();
+        // Note, attribute names are capitalized by the Force.com REST API
+        assertNotNull(result.get(0).getName());
+    }
 }

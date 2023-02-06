@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Date;
 
 import static org.junit.Assert.*;
 
@@ -13,10 +14,9 @@ public class DescribeTest {
 		.setUsername(Fixture.get("username"))
 		.setPassword(Fixture.get("password"))
 		.setClientId(Fixture.get("clientId"))
-		.setClientSecret(Fixture.get("clientSecret"))
-		.setLoginEndpoint(Fixture.get("loginEndpoint")));
+		.setClientSecret(Fixture.get("clientSecret")));
 
-	
+
 	@Test
 	public void testDescribeGlobal() {
 		DescribeGlobal dg = api.describeGlobal();
@@ -34,6 +34,15 @@ public class DescribeTest {
 		assertNotNull(ds.getAllFields().iterator().next().getSoapType());
 	}
 
+	@Test
+	public void testDescribeSObjectIfModified() {
+		DescribeSObject ds = api.describeSObjectIfModified("Account", new Date());
+		assertNull(ds);
+		Date d = new Date(System.currentTimeMillis()-(1000*60*60*24*365*20)); // 20 years ago
+		ds = api.describeSObjectIfModified("Account", d);
+		assertNotNull(ds);
+	}
+
     @Test
     public void testDiscoverSObject() throws Exception {
         DiscoverSObject<Contact> ds = api.discoverSObject("Contact", Contact.class);
@@ -48,7 +57,7 @@ public class DescribeTest {
 		PojoCodeGenerator gen = new PojoCodeGenerator();
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		try {
-			gen.generateCode(s, ds, new ApiConfig().getApiVersion(),null);
+			gen.generateCode(s, ds, new ApiConfig().getApiVersionString(),null);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
