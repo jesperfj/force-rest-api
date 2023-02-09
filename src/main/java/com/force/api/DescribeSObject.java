@@ -39,6 +39,10 @@ import java.util.*;
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class DescribeSObject extends DescribeSObjectBasic {
 
+    /**
+     * All fields for the sobject.
+     * @return
+     */
     private List<Field> fields;
     private List<ChildEntity> childRelationships;
 
@@ -46,6 +50,10 @@ public class DescribeSObject extends DescribeSObjectBasic {
         return fields;
     }
 
+    /**
+     * All fields for the sobject.
+     * @return
+     */
     public List<Field> getFields() {
         return fields;
     }
@@ -76,7 +84,10 @@ public class DescribeSObject extends DescribeSObjectBasic {
         return children;
     }
 
-
+    /**
+     * Required fields.
+     * @return
+     */
     public Set<Field> getRequiredFieldsForCreateUpdate() {
         Set<Field> required = new HashSet<Field>();
         for (Field field : fields) {
@@ -87,6 +98,10 @@ public class DescribeSObject extends DescribeSObjectBasic {
         return required;
     }
 
+    /**
+     * Required fields.
+     * @return
+     */
     public Set<Field> getOptionalFieldsForCreateUpdate() {
         Set<Field> optional = new HashSet<Field>();
         for (Field field : fields) {
@@ -98,7 +113,11 @@ public class DescribeSObject extends DescribeSObjectBasic {
         }
         return optional;
     }
-    
+
+    /**
+     * Required fields.
+     * @return
+     */
     public Set<Field> getParentEntitiesForCreateUpdate() {
         Set<Field> parentReference = new HashSet<Field>();
         for (Field field : fields) {

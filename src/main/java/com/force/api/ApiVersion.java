@@ -45,4 +45,19 @@ public enum ApiVersion {
 	
 	public String toString() { return v; }
 
+	public static ApiVersion getVersion(String api) {
+		if (api == null) {
+			return DEFAULT_VERSION;
+		}
+		api = api.toLowerCase();
+		if (!api.startsWith("v")) {
+			api = "v" + api;
+		}
+		for (ApiVersion v : ApiVersion.values()) {
+			if (v.v.equals(api)) {
+				return v;
+			}
+		}
+		return DEFAULT_VERSION;
+	}
 }
