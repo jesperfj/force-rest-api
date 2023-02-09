@@ -26,9 +26,10 @@ public class ApiException extends RuntimeException {
 	public String getMessage() {
 		return message;
 	}
-	
 	public HttpResponse getResp(){
 		return resp;
 	}
+	
+	
 	
 }

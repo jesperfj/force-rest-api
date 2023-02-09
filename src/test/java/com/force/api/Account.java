@@ -1,9 +1,11 @@
 package com.force.api;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.Date;
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Account {
@@ -19,6 +21,9 @@ public class Account {
 	
 	@JsonProperty("Contacts")
 	List<Contact> contacts;
+
+	@JsonProperty("CreatedDate")
+	Date createdDate;
 	
 	public String getId() {
 		return id;
@@ -55,4 +60,6 @@ public class Account {
 		this.contacts = contacts;
 	}
 
+	public Date getCreatedDate() { return createdDate; }
+	public void setCreatedDate(Date value) { createdDate = value; }
 }

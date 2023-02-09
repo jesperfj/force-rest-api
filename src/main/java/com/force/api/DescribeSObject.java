@@ -25,7 +25,7 @@
  */
 package com.force.api;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.*;
 
@@ -39,18 +39,18 @@ import java.util.*;
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class DescribeSObject extends DescribeSObjectBasic {
 
-    private List<Field> fields;
-    private List<ChildEntity> childRelationships;
-
     /**
      * All fields for the sobject.
      * @return
      */
+    private List<Field> fields;
+    private List<ChildEntity> childRelationships;
+
     public List<Field> getAllFields() {
         return fields;
     }
 
-	/**
+    /**
      * All fields for the sobject.
      * @return
      */
@@ -84,7 +84,6 @@ public class DescribeSObject extends DescribeSObjectBasic {
         return children;
     }
 
-
     /**
      * Required fields.
      * @return
@@ -100,7 +99,7 @@ public class DescribeSObject extends DescribeSObjectBasic {
     }
 
     /**
-     * Optional fields.
+     * Required fields.
      * @return
      */
     public Set<Field> getOptionalFieldsForCreateUpdate() {
@@ -114,9 +113,9 @@ public class DescribeSObject extends DescribeSObjectBasic {
         }
         return optional;
     }
-    
+
     /**
-     * Parent entity references.
+     * Required fields.
      * @return
      */
     public Set<Field> getParentEntitiesForCreateUpdate() {

@@ -30,6 +30,8 @@ public class HttpRequest {
 
 	private String authorization;
 	
+	private int requestTimeout = 0; // in milliseconds, defaults to 0 which is no timeout (infinity)
+
 	public HttpRequest() {
 	}
 
@@ -85,6 +87,12 @@ public class HttpRequest {
 		return this;
 	}
 
+	public int getRequestTimeout() { return requestTimeout; }
+
+	public void setRequestTimeout(int value){
+		requestTimeout = value;
+	}
+	
 	public HttpRequest url(String value) {
 		url = value;
 		return this;

@@ -5,19 +5,21 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class SessionRefreshTest {
+
+	public static boolean notified = false;
 	
 	@Test
 	public void testSessionRefresh() {
 		
 		ForceApi api = new ForceApi(new ApiConfig()
+			.setSessionRefreshListener(new TestRefreshListener())
 			.setUsername(Fixture.get("username"))
 			.setPassword(Fixture.get("password"))
 			.setClientId(Fixture.get("clientId"))
-			.setClientSecret(Fixture.get("clientSecret"))
-			.setLoginEndpoint(Fixture.get("loginEndpoint")));
+			.setClientSecret(Fixture.get("clientSecret")));
 
 		assertNotNull(api.getIdentity());
-		// This call is not available in public api
+
 		Auth.revokeToken(api.config, api.session.accessToken);
 
 		Identity id = null;
@@ -33,7 +35,7 @@ public class SessionRefreshTest {
 			}
 		}
 		assertNotNull(id);
-		
+		assertTrue(notified);
 	}
 
 }
