@@ -448,6 +448,48 @@ public class ForceApi {
         }
 	}
 
+	public <T> T postCustomResource(String resource, Object t, Class<T> respObj)
+			throws ResourceException {
+		try {
+			return jsonMapper.readValue(
+					apiRequest(
+							new HttpRequest().url(customApexBase(resource))
+									.method("POST")
+									.header("Accept", "application/json")
+									.header("Content-Type", "application/json")
+									.content(jsonMapper.writeValueAsBytes(t)))
+							.getStream(), respObj);
+		} catch (JsonParseException e) {
+			throw new ResourceException(e);
+		} catch (JsonMappingException e) {
+			throw new ResourceException(e);
+		} catch (UnsupportedEncodingException e) {
+			throw new ResourceException(e);
+		} catch (IOException e) {
+			throw new ResourceException(e);
+		}
+	}
+
+	public <T> T getCustomResource(String resource, Class<T> respObj) {
+		try {
+			return jsonMapper.readValue(
+					apiRequest(
+							new HttpRequest().url(customApexBase(resource))
+									.method("GET")
+									.header("Accept", "application/json"))
+							.getStream(), respObj);
+		} catch (JsonParseException e) {
+			throw new ResourceException(e);
+		} catch (JsonMappingException e) {
+			throw new ResourceException(e);
+		} catch (UnsupportedEncodingException e) {
+			throw new ResourceException(e);
+		} catch (IOException e) {
+			throw new ResourceException(e);
+		}
+	}
+
+
 	/**
 	 * Retrieves all the metadata for an object, including information about each field, URLs, and child relationships.
 	 * Response metadata will only be returned if the object metadata has changed since the provided date.
@@ -485,6 +527,10 @@ public class ForceApi {
 		return(session.getApiEndpoint()+"/services/data/"+config.getApiVersionString());
 	}
 
+
+	private final String customApexBase(String resource){
+		return session.getApiEndpoint()+"/services/apexrest/"+resource;
+	}
 	private final String uriBaseOrRoot() {
 		if(useRootPath) {
 			return(session.getApiEndpoint());
