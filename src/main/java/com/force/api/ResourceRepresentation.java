@@ -1,6 +1,7 @@
 package com.force.api;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -67,6 +68,24 @@ public class ResourceRepresentation {
 		} catch (IOException e) {
 			throw new ResourceException(e);
 		}
+	}
+
+	public String asJsonString() {
+		try {
+			Object o = jsonMapper.readValue(response.getStream(), Object.class);
+			return jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(o);
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new ResourceException(e);
+		}
+	}
+
+	public InputStream asStream() {
+		return response.getStream();
+	}
+
+	public byte[] asBytes() {
+		return response.getByte();
 	}
 
 	/**
