@@ -7,6 +7,8 @@ public class ApiSession implements java.io.Serializable {
 	String accessToken;
 	String apiEndpoint;
 	String refreshToken;
+	String instanceUrl;
+	String id;
 
 	public ApiSession() {}
 	
@@ -24,6 +26,12 @@ public class ApiSession implements java.io.Serializable {
 	public String getRefreshToken() {
 		return refreshToken;
 	}
+	public String getInstanceUrl() {
+		return instanceUrl;
+	}
+	public String getId() {
+		return id;
+	}
 	public ApiSession setAccessToken(String accessToken) {
 		this.accessToken = accessToken;
 		return this;
@@ -32,11 +40,17 @@ public class ApiSession implements java.io.Serializable {
 		this.apiEndpoint = apiEndpoint;
 		return this;
 	}
-
 	public ApiSession setRefreshToken(String value) {
 		refreshToken = value;
 		return this;
 	}
-	
+	public ApiSession setInstanceUrl(String value) {
+		instanceUrl = value;
+		return this;
+	}
+	public ApiSession setId(String value) {
+		id = value;
+		return this;
+	}
 
 }
