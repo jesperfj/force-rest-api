@@ -1,0 +1,30 @@
+name: Build and Push Artifact
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: "The release version for the artifact"
+        required: true
+      java_version:
+        description: "The java version for the job"
+        required: true
+        default: '8'
+      maven_version:
+        description: "The maven version for the job"
+        required: true
+        default: '3.2.5'
+      build_key:
+        description: "Name of artifact"
+        required: true
+        default: 'PLAT-PUB-GHA-BUILD'
+
+jobs:
+  docker:
+    uses: GannettDigital/dms-devops-github-actions/.github/workflows/build-maven-and-upload-to-gcp.yaml@main
+    with:
+      release_version: ${{ inputs.release_version }}
+      java_version: ${{ inputs.java_version }}
+      maven_version: ${{ inputs.maven_version }}
+      build_key: ${{ inputs.build_key }}
+    secrets: inherit
