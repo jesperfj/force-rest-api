@@ -1,0 +1,17 @@
+# This is a workflow to complete a Sonarqube scan for a PR
+# SonarQube will scan code and provide feeback to the PR via a BOT.
+# A SEC Team reaquest is needed to get BOT feeback. Provied the REPO URL.
+
+name: SonarqubeActions-PR
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+    branches:
+      - master
+
+jobs:
+  sonarqube_pr_scan:
+    uses: GannettDigital/dms-devops-github-actions/.github/workflows/sonarqube-pr.yaml@main
+    secrets: inherit
