@@ -1,0 +1,12 @@
+# This is a workflow to complete a Sonarqube scan on a Montly Basis
+name: SonarqubeActions-Scheduled
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "15 17 16 * *"
+
+jobs:
+  sonarqube_scheduled:
+    uses: GannettDigital/dms-devops-github-actions/.github/workflows/sonarqube-scheduled.yaml@main
+    secrets: inherit
