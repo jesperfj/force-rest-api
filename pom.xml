@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.reachlocal</groupId>
     <artifactId>force-rest-api</artifactId>
-    <version>MASTER-SNAPSHOT</version>
+    <version>${releaseVersion}</version>
     <name>force-rest-api</name>
     <scm>
         <connection>scm:git:git@github.com:reachlocal/force-rest-api.git</connection>
@@ -11,6 +11,24 @@
         <tag>HEAD</tag>
         <url>https://github.com/reachlocal/force-rest-api.git</url>
     </scm>
+    <repositories>
+        <repository>
+            <id>rl-snapshots</id>
+            <name>rl-snapshots</name>
+            <url>https://artifacts.reachlocal.com/nexus/content/repositories/rl-snapshots</url>
+        </repository>
+        <repository>
+            <id>master-repo-group</id>
+            <name>master-repo-group</name>
+            <url>https://artifacts.reachlocal.com/nexus/content/groups/master-repo-group/</url>
+        </repository>
+        <repository>
+            <id>public-snapshots</id>
+            <name>public-snapshots</name>
+            <url>https://artifacts.reachlocal.com/nexus/content/groups/public-snapshots/</url>
+        </repository>
+    </repositories>
+
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -201,4 +219,19 @@
             </plugin>
         </plugins>
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>rl-releases</id>
+            <name>ReachLocal Releases</name>
+            <url>https://artifacts.reachlocal.com/nexus/content/repositories/rl-releases</url>
+            <uniqueVersion>false</uniqueVersion>
+        </repository>
+        <snapshotRepository>
+            <id>rl-snapshots</id>
+            <name>ReachLocal Snapshots</name>
+            <url>https://artifacts.reachlocal.com/nexus/content/repositories/rl-snapshots</url>
+            <!-- uniqueVersion>false</uniqueVersion -->
+        </snapshotRepository>
+    </distributionManagement>
 </project>

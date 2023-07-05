@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<settings>
+
+<servers>
+    <server>
+        <id>rl-releases</id>
+        <username>nexus</username>
+        <password>nexus</password>
+    </server>
+    <server>
+        <id>rl-snapshots</id>
+        <username>nexus</username>
+        <password>nexus</password>
+    </server>
+</servers>
+
+</settings>

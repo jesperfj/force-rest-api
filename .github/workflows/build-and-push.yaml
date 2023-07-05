@@ -6,6 +6,7 @@ on:
       release_version:
         description: "The release version for the artifact"
         required: true
+        default: 1.0.7.1
       java_version:
         description: "The java version for the job"
         required: true
@@ -17,7 +18,8 @@ on:
       build_key:
         description: "Name of artifact"
         required: true
-        default: 'PLAT-PUB-GHA-BUILD'
+        default: 'BUSSYS-SFAPI-14'
+
 
 jobs:
   docker:
@@ -26,5 +28,7 @@ jobs:
       release_version: ${{ inputs.release_version }}
       java_version: ${{ inputs.java_version }}
       maven_version: ${{ inputs.maven_version }}
-      build_key: ${{ inputs.build_key }}
+      build_key: ''
+      maven_default_params: 'mvn deploy --settings.xml -Dbuild.version=${{ github.event.inputs.release_version }}'
+
     secrets: inherit
