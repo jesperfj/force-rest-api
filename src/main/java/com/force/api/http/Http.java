@@ -109,8 +109,13 @@ public class Http {
 				return new HttpResponse().setResponseCode(code);
 			} else {
 				logger.info("Bad response code: {} on request: {} {}", code, req.getMethod(), req.getUrl());
-				return new HttpResponse().setString(
-						new String(readResponse(conn.getErrorStream()), "UTF-8")).setResponseCode(code);
+				HttpResponse response = new HttpResponse().setResponseCode(code);
+				if (conn.getErrorStream() != null) {
+					response.setString(new String(readResponse(conn.getErrorStream()), "UTF-8"));
+				} else {
+					response.setString(conn.getResponseMessage());
+				}
+				return response;
 			}
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
