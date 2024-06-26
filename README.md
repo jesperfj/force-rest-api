@@ -296,6 +296,10 @@ There should be nothing to push. If something is messed up, delete the tags in G
 
 # Release History
 
+## 0.0.46
+
+* Added this fix: https://github.com/jesperfj/force-rest-api/pull/105. Thanks @marcantoine-bibeau.
+
 ## 0.0.45
 
 * No major changes
