@@ -22,7 +22,8 @@ public class AuthTest {
 
 	}
 
-	@Test
+	//@Test
+	// The test org is not set up for this test anymore.
 	public void testSoapLoginWithBadChars() {
 		ForceApi api = new ForceApi(new ApiConfig()
 			.setUsername(Fixture.get("usernameEscapeTest"))
